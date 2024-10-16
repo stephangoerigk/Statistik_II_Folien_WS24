@@ -96,7 +96,7 @@ class: top, left
 ### Übersicht Lehrveranstaltung 
 
 Termine:
-* 13 Termine
+* 14 Termine
 * Mittwoch 13:05 - 14:35 (Audimax)
 
 Begleitendes Seminar:
@@ -114,7 +114,7 @@ class: top, left
 ### Termine
 
 ```{r echo = F}
-df = readxl::read_xlsx("Modul Quantitative Methoden II_Termine.xlsx", sheet = "Tabellenblatt1")[1:13, 1:3]
+df = readxl::read_xlsx("Modul Quantitative Methoden II_Termine.xlsx", sheet = "Tabellenblatt1")[1:14, 1:3]
 df$Datum = format(as.Date(df$Datum), "%d.%m.%Y")
 df %>%
   kbl() %>%
