@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Einheit 5</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Dr. Stephan Goerigk" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/hygge.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#EE0071"],"pen_size":4,"eraser_size":40,"palette":[]}) })</script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link href="libs/htmltools-fill/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/plotly-binding/plotly.js"></script>
+    <script src="libs/typedarray/typedarray.min.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <link href="libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+name: Title slide
+class: middle, left
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+# Statistik II
+***
+### Einheit 5: Mehrfaktorielle ANOVA
+##### 20.11.2024 | Prof. Dr. Stephan Goerigk
+
+
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+.pull-left[
+
+#### Einfaktorielle vs. Mehrfaktorielle ANOVA
+
+* Einfaktorielle ANOVA: Einfluss **einer** UV a.k.a Faktor (i.d.R. `\(\geq\)` 3 Stufen) auf eine AV
+
+* Mehrfaktorielle ANOVA: Einfluss **mehrerer** UVs (beide zumindest 2 Stufen) auf eine AV
+
+**Psychologie:**
+
+* Verhalten wird (fast) immer von mehr als einem Faktor bestimmt
+
+* Deshalb interessiert oft die Wirkung von nicht einem, sondern mehreren Faktoren auf die AV
+
+* Von besonderem Interesse: Zusammenwirken der Faktoren (Wechselwirkung, Interaktion)
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/einvsmehrfaktoriell.png" width="520px" /&gt;
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Nomenklatur
+
+* Abhängige Variable (AV) auch Kriterium genannt
+
+* Unabhängige Variablen (UV) in ANOVA-Sprache auch Faktoren genannt
+
+* Die Stufenanzahl der Faktoren wird durch Indizes angegeben
+
+  * Faktor A hat p Stufen (Laufindex i)
+  * Faktor B hat q Stufen (Laufindex j)
+  
+* Benennung des Tests als **p x q ANOVA**
+
+  * Beispiel: IQ (AV) wird durch Geschlecht `\([UV_1:\)` 0=männlich, 1=weiblich] und Bildung `\([UV_2:\)` 0=Hauptschule, 1=Realschule, 2=Gymnasium] vorhergesagt
+  
+  * `\(UV_1\)` = 2-stufig, `\(UV_2\)` = 3-stufig
+  
+  * Man spricht dann von einer 2 x 3 ANOVA
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Vorgehen
+
+* Mehrfaktorielle ANOVA ist in der Vorgehensweise analog zur Einfaktoriellen ANOVA
+
+* Ziel: Prüfen von Mittelwertsunterschieden mit dem F-Test auf Signifikanz
+
+* Jeder Faktor wird mit einem eigenen F-Test geprüft (Ergebnis: F-Wert mit `\(df_1\)` und `\(df_2\)` und p-Wert)
+
+* Durch Hinzufügen des Interaktionseffekts gibt es bei 2 Faktoren 3 Arten von Mittelwertsunterschieden:
+
+  * Haupteffekt `\(UV_1\)`
+  
+  * Haupteffekt `\(UV_2\)`
+  
+  * Interaktion `\(UV_1\)` x `\(UV_2\)`
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Effektarten
+
+##### Haupteffekt `\(UV_1\)`
+
+* Haupteffekt `\(UV_1\)` beschreibt den Einfluss der `\(UV_1\)` auf die AV unabhängig von der `\(UV_2\)`
+
+* Mittelwertsunterschiede in den Stufen des Faktors `\(UV_1\)` gemittelt über die Stufen der `\(UV_2\)`
+
+**Interpretation:**
+
+* `\(UV_1\)` ist 2-stufig `\(\rightarrow\)` das Ergebnis von Haupteffekt `\(UV_1\)` entspricht einem unabhängigen t-Test  
+
+* `\(UV_1\)` ist `\(\geq\)` 3-stufig  `\(\rightarrow\)` das Ergebnis von Haupteffekt `\(UV_1\)` einer einfaktoriellen ANOVA. 
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Effektarten
+
+##### Haupteffekt `\(UV_2\)`
+
+* Haupteffekt `\(UV_2\)` beschreibt den Einfluss der `\(UV_2\)` auf die AV unabhängig von der `\(UV_1\)`
+
+* Mittelwertsunterschiede in den Stufen des Faktors `\(UV_2\)` gemittelt über die Stufen der `\(UV_1\)`
+
+**Interpretation:**
+
+* `\(UV_2\)` ist 2-stufig `\(\rightarrow\)` das Ergebnis von Haupteffekt `\(UV_2\)` entspricht einem unabhängigen t-Test  
+
+* `\(UV_2\)` ist `\(\geq\)` 3-stufig  `\(\rightarrow\)` das Ergebnis von Haupteffekt `\(UV_2\)` einer einfaktoriellen ANOVA. 
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Effektarten
+
+##### Interaktion `\(UV_1\)` x `\(UV_2\)`
+
+* Wechselwirkung von `\(UV_1\)` x `\(UV_2\)` (Interaktion) beschreibt gemeinsamen Einfluss von `\(UV_1\)` und `\(UV_2\)` auf die AV
+
+**Interpretation:**
+
+* Interaktion erfasst das Zusammenwirken der Faktorstufen beider Faktoren
+
+* Sie quantifiziert Einflüsse, die nur durch die gemeinsame, simultane Wirkung zweier Faktorstufen entstehen `\(\rightarrow\)` nicht durch die Haupteffekte alleine
+
+Formell:
+
+* Es wird geprüft, ob die Wirkung der `\(UV_2\)` auf allen Stufen der `\(UV_1\)` identisch ist.
+
+* Der Interaktionseffekt wird mit einem eigenen F-Test geprüft 
+
+  `\(\rightarrow\)` ANOVA mit 2 UVs enthält also 3 Signifikanztests
+  
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Formelnotation
+
+.center[
+&lt;img src="bilder/mehrfaktorielle_ANOVA_Formel1.png" width="900px" /&gt;
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+.pull-left[
+#### Beispiel: Klinische Studie mit 2 Gruppenfaktoren
+
+* `\(N= 16\)` Patient:innen
+
+* Medikament: Behandlung mit Psychopharmakum vs. Placebo
+
+* Dosis: hoch = 3x täglich, niedrig = 1x täglich
+
+* Verbesserung: hohe Werte = viel Verbesserung
+]
+
+.pull-right[
+.center[
+&lt;table class=" lightable-classic" style="font-size: 13px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; ID &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; UV1: Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; UV2: Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; AV: Verbesserung &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 42 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 37 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Formelnotation - Beispiel
+
+.center[
+&lt;img src="bilder/mehrfaktorielle_ANOVA_Formel2.png" width="900px" /&gt;
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Beispiel: Klinische Studie mit 2 Gruppenfaktoren
+
+.pull-left[
+
+##### Haupteffekt `\(UV_1:\)` Medikament
+
+&lt;small&gt;
+`$$Y = \color{red}{Medikament} + Dosis + Medikament \cdot Dosis + \epsilon$$`
+&lt;/small&gt;
+
+`$$\downarrow$$`
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 28.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-663e1ef97bd54d26a1a5" style="width:504px;height:450px;"></div>
+<script type="application/json" data-for="htmlwidget-663e1ef97bd54d26a1a5">{"x":{"data":[{"x":[1,2],"y":[16,28.5],"text":["Medikament: Placebo<br />Verbesserung: 16.0","Medikament: Verum<br />Verbesserung: 28.5"],"type":"scatter","mode":"lines+markers","opacity":1,"line":{"color":"rgba(0,0,0,1)","width":1.8897637795275593,"dash":"solid"},"error_y":{"array":[1.2535663410560183,3.2513733362117279],"arrayminus":[1.2535663410560183,3.2513733362117279],"type":"data","width":0,"symmetric":false,"color":"rgba(0,0,0,1)"},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":3.7795275590551185,"color":"rgba(0,0,0,1)"}},"hoveron":"points","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":53.997509339975103,"l":53.997509339975103},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["Placebo","Verum"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Placebo","Verum"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Medikament","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2,42],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Verbesserung","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":19.128268991282695}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b344eed61b3":{"x":{},"y":{},"type":"scatter"},"9b3442a95740":{"x":{},"y":{}}},"cur_data":"9b344eed61b3","visdat":{"9b344eed61b3":["function (y) ","x"],"9b3442a95740":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Beispiel: Klinische Studie mit 2 Gruppenfaktoren
+
+.pull-left[
+
+##### Haupteffekt `\(UV_1:\)` Medikament
+
+&lt;small&gt;
+`$$Y = \color{red}{Medikament} + Dosis + Medikament \cdot Dosis + \epsilon$$`
+&lt;/small&gt;
+
+`$$\downarrow$$`
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 28.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+`\(\rightarrow\)` Unterschied zwischen Verum und Placebo (ungeachtet der Dosis)
+]
+
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-45b42ef870947298f4c2" style="width:504px;height:450px;"></div>
+<script type="application/json" data-for="htmlwidget-45b42ef870947298f4c2">{"x":{"data":[{"x":[1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2],"y":[16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16,null,16,16],"text":"Medikament: 1<br />Verbesserung: 16","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(238,0,113,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2],"y":[16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5,null,16,28.5],"text":"Medikament: 2<br />Verbesserung: 16","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(238,0,113,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2],"y":[16,28.5],"text":["Medikament: Placebo<br />Verbesserung: 16.0","Medikament: Verum<br />Verbesserung: 28.5"],"type":"scatter","mode":"lines+markers","opacity":1,"line":{"color":"rgba(0,0,0,1)","width":1.8897637795275593,"dash":"solid"},"error_y":{"array":[1.2535663410560183,3.2513733362117279],"arrayminus":[1.2535663410560183,3.2513733362117279],"type":"data","width":0,"symmetric":false,"color":"rgba(0,0,0,1)"},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":3.7795275590551185,"color":"rgba(0,0,0,1)"}},"hoveron":"points","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":53.997509339975103,"l":53.997509339975103},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["Placebo","Verum"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Placebo","Verum"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Medikament","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2,42],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Verbesserung","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":19.128268991282695}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b3485f0278":{"x":{},"y":{},"type":"scatter"},"9b34159b1893":{"x":{},"y":{}},"9b34796a65f9":{"x":{},"y":{}},"9b34384cfcb5":{"x":{},"y":{}}},"cur_data":"9b3485f0278","visdat":{"9b3485f0278":["function (y) ","x"],"9b34159b1893":["function (y) ","x"],"9b34796a65f9":["function (y) ","x"],"9b34384cfcb5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Beispiel: Klinische Studie mit 2 Gruppenfaktoren
+
+.pull-left[
+
+##### Haupteffekt `\(UV_2:\)` Dosis
+
+&lt;small&gt;
+`$$Y = Medikament + \color{red}{Dosis} + Medikament \cdot Dosis + \epsilon$$`
+&lt;/small&gt;
+
+`$$\downarrow$$`
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.44 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-cccc63a05e01edf3e7cf" style="width:504px;height:450px;"></div>
+<script type="application/json" data-for="htmlwidget-cccc63a05e01edf3e7cf">{"x":{"data":[{"x":[1,2],"y":[18,26.5],"text":["Dosis: niedrig<br />Verbesserung: 18.0","Dosis: hoch<br />Verbesserung: 26.5"],"type":"scatter","mode":"lines+markers","opacity":1,"line":{"color":"rgba(0,0,0,1)","width":1.8897637795275593,"dash":"solid"},"error_y":{"array":[1.5698043554168493,3.9596175861529126],"arrayminus":[1.5698043554168493,3.9596175861529126],"type":"data","width":0,"symmetric":false,"color":"rgba(0,0,0,1)"},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":3.7795275590551185,"color":"rgba(0,0,0,1)"}},"hoveron":"points","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":53.997509339975103,"l":53.997509339975103},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["niedrig","hoch"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["niedrig","hoch"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Dosis","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2,42],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Verbesserung","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":19.128268991282695}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b346550ac66":{"x":{},"y":{},"type":"scatter"},"9b3413669081":{"x":{},"y":{}}},"cur_data":"9b346550ac66","visdat":{"9b346550ac66":["function (y) ","x"],"9b3413669081":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Beispiel: Klinische Studie mit 2 Gruppenfaktoren
+
+.pull-left[
+
+##### Haupteffekt `\(UV_2:\)` Dosis
+
+&lt;small&gt;
+`$$Y = Medikament + \color{red}{Dosis} + Medikament \cdot Dosis + \epsilon$$`
+&lt;/small&gt;
+
+`$$\downarrow$$`
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.44 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+`\(\rightarrow\)` Unterschied zwischen niedriger und hoher Dosis (ungeachtet des Medikaments)
+]
+
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-31232fea623ec4483a5a" style="width:504px;height:450px;"></div>
+<script type="application/json" data-for="htmlwidget-31232fea623ec4483a5a">{"x":{"data":[{"x":[1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2],"y":[18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18,null,18,18],"text":"Dosis: 1<br />Verbesserung: 18","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(238,0,113,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2],"y":[18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5,null,18,26.5],"text":"Dosis: 2<br />Verbesserung: 18","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(238,0,113,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2],"y":[18,26.5],"text":["Dosis: niedrig<br />Verbesserung: 18.0","Dosis: hoch<br />Verbesserung: 26.5"],"type":"scatter","mode":"lines+markers","opacity":1,"line":{"color":"rgba(0,0,0,1)","width":1.8897637795275593,"dash":"solid"},"error_y":{"array":[1.5698043554168493,3.9596175861529126],"arrayminus":[1.5698043554168493,3.9596175861529126],"type":"data","width":0,"symmetric":false,"color":"rgba(0,0,0,1)"},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":3.7795275590551185,"color":"rgba(0,0,0,1)"}},"hoveron":"points","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":53.997509339975103,"l":53.997509339975103},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["niedrig","hoch"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["niedrig","hoch"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Dosis","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2,42],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Verbesserung","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":19.128268991282695}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b34760045b9":{"x":{},"y":{},"type":"scatter"},"9b34be1b135":{"x":{},"y":{}},"9b34e3914ab":{"x":{},"y":{}},"9b34457bedd8":{"x":{},"y":{}}},"cur_data":"9b34760045b9","visdat":{"9b34760045b9":["function (y) ","x"],"9b34be1b135":["function (y) ","x"],"9b34e3914ab":["function (y) ","x"],"9b34457bedd8":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Beispiel: Klinische Studie mit 2 Gruppenfaktoren
+
+.pull-left[
+
+##### Interaktion `\(UV_1\)` x `\(UV_2:\)` Medikament x Dosis
+
+&lt;small&gt;
+`$$Y = Medikament + Dosis + \color{red}{Medikament \cdot Dosis} + \epsilon$$`
+&lt;/small&gt;
+
+`$$\downarrow$$`
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.86 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.92 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-efe588e19ce682a6bcc5" style="width:504px;height:450px;"></div>
+<script type="application/json" data-for="htmlwidget-efe588e19ce682a6bcc5">{"x":{"data":[{"x":[1,2],"y":[15.25,20.75],"text":["Medikament: Placebo<br />Verbesserung: 15.25<br />Dosis: niedrig","Medikament: Verum<br />Verbesserung: 20.75<br />Dosis: niedrig"],"type":"scatter","mode":"lines+markers","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[1.7969882210706523,1.7969882210706523],"arrayminus":[1.7969882210706523,1.7969882210706523],"type":"data","width":0,"symmetric":false,"color":"rgba(248,118,109,1)"},"name":"niedrig","legendgroup":"niedrig","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":3.7795275590551185,"color":"rgba(248,118,109,1)"}},"hoveron":"points","frame":null},{"x":[1,2],"y":[16.75,36.25],"text":["Medikament: Placebo<br />Verbesserung: 16.75<br />Dosis: hoch","Medikament: Verum<br />Verbesserung: 36.25<br />Dosis: hoch"],"type":"scatter","mode":"lines+markers","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[1.9311050377094112,2.4622144504490251],"arrayminus":[1.9311050377094112,2.4622144504490251],"type":"data","width":0,"symmetric":false,"color":"rgba(0,191,196,1)"},"name":"hoch","legendgroup":"hoch","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":3.7795275590551185,"color":"rgba(0,191,196,1)"}},"hoveron":"points","frame":null},{"x":[1,2],"y":[15.25,20.75],"text":["Medikament: Placebo<br />Verbesserung: 15.25<br />Dosis: niedrig<br />Dosis: niedrig","Medikament: Verum<br />Verbesserung: 20.75<br />Dosis: niedrig<br />Dosis: niedrig"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(248,118,109,1)","dash":"solid"},"hoveron":"points","name":"niedrig","legendgroup":"niedrig","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2],"y":[16.75,36.25],"text":["Medikament: Placebo<br />Verbesserung: 16.75<br />Dosis: hoch<br />Dosis: hoch","Medikament: Verum<br />Verbesserung: 36.25<br />Dosis: hoch<br />Dosis: hoch"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,191,196,1)","dash":"solid"},"hoveron":"points","name":"hoch","legendgroup":"hoch","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":53.997509339975103,"l":53.997509339975103},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["Placebo","Verum"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Placebo","Verum"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Medikament","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2,42],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Verbesserung","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":19.128268991282695},"title":{"text":"Dosis","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b3416fb51c8":{"x":{},"y":{},"colour":{},"type":"scatter"},"9b344db62d41":{"x":{},"y":{},"colour":{}}},"cur_data":"9b3416fb51c8","visdat":{"9b3416fb51c8":["function (y) ","x"],"9b344db62d41":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Beispiel: Klinische Studie mit 2 Gruppenfaktoren
+
+.pull-left[
+
+##### Interaktion `\(UV_1\)` x `\(UV_2:\)` Medikament x Dosis
+
+&lt;small&gt;
+`$$Y = Medikament + Dosis + \color{red}{Medikament \cdot Dosis} + \epsilon$$`
+&lt;/small&gt;
+
+`$$\downarrow$$`
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.86 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.92 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+`\(\rightarrow\)` Unterschied des Effekts der Dosis in der Verum-Gruppe vs. des Effekts der Dosis in der Placebo-Gruppe
+
+]
+
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-eed26c47b9983cb90de8" style="width:504px;height:450px;"></div>
+<script type="application/json" data-for="htmlwidget-eed26c47b9983cb90de8">{"x":{"data":[{"x":[1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1],"y":[15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75,null,15.25,16.75],"text":"Medikament: 1<br />Verbesserung: 15.25<br />Dosis: #EE0071","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(238,0,113,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2],"y":[20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25,null,20.75,36.25],"text":"Medikament: 2<br />Verbesserung: 20.75<br />Dosis: #EE0071","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(238,0,113,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2],"y":[16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25,null,16.75,36.25],"text":"Medikament: 1<br />Verbesserung: 16.75<br />Dosis: black","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2,null,1,2],"y":[15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75,null,15.25,20.75],"text":"Medikament: 1<br />Verbesserung: 15.25<br />Dosis: black","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2],"y":[16,28.5],"text":["Medikament: Placebo<br />Verbesserung: 16.0<br />Dosis: transparent","Medikament: Verum<br />Verbesserung: 28.5<br />Dosis: transparent"],"type":"scatter","mode":"lines+markers","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[1.2535663410560183,3.2513733362117279],"arrayminus":[1.2535663410560183,3.2513733362117279],"type":"data","width":0,"symmetric":false,"color":"transparent"},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"transparent","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":3.7795275590551185,"color":"transparent"}},"hoveron":"points","frame":null},{"x":[1,2,null,1,2],"y":[15.25,20.75,null,16.75,36.25],"text":["Medikament: Placebo<br />Verbesserung: 15.25<br />Dosis: transparent<br />Dosis: niedrig","Medikament: Verum<br />Verbesserung: 20.75<br />Dosis: transparent<br />Dosis: niedrig",null,"Medikament: Placebo<br />Verbesserung: 16.75<br />Dosis: transparent<br />Dosis: hoch","Medikament: Verum<br />Verbesserung: 36.25<br />Dosis: transparent<br />Dosis: hoch"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"transparent","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":53.997509339975103,"l":53.997509339975103},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["Placebo","Verum"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Placebo","Verum"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Medikament","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2,42],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":19.128268991282695},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Verbesserung","font":{"color":"rgba(0,0,0,1)","family":"","size":23.910336239103366}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":19.128268991282695}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b34416cebdf":{"x":{},"y":{},"colour":{},"type":"scatter"},"9b3455f19f07":{"x":{},"y":{},"colour":{}},"9b3469ffb0a5":{"x":{},"y":{},"colour":{}},"9b3411a65701":{"x":{},"y":{},"colour":{}},"9b343f9a0bb4":{"x":{},"y":{},"colour":{}},"9b341a76770b":{"x":{},"y":{},"colour":{}}},"cur_data":"9b34416cebdf","visdat":{"9b34416cebdf":["function (y) ","x"],"9b3455f19f07":["function (y) ","x"],"9b3469ffb0a5":["function (y) ","x"],"9b3411a65701":["function (y) ","x"],"9b343f9a0bb4":["function (y) ","x"],"9b341a76770b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+.pull-left[
+
+##### Zerlegung der Gesamtvarianz
+
+* Signifikanzprüfung erfordert Zerlegung der Gesamtvarianz
+
+Parallele zur einfaktoriellen ANOVA:
+
+* Gesamtvarianz = systematische Varianz + Residualvarianz
+
+* Systematische Varianz besteht nun aus 3 Teilen
+
+`$$\sigma^2_{sys} = \sigma^2_{UV_1} + \sigma^2_{UV_2} + \sigma^2_{UV_1\text{x}UV_2}$$`
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/Zerlegung_Gesamtvarianz.png" width="600px" /&gt;
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+Signifikanztest der Effekte läuft nach (von der einfaktorielle ANOVA) bekanntem Prinzip der F-Bruchbildung ab:
+
+`$$F_{UV_1(df_{UV_1},df_{Res})}=\frac{\hat{\sigma}^2_{UV_1}}{\hat{\sigma}^2_{Res}}$$`
+`$$\text{  mit } df_{UV_1}=p-1 \text{ (dabei ist p die Anzahl der Stufen in } UV_1)$$`
+
+`$$F_{UV_2(df_{UV_2},df_{Res})}=\frac{\hat{\sigma}^2_{UV_2}}{\hat{\sigma}^2_{Res}}$$`
+`$$\text{  mit } df_{UV_2}=q-1 \text{ (dabei ist q die Anzahl der Stufen in } UV_2)$$`
+`$$F_{UV_1\text{x}UV_2(df_{UV_1\text{x}UV_2},df_{Res})}=\frac{\hat{\sigma}^2_{UV_1\text{x}UV_2}}{\hat{\sigma}^2_{Res}}$$`
+$$\text{  mit } df_{UV_1\text{x}UV_2}=(p-1) \cdot (q-1) $$
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Berechnung der Residualvarianz
+
+* Auch hier: Residualvarianz wird geschätzt durch "Varianz innerhalb"
+
+* Quadrierte Abweichung der einzelnen Personen von ihrem Gruppenmittelwert
+
+`\(\rightarrow\)` Die Varianzen werden addiert und durch die Anzahl der Zellen geteilt
+
+`$$\hat{\sigma}^2_{Res}= \hat{\sigma}^2_{innerhalb}= \frac{\hat{\sigma}^2_{11} + \hat{\sigma}^2_{12} +...+\hat{\sigma}^2_{1q} + \hat{\sigma}^2_{21} + \hat{\sigma}^2_{22} +...+\hat{\sigma}^2_{pq}}{p \cdot q}$$`
+
+`$$df_{Res}=p \cdot q \cdot (n-1)$$`
+`$$\hat{\sigma}_{Res}^2 = =\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}QS_{ij}}{p \cdot q \cdot (n-1)}=\frac{QS_{Res}}{df_{Res}}$$`
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+.pull-left[
+#### Signifikanztest der Effekte
+
+##### Berechnung der Residualvarianz
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.86 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.92 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+`$$\hat{\sigma}_{Res}^2 = \frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}QS_{ij}}{p \cdot q \cdot (n-1)}=\frac{QS_{Res}}{df_{Res}}$$`
+]
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 13px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; ID &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Verbesserung &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 42 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 37 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+.pull-left[
+#### Signifikanztest der Effekte
+
+##### Berechnung der Residualvarianz
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.86 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.92 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;small&gt;
+
+`$$\hat{\sigma}^2_{Res}= \frac{(18 - 20.75)^2+(19 - 20.75)^2+...+(22 - 16.75)^2}{2 \cdot 2 \cdot (4-1)}=16.25$$`
+
+`$$df_{Res}=2 \cdot 2 \cdot (4-1)=12$$`
+]
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 13px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; ID &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Verbesserung &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 42 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 37 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_1:\)`
+
+* Prüfung: Besteht ein systematischer Einfluss der `\(UV_1\)` (Medikament) auf die AV (Verbesserung)?
+
+* `\(H_0:\)` Alle Populationsmittelwerte der Stufen des Faktors **Medikament** (gemittelt über die Stufen von Dosis) sind gleich.
+
+* `\(H_1\)` wie bei allen Varianzanalysen 2-seitig formuliert (Varianzen sind aufgrund der Quadrierung immer positiv)
+
+.pull-left[
+
+**Aufstellen des Hypothesenpaares (allgemein):**
+
+  * `\(H_0:\)` `\(\mu_1 = \mu_2 = ...= \mu_p\)`
+  
+  * `\(H_1:\)` `\(\lnot H_0\)` `\((\lnot\)` bedeutet Negation)
+]
+
+.pull-right[
+
+**Aufstellen des Hypothesenpaares (hier):**
+
+  * `\(H_0:\)` `\(\mu_{Placebo} = \mu_{Verum}\)`
+  
+  * `\(H_1:\)` `\(\lnot H_0\)`
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_1:\)`
+
+`$$F_{UV_1(df_{UV_1},df_{Res})}=\frac{\hat{\sigma}^2_{UV_1}}{\hat{\sigma}^2_{Res}}$$`
+* Trifft `\(H_0\)` zu, sollte F-Wert den Wert 1 haben
+
+  `\(\rightarrow\)` Geschätzte Varianz des Haupteffekts der `\(UV_1\)` bestünde nur aus Residualvarianz
+
+* F-Verteilung (s.h. Einheit 1) gibt Auskunft, wie wahrscheinlich ein F-Wert unter Annahme der `\(H_0\)` ist
+
+* Ist er ausreichend unwahrscheinlich (p&lt;.05) wird die `\(H_0\)` verworfen
+
+  `\(\rightarrow\)` Der Haupteffekt der `\(UV_1\)` ist signifikant (hat einen systematischen Einfluss auf die AV)
+  
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_1:\)`
+
+**Berechnung:**
+
+`$$F_{UV_1(df_{UV_1},df_{Res})}=\frac{\hat{\sigma}^2_{UV_1}}{\hat{\sigma}^2_{Res}}$$`
+
+`$$\hat{\sigma}^2_{UV_1}= \frac{QS_{UV_1}}{df_{UV_1}}$$`
+
+Die Quadratsumme entspricht der quadrierten Abweichung der Mittelwerte `\((\bar{UV_{1i}})\)` vom Gesamtmittelwert `\((\bar{G})\)` multipliziert mit der Zellgröße `\(n\)` und der Anzahl der Stufen der `\(UV_2:\)`
+
+`$$\hat{\sigma}^2_{UV_1}= \frac{\sum\limits _{i=1}^{p}n \cdot q \cdot (\bar{UV_{1i}} - \bar{G})^2}{p-1}$$`
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_1:\)`
+
+**Berechnung - Beispiel:**
+
+.pull-left[
+
+`$$\hat{\sigma}^2_{UV_1}= \frac{\sum\limits _{i=1}^{p}n \cdot q \cdot (\bar{UV_{1i}} - \bar{G})^2}{p-1}$$`
+`$$\bar{G}= 22.25$$`
+`$$\hat{\sigma}^2_{UV_1}= \frac{4 \cdot 2 \cdot [(16 - 22.25)^2 + (28.5 - 22.25)^2]}{2-1}=625$$`
+`$$F_{UV_1(1,12)}=\frac{\hat{\sigma}^2_{UV_1}}{\hat{\sigma}^2_{Res}}=\frac{625}{16.25}=38.46$$`
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 28.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+.pull-left[
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_1:\)`
+
+**Berechnung - Beispiel:**
+
+Entscheidungsregel:
+
+* Vergleich von `\(F_{emp}=38.46\)` mit `\(F_{krit}\)` für `\(df_1=1, df_2=12\)` und `\(\alpha = .05\)`
+
+* Wenn `\(F_{emp} &gt; F_{krit} \rightarrow\)` Test ist signifikant
+
+* `\(38.46 &gt; 4.75\)`
+
+`\(\rightarrow\)` Es besteht ein signifikanter Unterschied zwischen den Mittelwerten der Verum vs. Placebo Gruppe
+]
+.pull-right[
+.center[
+&lt;img src="bilder/ftab2.png" width="400px" /&gt;
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_2:\)`
+
+* Prüfung: Besteht ein systematischer Einfluss der `\(UV_2\)` (Dosis) auf die AV (Verbesserung)?
+
+* `\(H_0:\)` Alle Populationsmittelwerte der Stufen des Faktors **Dosis** (gemittelt über die Stufen von Medikament) sind gleich.
+
+* `\(H_1\)` wie bei allen Varianzanalysen 2-seitig formuliert (Varianzen sind aufgrund der Quadrierung immer positiv)
+
+.pull-left[
+
+**Aufstellen des Hypothesenpaares (allgemein):**
+
+  * `\(H_0:\)` `\(\mu_1 = \mu_2 = ...= \mu_p\)`
+  
+  * `\(H_1:\)` `\(\lnot H_0\)` `\((\lnot\)` bedeutet Negation)
+]
+
+.pull-right[
+
+**Aufstellen des Hypothesenpaares (hier):**
+
+  * `\(H_0:\)` `\(\mu_{niedrig} = \mu_{hoch}\)`
+  
+  * `\(H_1:\)` `\(\lnot H_0\)`
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_2:\)`
+
+**Berechnung:**
+
+`$$F_{UV_2(df_{UV_2},df_{Res})}=\frac{\hat{\sigma}^2_{UV_2}}{\hat{\sigma}^2_{Res}}$$`
+
+`$$\hat{\sigma}^2_{UV_2}= \frac{QS_{UV_2}}{df_{UV_2}}$$`
+
+Die Quadratsumme entspricht der quadrierten Abweichung der Mittelwerte `\((\bar{UV_{2j}})\)` vom Gesamtmittelwert `\((\bar{G})\)` multipliziert mit der Zellgröße `\(n\)` und der Anzahl der Stufen der `\(UV_1:\)`
+
+`$$\hat{\sigma}^2_{UV_2}= \frac{\sum\limits _{i=j}^{q}n \cdot p \cdot (\bar{UV_{2j}} - \bar{G})^2}{q-1}$$`
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_2:\)`
+
+**Berechnung - Beispiel:**
+
+.pull-left[
+
+`$$\hat{\sigma}^2_{UV_2}= \frac{\sum\limits _{j=1}^{q}n \cdot p \cdot (\bar{UV_{2j}} - \bar{G})^2}{q-1}$$`
+`$$\bar{G}= 22.25$$`
+`$$\hat{\sigma}^2_{UV_2}= \frac{4 \cdot 2 \cdot [(18 - 22.25)^2 + (26.5 - 22.25)^2]}{2-1}=289$$`
+`$$F_{UV_2(1,12)}=\frac{\hat{\sigma}^2_{UV_2}}{\hat{\sigma}^2_{Res}}=\frac{289}{16.25}=17.79$$`
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.44 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+.pull-left[
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Haupteffekt `\(UV_2:\)`
+
+**Berechnung - Beispiel:**
+
+Entscheidungsregel:
+
+* Vergleich von `\(F_{emp}=17.79\)` mit `\(F_{krit}\)` für `\(df_1=1, df_2=12\)` und `\(\alpha = .05\)`
+
+* Wenn `\(F_{emp} &gt; F_{krit} \rightarrow\)` Test ist signifikant
+
+* `\(17.79 &gt; 4.75\)`
+
+`\(\rightarrow\)` Es besteht ein signifikanter Unterschied zwischen den Mittelwerten der niedrigen vs. hohen Dosis Gruppe
+]
+.pull-right[
+.center[
+&lt;img src="bilder/ftab2.png" width="400px" /&gt;
+]
+]
+
+
+
+
+
+
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Interaktionseffekt `\(UV_1\)` x `\(UV_2\)`
+
+&lt;small&gt;
+
+* Interaktion beschreibt Variabilität der Zellmittelwerte, die nicht durch die 2 Haupteffekte erklärt werden kann
+
+* Formell: Interaktion betrachtet Abweichungen, der beobachteten Zellmittelwerte von den aufgrund der Haupteffekte zu erwartenden Zellmittelwerte
+
+Frage: Welche Werte sind aufgrund der Haupteffekte zu erwarten?
+
+Einfluss Haupteffekt `\(UV_1\)`:
+
+`$$\hat{\alpha}_i = \bar{UV_1i} - \bar{G}$$`
+Einfluss Haupteffekt `\(UV_2\)`:
+
+`$$\hat{\beta}_j = \bar{UV_2j} - \bar{G}$$`
+
+Laut Haupteffekten erwartete Zellmittelwerte:
+
+`$$\bar{UV_1UV_2}_{ij; erwartet} = \bar{G} + \hat{\alpha}_i + \hat{\beta}_j = \bar{G} + (\bar{UV_1i} - \bar{G}) +   (\bar{UV_2j} - \bar{G}) = \bar{UV_1i} + \bar{UV_2j} - \bar{G}$$`
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Interaktionseffekt `\(UV_1\)` x `\(UV_2\)`
+
+.pull-left[
+.pull-left[
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 28.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.44 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+&lt;br&gt;&lt;br&gt;
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.86 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.75 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.92 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+.pull-right[
+**Beispiel (nur für 2 der Zellen): **
+&lt;small&gt;
+
+* Erwarteter Wert für Mittelwert von Placebo mit niedriger Dosis:
+
+`$$\bar{UV_1UV_2}_{1,1; erwartet}= 16 + 18 - 22.25 = 11.75$$`
+
+* Beobachteter Wert für Mittelwert von Placebo mit niedriger Dosis = 15.25
+
+* Erwarteter Wert für Mittelwert von Verum mit hoher Dosis:
+
+`$$\bar{UV_1UV_2}_{2,2; erwartet} = 28.5 + 26.5 - 22.25 = 32.75$$`
+
+* Beobachteter Wert für Mittelwert von Verum mit hoher Dosis = 36.25
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Interaktionseffekt `\(UV_1\)` x `\(UV_2\)`
+
+* Prüfung: Besteht ein systematischer Interaktionseinfluss der `\(UV_1\)` (Medikament) und der `\(UV_2\)` (Dosis) auf die AV (Verbesserung)?
+
+* `\(H_0:\)` Beobachtete Zellmittelwerte entsprechen den laut Haupteffekten erwartbaren Zellmittelwerten (keine Interaktion).
+
+* `\(H_1\)` Beobachtete Zellmittelwerte weichen systematisch von den laut Haupteffekten erwartbaren Zellmittelwerten ab (Interaktion)
+
+
+**Aufstellen des Hypothesenpaares (allgemein):**
+
+  * `\(H_0:\)` `\(\mu_{ij(beobachtet)} = \mu_{ij(erwartet)}\)`
+  
+  * `\(H_1:\)` `\(\lnot H_0\)` 
+
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Interaktionseffekt `\(UV_1\)` x `\(UV_2\)`
+
+`$$F_{UV_1\text{x}UV_2(df_{UV_1\text{x}UV_2},df_{Res})}=\frac{\hat{\sigma}^2_{UV_1\text{x}UV_2}}{\hat{\sigma}^2_{Res}}$$`
+* Trifft `\(H_0\)` zu, sollte F-Wert den Wert 1 haben
+
+  `\(\rightarrow\)` Geschätzte Varianz des Interaktionseffekts bestünde nur aus Residualvarianz
+
+* F-Verteilung (s.h. Einheit 1) gibt Auskunft, wie wahrscheinlich ein F-Wert unter Annahme der `\(H_0\)` ist
+
+* Ist er ausreichend unwahrscheinlich (p&lt;.05) wird die `\(H_0\)` verworfen
+
+  `\(\rightarrow\)` Der Interaktions ist signifikant (hat einen systematischen Einfluss auf die AV, der über reine Haupteffekte hinaus geht)
+  
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Interaktionseffekt `\(UV_1\)` x `\(UV_2\)`
+
+**Berechnung:**
+
+`$$F_{UV_1\text{x}UV_2(df_{UV_1\text{x}UV_2},df_{Res})}=\frac{\hat{\sigma}^2_{UV_1\text{x}UV_2}}{\hat{\sigma}^2_{Res}}$$`
+
+`$$\hat{\sigma}^2_{UV_1\text{x}UV_2}= \frac{QS_{UV_1\text{x}UV_2}}{df_{UV_1\text{x}UV_2}}$$`
+
+Die Quadratsumme entspricht der Differenz der beobachteten Zellmittelwerte und der erwarteten Zellmittelwerte
+
+`$$\hat{\sigma}^2_{UV_1\text{x}UV_2}= \frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}n \cdot [\bar{UV_{1}UV_{2}}_{ij} - (\bar{UV_{1i}} + \bar{UV_{2j}}- \bar{G})]^2}{(p-1) \cdot (q-1)}$$`
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Signifikanztest der Effekte
+
+.pull-left[
+
+##### Signifikanztest Interaktionseffekt `\(UV_1\)` x `\(UV_2\)`
+
+**Berechnung - Beispiel:**
+
+
+
+`$$\hat{\sigma}^2_{UV_1\text{x}UV_2}= \frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{1}n \cdot [\bar{UV_{1}UV_{2}}_{ij} - (\bar{UV_{1i}} + \bar{UV_{2j}}- \bar{G})]^2}{(p-1) \cdot (q-1)}$$`
+`$$\bar{G}= 22.25$$`
+`$$\hat{\sigma}^2_{UV_1\text{x}UV_2}= \frac{4 \cdot [15.25  - (16 + 18 - 22.25)]^2 + ... + [36.25  - (28.5 + 26.5 - 22.25)]^2}{(2-1) \cdot (2-1)}=196$$`
+`$$F_{UV_1(1,12)}=\frac{\hat{\sigma}^2_{UV_1\text{x}UV_2}}{\hat{\sigma}^2_{Res}}=\frac{196}{16.25}=12.06$$`
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Medikament &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Placebo &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Verum &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 28.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;br&gt;
+
+&lt;table class=" lightable-classic" style="font-size: 18px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Dosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mittelwert &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.44 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 26.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.20 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+.pull-left[
+#### Signifikanztest der Effekte
+
+##### Signifikanztest Interaktionseffekt `\(UV_1\)` x `\(UV_2\)`
+
+**Berechnung - Beispiel:**
+
+Entscheidungsregel:
+
+* Vergleich von `\(F_{emp}=12.06\)` mit `\(F_{krit}\)` für `\(df_1=1, df_2=12\)` und `\(\alpha = .05\)`
+
+* Wenn `\(F_{emp} &gt; F_{krit} \rightarrow\)` Test ist signifikant
+
+* `\(12.06 &gt; 4.75\)`
+
+`\(\rightarrow\)` Der Effekt der Dosis in der Verum Gruppe unterscheidet sich vom Effekt der Dosis in der Placebo Gruppe
+]
+.pull-right[
+.center[
+&lt;img src="bilder/ftab2.png" width="400px" /&gt;
+]
+]
+
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Berechnung in R
+
+
+```r
+model = lm(Verbesserung ~ Medikament * Dosis, data = df)
+
+anova(model)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: Verbesserung
+##                  Df Sum Sq Mean Sq F value     Pr(&gt;F)    
+## Medikament        1    625  625.00  38.462 0.00004575 ***
+## Dosis             1    289  289.00  17.785   0.001195 ** 
+## Medikament:Dosis  1    196  196.00  12.062   0.004606 ** 
+## Residuals        12    195   16.25                       
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Effektstärke partielles `\(\omega^2\)` in R
+.code60[
+.pull-left[
+
+```r
+ES = effectsize::omega_squared(model)
+
+ES
+```
+
+```
+## # Effect Size for ANOVA (Type I)
+## 
+## Parameter        | Omega2 (partial) |       95% CI
+## --------------------------------------------------
+## Medikament       |             0.70 | [0.40, 1.00]
+## Dosis            |             0.51 | [0.15, 1.00]
+## Medikament:Dosis |             0.41 | [0.07, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].
+```
+]
+.pull-right[
+
+```r
+# Automatisches Anzeigen der Interpretation
+
+effectsize::interpret_omega_squared(ES)
+```
+
+```
+## # Effect Size for ANOVA (Type I)
+## 
+## Parameter        | Omega2 (partial) |       95% CI | Interpretation
+## -------------------------------------------------------------------
+## Medikament       |             0.70 | [0.40, 1.00] |          large
+## Dosis            |             0.51 | [0.15, 1.00] |          large
+## Medikament:Dosis |             0.41 | [0.07, 1.00] |          large
+## 
+## - One-sided CIs: upper bound fixed at [1.00].
+## - Interpretation rule: field2013
+```
+]
+]
+
+---
+class: top, left
+### Mehrfaktorielle ANOVA
+
+#### Effektstärke partielles `\(\eta^2\)` in R
+.code60[
+.pull-left[
+
+```r
+ES = effectsize::eta_squared(model)
+
+ES
+```
+
+```
+## # Effect Size for ANOVA (Type I)
+## 
+## Parameter        | Eta2 (partial) |       95% CI
+## ------------------------------------------------
+## Medikament       |           0.76 | [0.50, 1.00]
+## Dosis            |           0.60 | [0.25, 1.00]
+## Medikament:Dosis |           0.50 | [0.14, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].
+```
+]
+.pull-right[
+
+```r
+# Automatisches Anzeigen der Interpretation
+
+effectsize::interpret_eta_squared(ES)
+```
+
+```
+## # Effect Size for ANOVA (Type I)
+## 
+## Parameter        | Eta2 (partial) |       95% CI | Interpretation
+## -----------------------------------------------------------------
+## Medikament       |           0.76 | [0.50, 1.00] |          large
+## Dosis            |           0.60 | [0.25, 1.00] |          large
+## Medikament:Dosis |           0.50 | [0.14, 1.00] |          large
+## 
+## - One-sided CIs: upper bound fixed at [1.00].
+## - Interpretation rule: field2013
+```
+]
+]
+
+
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+* Mit der mehrfaktoriellen ANOVA können Haupteffekte und Interaktionseffekte geprüft werden.
+
+* Haupteffekte beschreiben Einfluss einer UV, ungeachtet des Einflusses der anderen UVs.
+
+* Interaktionseffekte prüfen die Wechselwirkung der UVs auf die AV.
+
+* Jeder Effekt hat einen eigenen Signifikanztest. Dieser wird mittels F-Bruch geprüft, in dem die Zwischenvarianzen an der geschätzten Residualvarianz geprüft werden.
+
+* Der Hypothesentest der Interaktion nimmt an, dass die beobachteten von den erwarteten Zellmittelwerten abweichen.
+
+* Als Effektstärken bieten sich die partiellen Maße von `\(\omega^2\)` und `\(\eta^2:\)` `\(\omega^2_p\)` und `\(\eta^2_p\)` an.
+]
+
+]
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

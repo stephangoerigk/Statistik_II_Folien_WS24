@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Einheit 6</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Dr. Stephan Goerigk" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/hygge.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#EE0071"],"pen_size":4,"eraser_size":40,"palette":[]}) })</script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+name: Title slide
+class: middle, left
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+# Statistik II
+***
+### Einheit 6: Multiple Regression
+##### 27.11.2024 | Prof. Dr. Stephan Goerigk
+
+---
+class: top, left
+### Multiple Regression
+
+.pull-left[
+
+#### Vorbemerkungen
+
+* multiple Regression: das Regressionsmodell enthält mehr als eine UV (Prädiktor)
+
+* Ziel: Durch Hinzunahme weiterer Prädiktoren Vorhersagen bezogen auf die AV zu verbessern
+
+**Abgrenzung zur mehrfaktoriellen ANOVA:**
+
+* Bei der ANOVA sind UVs immer kategorial (Mittelwertesvergleiche zw. Gruppen/Kategorien)
+
+* Im Regressionsmodell können kategoriale und stetige UVs verwendet und auch kombiniert werden
+
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/einvsmehrfaktoriell.png" width="520px" /&gt;
+]
+]
+
+---
+class: top, left
+### Multiple Regression
+
+.pull-left[
+
+#### Weitere relevante Fragen
+
+* Wie viel % der Gesamtvarianz der AV können die Prädiktoren **gemeinsam** erklären?
+
+* Welcher Prädiktor hat den **größten** Vorhersagebeitrag?
+
+* **Verändert** sich die Stärke, Richtung (und Interpretation) des Effekts eines Prädiktors, wenn weitere Prädiktoren berücksichtigt werden? (z.B. Überdeckungseffekte)
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/einvsmehrfaktoriell.png" width="520px" /&gt;
+]
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Szenario in der Vorlesung
+
+Wir beschränken uns heute zunächst auf die einfachste Form der multiplen Regression: 
+
+* Die Beschreibung des AV-Werts `\(Y_i\)` durch 2 stetige Prädiktoren und die Fehlervariable. 
+
+* Hat man den Fall mit zwei Prädiktoren verstanden, ist die Generalisierung auf weitere Prädiktoren einfach.
+
+Dies lässt sich durch die folgende **Erweiterung der Regressionsgleichung** darstellen:
+
+`$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} + \epsilon_i$$`
+
+wobei: 
+
+`$$\epsilon_i ~ N(0,\sigma^2)$$`
+
+(Fehler normalverteilt mit Erwartungswert 0)
+
+---
+class: top, left
+### Multiple Regression
+
+#### Elemente der multiplen Regressionsgleichung
+
+`$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} + \epsilon_i$$`
+
+* `\(X_1\)` und `\(X_2\)` sind Zufallsvariablen. Ihre Realisationen sind jeweils die Werte der zufällig gezogenen Person `\(i\)` bezüglich der `\(UV_1\)` und der `\(UV_2\)`
+
+* `\(a, \beta_1, \beta_2\)` und `\(\sigma^2\)` sind die zu schätzenden Modellparameter
+
+  * `\(a\)` = Y-Achsenabschnitt
+
+  * `\(\beta_1\)` = Steigungsparameter der `\(UV_1\)`
+
+  * `\(\beta_2\)` = Steigungsparameter der `\(UV_2\)`
+
+  * `\(\sigma^2\)` = Varianz des Fehlerterms (für Hypothesen meist inhaltlich nicht relevant)
+
+---
+class: top, left
+### Multiple Regression
+
+#### Graphische Darstellung
+
+.pull-left[
+![](Statistik_II_6_WS24_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+* Einfache lineare Regression: 2-dimensionales Koordinatensystem mit X-Achse und Y-Achse
+
+* Mutiple Regression (2 UVs): 3-dimensionales Koordinatensystem mit X-Achse, Y-Achse und Z-Achse
+
+`\(\rightarrow\)` Es wird ein 3D-Streudiagramm dargestellt
+
+  * Punkt = Beobachtungswert einer Person 
+  
+  * Kombination aus `\(AV\)` (Y-Achse), `\(UV_1\)` (X-Achse) und `\(UV_2\)` (Z-Achse) Wert
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Graphische Darstellung 
+
+.pull-left[
+![](Statistik_II_6_WS24_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+* Einfache lineare Regression: Modellfunktion dargestellt durch Regressionsgerade
+
+  * Gerade definiert durch 1 Y-Achsenabschnitt + 1 Steigungsparameter
+
+* Mutiple Regression (2 UVs): Modellfunktion dargestellt durch Regressionsebene
+
+  * Ebene definiert durch 1 Y-Achsenabschnitt + 2 Steigungsparameter
+
+* Auf der Ebene liegen alle durch das Modell erwarteten Werte
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Graphische Darstellung 
+
+`$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} + \epsilon_i$$`
+
+.pull-left[
+.center[
+&lt;img src="bilder/plane.png" width="500px" /&gt;
+]
+]
+
+.pull-right[
+&lt;small&gt;
+
+* `\(a\)` gibt den Y-Achsenabschnitt an
+
+  * `\(a\)` ist der Wert der AV, wenn `\(UV_1\)` und `\(UV_2\)` gleich 0 sind
+  
+  * `\(a=a + \beta_1 \cdot 0 + \beta_2 \cdot 0\)`
+  
+  * Ob `\(a\)` sinnvoll interpretiert werden kann, hängt davon ab, ob `\(UV_1=0\)` und `\(UV_2=0\)` inhaltlich sinnvolle Werte darstellen
+
+* `\(\beta_1\)` gibt an, wie stark die Regressionsebene auf der `\(xy\)`-Gerade steigt bzw. fällt, wenn `\(UV_1\)` um 1 Einheit zunimmt.
+
+* `\(\beta_2\)` gibt an, wie stark die Regressionsebene auf der `\(zy\)`-Gerade steigt bzw. fällt, wenn `\(UV_2\)` um 1 Einheit zunimmt.
+
+&lt;/small&gt;
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Parameterschätzung
+
+
+.pull-left[
+![](Statistik_II_6_WS24_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+* Die unbekannten Modellparameter `\(a, \beta_1\)` und `\(\beta_2\)` können mit der **Methode der kleinsten Quadrate** bestimmt werden (wie bei einfacher Regression)
+
+* Die Ebene wird so definiert, dass die Residuen minimiert werden
+
+* Die Formeln sind aufwendig, weswegen wir uns hier auf die Berechnung in R beschränken
+]
+
+
+---
+class: top, left
+### Multiple Regression
+
+#### Standardfehler der Modellparameter
+
+* Während wir die Schätzung der Modellparameter R überlassen, schauen wir uns einmal die Berechnung der Standardfehler für `\(\beta_1\)` und `\(\beta_2\)` an.
+
+* Diese brauchen wir, um Hypothesentests/Konfidenzintervalle für diese Parameter zu berechnen
+
+`$$SE(B_1) = \sqrt{Var(B_1)} = \sqrt{\frac{1}{1-r^2_{x1x2}}\cdot\frac{\sigma^2}{\sum\limits _{i=1}^{n}(x_{i1}-\bar{x}_1)^2}}$$`
+`$$SE(B_2) = \sqrt{Var(B_2)} = \sqrt{\frac{1}{1-r^2_{x1x2}}\cdot\frac{\sigma^2}{\sum\limits _{i=1}^{n}(x_{i2}-\bar{x}_2)^2}}$$`
+
+* `\(r^2_{x1x2}\)` stellt die quadrierte Korrelation zwischen den beiden Prädiktoren dar
+
+* `\(\sigma^2\)` wird durch die Stichprobenvarianz `\(s^2\)` geschätzt.
+
+---
+class: top, left
+### Multiple Regression
+
+#### Konfidenzintervalle der Modellparameter
+
+Die Konfidenzintervalle für `\(\beta_1\)` und `\(\beta_2\)` lassen sich wie folgt berechnen:
+
+`$$\beta \pm t_{1-\frac{\alpha}{2} \cdot SE(B_j)}$$`
+
+* Die Freiheitsgerade für den t-Wert errechnen sich als `\(df=n-3\)`
+
+---
+class: top, left
+### Multiple Regression
+
+.pull-left[
+#### Beispiel: Risikofaktoren für Aggression bei Kindern
+
+* Wissenschaftler:innen haben Daten erhoben `\((N=50)\)`, um Risikofaktoren für Aggression bei Kindern zu identifizieren.
+
+* Folgende Variablen wurden gemessen
+
+  * Aggression (AV, 1-100 Punkte)
+  * TV (UV, in Stunden/Tag)
+  * Emotionsregulation (UV, 1-100 Punkte)
+  * Ausgrenzungserfahrung (UV, 1-100 Punkte)
+  
+* Die ersten 15 Fälle sind in der Tabelle rechts dargestellt.
+]
+
+
+.pull-right[
+
+
+&lt;table class=" lightable-classic" style='font-size: 16px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Aggression &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; TV &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Emotionsregulation &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Ausgrenzung &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 50 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 57 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 71 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 41 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 82 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 63 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 66 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 44 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 47 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 76 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 78 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 52 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 98 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 64 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 37 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+]
+
+---
+class: top, left
+### Multiple Regression
+
+.pull-left[
+#### Beispiel: Risikofaktoren für Aggression bei Kindern
+
+* Um einen 1. Eindruck zu gewinnen, lohnt es sich, die Daten zu visualisieren
+
+* Wir schauen uns dafür die bivariaten Streudiagramme an:
+]
+
+.pull-right[
+
+![](Statistik_II_6_WS24_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Modellschätzung in R
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+Die Schätzwerte für `\(a, \beta_1\)` und `\(\beta_2\)` können in der Spalte `Estimate` abgelesen werden
+
+**Interpretation:**
+
+* Der durchschnittliche Aggressionswert eines Kindes, das 0h TV sieht und einen Emotionsregulationsscore von 0 hat ist `\(a=86.24\)`
+
+* Mit jeder zusätzlichen Stunde TV nimmt der Aggressionswert um `\(\beta_1= 0.11\)` Punkte zu.
+
+* Mit jedem zusätzlichen Punkt auf der Emotionsregulationsskale nimmt der Aggressionswert um `\(\beta_2= -0.53\)` Punkte ab.
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Schätzung der unbekannten Fehlervarianz `\(\sigma^2\)`
+
+Die Schätzfunktion für die unbekannte Fehlervarianz lässt sich darstellen als
+
+`$$\hat{\sigma}^2 = \frac{1}{n-3}\sum\limits _{i=1}^{n}(Y_i-(A + B_1 \cdot X_{i2}))^2$$`
+
+* Nach Umstellen und ziehen der Wurzel erhält man den Standardschätzfehler (wie in der einfachen Regression):
+
+`$$s=\sqrt{\frac{\sum\limits _{i=1}^{n}e^2_i}{n-3}}$$`
+
+`\(\rightarrow\)` Dies entspricht der Wurzel aus der Summe der quadrierten Residuen geteilt durch `\(n-3\)`
+
+---
+class: top, left
+### Multiple Regression
+
+#### Schätzung der unbekannten Fehlervarianz `\(\sigma^2\)`
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+.pull-right[
+Dieser Wert findet sich im unteren Bereich des R Outputs:
+
+`$$s=\sqrt{\frac{\sum\limits _{i=1}^{n}e^2_i}{n-3}}=9.60$$`
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Aufstellen der Modellgleichung
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+Allgemeine Form:
+
+`$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} + \epsilon_i$$`
+mit `\(\epsilon_i ~ N(0,\sigma^2)\)`
+
+In unserem Fall ergibt sich die Modellgleichung:
+
+`$$Y_i= 86.24 + 0.11 \cdot X_{i1} + -0.53 \cdot X_{i2} + \epsilon_i$$`
+mit `\(\epsilon_i ~N(0,9.60^2)\)`
+
+`\(\rightarrow\)` Damit ließe sich ein konkreter Wert `\(Y_i\)` der AV schätzen.
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Hypothesentests
+
+Je nach konkreter Fragestellung muss entschieden werden, welche Parameter geschätzt werden sollen bzw. welche Hypothesen getestet werden sollen.
+
+Wir besprechen (zunächst) zwei Arten von Hypothesentests für die multiple Regression:
+
+1. Hypothesentests für einzelne Modellparameter (z.B. eine Steigung)
+
+  * `\(H_0: \beta_j=0\)`
+  * Geeignet für Zusammenhangshypothesen 
+  * keine Steigung = kein Zusammenhang (UV kann AV nicht systematisch vorhersagen)
+
+2. Omnibus Tests
+
+  * basieren auf Vergleich der Varianzaufklärung (wie ANOVA)
+  * prüfen Signifikanz des Gesamtmodells `\((H_0:\)` alle Steigungen sind `\(0)\)`
+  * erlauben Vergleich von Teilmodellen (z.B. Modell mit weiterem Prädiktor vs. Modell ohne weiteren Prädiktor)
+
+---
+class: top, left
+### Multiple Regression
+
+#### Hypothesentests für einzelne Modellparameter
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+1. Hypothesentest Y-Achsenabschnitt:
+
+  * `\(H_0: a=0\)`
+  * `\(H_1: a\neq0\)`
+
+2. Hypothesentest Steigung (TV):
+  * `\(H_0: \beta_1=0\)`
+  * `\(H_1: \beta_1\neq0\)`
+
+3. Hypothesentest Steigung (Emotionsregulation):
+  * `\(H_0: \beta_2=0\)`
+  * `\(H_1: \beta_2\neq0\)`
+]
+
+**Unser Beispiel:** Es soll überprüft werden, ob TV-Sehen bzw. Emotionsregulation linear mit Aggression zusammenhängt, wenn der jeweils andere Prädiktor konstant gehalten wird.
+
+---
+class: top, left
+### Multiple Regression
+
+#### Hypothesentests für einzelne Modellparameter
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+`\(t_a = \frac{a}{SE(a)} = \frac{86.24}{6.70}=12.86\)` 
+
+`\(t_{\beta_1} = \frac{\beta_1}{SE(\beta_1)}= \frac{0.11}{0.69} = 0.16\)` 
+
+`\(t_{\beta_2} = \frac{\beta_2}{SE(\beta_2)}= \frac{-0.53}{0.10} = -5.30\)` 
+
+* Unter der Geltung der `\(H_0\)` folgen diese Teststatistiken jeweils einer t-Verteilung mit `\(df=n-3\)`
+
+* Der kritische Bereich ist jeweils beidseitig.
+
+* `\(p\)`-Werte `\(&lt;.05\)` zeigen signifikantes Ergebnis an (Koeffizient `\(\neq0\)`)
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Hypothesentests für einzelne Modellparameter - Konfidenzintervalle
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+.code60[
+
+```r
+confint(model)
+```
+
+```
+##                         2.5 %     97.5 %
+## (Intercept)        72.7545432 99.7313311
+## TV                 -1.2719190  1.4970047
+## Emotionsregulation -0.7279233 -0.3271248
+```
+]
+
+* KI zeigt Bereich an, in welchem der Parameter mit 95% Sicherheit liegt.
+
+* Umschließt KI die 0 nicht (Koeffizient ungleich 0), kommt dies einem signifikanten Testergebnis gleich
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Omnibus-Test
+
+Omnibustest des Gesamtmodells kann folgende Hypothese prüfen:
+
+* `\(H_0: \beta_1 = \beta_2 = 0\)`
+* `\(H_1: \beta_j \neq 0\)`
+
+`\(\rightarrow\)` Mithilfe des Omnibus-Tests kann überprüft werden, ob bei zumindest einer der UVs der lineare Zusammenhang mit der AV ungleich 0 ist (bei Konstanthaltung der jeweils anderen UV).
+
+**Anders gesagt:**
+
+* Prüfung, ob Modell mit Prädiktoren signifikant mehr Varianz der AV erklärt als ohne.
+* Es werden Varianzen verwendet `\(\rightarrow\)` Teststatistik ist wieder der von der ANOVA bekannte F-Wert
+
+---
+class: top, left
+### Multiple Regression
+
+#### Omnibus-Test
+
+Die Teststatistik des Omnibus-Tests ist wie folgt definiert:
+
+`$$F = \frac{\frac{1}{2}\sum\limits _{i=1}^{n}(\hat{Y}_i - \bar{Y})^2}{\frac{1}{n-3}\sum\limits _{i=1}^{n}(Y_i - \hat{Y}_i)^2} = \frac{\frac{1}{2}\sum\limits _{i=1}^{n}(\hat{Y}_i - \bar{Y})^2}{s^2}$$`
+
+* Unter der Geltung der Nullhypothese folgt diese Teststatistik einer F-Verteilung.
+
+* Der kritische Bereich liegt auf der rechten Seite.
+
+---
+class: top, left
+### Multiple Regression
+
+#### Omnibus-Test
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+Dieser Wert findet sich im unteren Bereich des R Outputs:
+
+`$$F = \frac{\frac{1}{2}\sum\limits _{i=1}^{n}(\hat{Y}_i - \bar{Y})^2}{s^2}= 14.73$$`
+
+mit `\(df_{Zähler}=2\)` und `\(df_{Nenner}=47\)`
+
+* `\(p=0.00001083&lt;.05\)`
+
+* Das Gesamtmodell mit den Prädiktoren erklärt signifikant mehr Varianz, als das Modell ohne Prädiktoren.
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Omnibus-Test - Modellvergleiche
+
+* Der Omnibus-Test ermöglicht uns auch den Vergleich von 2 Modellen miteinander
+
+* Voraussetzung ist, dass das eine Modell (komplex) das andere Modell (einfach) enhält (geschachtelte Modelle; engl.: "*nested models*").
+
+* Dies z.B. der Fall, wenn wir zu einem bestehenden Modell einen Prädiktor hinzunehmen
+
+* Wir probieren dies in unserem Beispiel, indem wir zu unserem Modell den Prädiktor "Ausgrenzungserfahrung" hinzunehmen
+
+  * **Szenario 1:** Ausgrenzungserfahrung ist kein relevanter Prädiktor - Modell ohne Ausgrenzungserfahrung erklärt Daten zumindest gleich gut
+  * **Szenario 2:** Modell mit Ausgrenzungserfahrung hat signifikant bessere Modellpassung (kann AV besser vorhersagen)
+
+---
+class: top, left
+### Multiple Regression
+
+#### Omnibus-Test - Modellvergleiche
+
+.pull-left[
+.code60[
+
+```r
+# Aufstellen einfaches Modell:
+
+model1 = lm(Aggression ~ TV + Emotionsregulation, data = df)
+
+# Aufstellen komplexes Modell:
+
+model2 = lm(Aggression ~ TV + Emotionsregulation + Ausgrenzung, data = df)
+
+# Das einfache Modell ist in das komplexe Modell "geschachtelt"
+```
+]
+]
+
+.pull-right[
+.code60[
+
+```r
+# Omnibus-Test zum Vergleich "geschachtelter" Modelle
+
+anova(model1, model2)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: Aggression ~ TV + Emotionsregulation
+## Model 2: Aggression ~ TV + Emotionsregulation + Ausgrenzung
+##   Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)   
+## 1     47 4335.5                                
+## 2     46 3508.3  1     827.2 10.846 0.001909 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+]
+
+Das komplexe Modell (inklusive Prädiktor Ausgrenzung) kann AV signifikant besser vorhersagen als das einfache Modell `\((p=0.001909&lt;.05)\)`
+
+---
+class: top, left
+### Multiple Regression
+
+#### Hinzunahme weiterer Prädiktoren
+
+.pull-left[
+.code60[
+
+```r
+# Aufstellen einfaches Modell:
+
+model1 = lm(Aggression ~ TV + Emotionsregulation, data = df)
+summary(model1)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+.code60[
+
+```r
+# Aufstellen komplexes Modell:
+
+model2 = lm(Aggression ~ TV + Emotionsregulation + Ausgrenzung, data = df)
+summary(model2)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation + Ausgrenzung, 
+##     data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.6668  -7.6041   0.2665   6.8444  18.4565 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value      Pr(&gt;|t|)    
+## (Intercept)        65.59233    8.74569   7.500 0.00000000163 ***
+## TV                  0.40650    0.63209   0.643       0.52335    
+## Emotionsregulation -0.41784    0.09651  -4.330 0.00007997688 ***
+## Ausgrenzung         0.27409    0.08322   3.293       0.00191 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.733 on 46 degrees of freedom
+## Multiple R-squared:  0.5025,	Adjusted R-squared:  0.4701 
+## F-statistic: 15.49 on 3 and 46 DF,  p-value: 0.0000004219
+```
+]
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Hinzunahme weiterer Prädiktoren
+
+.pull-left[
+Was passiert?
+
+* Weiterer Prädiktor wird an Modell "drangehängt"
+
+* Er erhält ebenfalls einen Steigungsparameter, dieser erhält einen Signifikanztest
+  * Mit weiterem Punkt Ausgrenzungserfahrung nimmt Aggression um `\(\beta_3=0.27\)` Punkte zu
+  * Ausgrenzungserfahrung kann Aggression signifikant vorhersagen `\((p=0.00191)\)`
+
+* Y-Achsenabschnitt ist nun der Wert der AV, wenn alle 3 Prädiktoren = 0 sind.
+]
+
+.pull-right[
+.code60[
+
+```r
+# Aufstellen komplexes Modell:
+
+model2 = lm(Aggression ~ TV + Emotionsregulation + Ausgrenzung, data = df)
+summary(model2)
+```
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation + Ausgrenzung, 
+##     data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.6668  -7.6041   0.2665   6.8444  18.4565 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value      Pr(&gt;|t|)    
+## (Intercept)        65.59233    8.74569   7.500 0.00000000163 ***
+## TV                  0.40650    0.63209   0.643       0.52335    
+## Emotionsregulation -0.41784    0.09651  -4.330 0.00007997688 ***
+## Ausgrenzung         0.27409    0.08322   3.293       0.00191 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.733 on 46 degrees of freedom
+## Multiple R-squared:  0.5025,	Adjusted R-squared:  0.4701 
+## F-statistic: 15.49 on 3 and 46 DF,  p-value: 0.0000004219
+```
+]
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Modellpassung
+
+* Auch für die multiple Regression lässt sich die Güte des Modells über `\(R^2\)` schätzen
+
+* Zur Erinnerung: 
+  * Verhältnis aufgeklärter zu gesamter Streuung
+  * `\(0≤𝑅^2≤1\)`
+  * Je näher `\(R^2\)` an 1, desto besser passt sich Modell an Beobachtungspunkte an
+  
+* Die Hinzunahme weiterer Prädiktoren erhöht i.d.R. die Modellpassung
+
+---
+class: top, left
+### Multiple Regression
+
+#### Modellpassung
+
+.pull-left[
+.code60[
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.4040  -6.2847   0.7681   7.6023  19.7061 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)        86.24294    6.70484  12.863 &lt; 0.0000000000000002 ***
+## TV                  0.11254    0.68819   0.164                0.871    
+## Emotionsregulation -0.52752    0.09961  -5.296           0.00000308 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.604 on 47 degrees of freedom
+## Multiple R-squared:  0.3852,	Adjusted R-squared:  0.3591 
+## F-statistic: 14.73 on 2 and 47 DF,  p-value: 0.00001083
+```
+]
+]
+
+.pull-right[
+.code60[
+
+```
+## 
+## Call:
+## lm(formula = Aggression ~ TV + Emotionsregulation + Ausgrenzung, 
+##     data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.6668  -7.6041   0.2665   6.8444  18.4565 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value      Pr(&gt;|t|)    
+## (Intercept)        65.59233    8.74569   7.500 0.00000000163 ***
+## TV                  0.40650    0.63209   0.643       0.52335    
+## Emotionsregulation -0.41784    0.09651  -4.330 0.00007997688 ***
+## Ausgrenzung         0.27409    0.08322   3.293       0.00191 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.733 on 46 degrees of freedom
+## Multiple R-squared:  0.5025,	Adjusted R-squared:  0.4701 
+## F-statistic: 15.49 on 3 and 46 DF,  p-value: 0.0000004219
+```
+]
+]
+
+* Einfaches Modell (links): `\(R^2=.39 \rightarrow\)` Es können 39% der AV (Aggression) durch TV und Emotionsregulation erklärt werden.
+* Komplexes Modell (rechts): `\(R^2=.50 \rightarrow\)` Es können weitere 11% der AV durch Ausgrenzung erklärt werden.
+
+---
+class: top, left
+### Multiple Regression
+
+.pull-left[
+#### Vorhersagewerte - Anwendung des Modells
+
+`$$Y_i= 86.24 + 0.11 \cdot X_{i1} + -0.53 \cdot X_{i2} + \epsilon_i$$`
+
+* Mit der aufgestellten Modellgleichung, können wir Werte vorhersagen.
+
+**Beispiel** für Person `\(i=1\)`:
+
+`$$\hat{Y}_i= 86.24294 + 0.11254 \cdot 5 + -0.52752 \cdot 50 = 60.43$$`
+
+* Laut unserem Modell mit 2 Prädiktoren, sollte Person 1 einen Aggressionswert von 60.29 Punkten haben.
+
+* Da der tatsächlich beobachtete Wert 53 ist, beträgt der Modellfehler `\(60.29-53=7.29\)` Punkte.
+
+]
+
+
+.pull-right[
+
+&lt;table class=" lightable-classic" style='font-size: 16px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Aggression &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; TV &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Emotionsregulation &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Ausgrenzung &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 50 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 57 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 71 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 41 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 82 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 63 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 66 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 44 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 47 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 76 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 78 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 52 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 98 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 64 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 37 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+]
+
+---
+class: top, left
+### Multiple Regression
+
+.pull-left[
+#### Vorhersagewerte - Anwendung des Modells
+
+Wir können mit R automatisch die Wert für unsere Modelle schätzen:
+
+Für das Modell mit TV und Emotionsregulation:
+
+.code80[
+
+```r
+df$pred_model1 = round(predict(model1, newdata = df), 2)
+```
+
+Für das Modell mit TV, Emotionsregulation und Ausgrenzung:
+
+```r
+df$pred_model2 = round(predict(model2, newdata = df), 2)
+```
+]
+]
+
+.pull-right[
+
+&lt;table class=" lightable-classic" style='font-size: 16px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Aggression &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; TV &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Emotionsregulation &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Ausgrenzung &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pred_model1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pred_model2 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 50 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 60.43 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61.81 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 57 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56.21 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.29 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 71 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68.34 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 72.46 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61.29 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 57.96 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 41 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 65.06 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 63.52 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 82 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 63 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68.26 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 71.48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 66 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 65.25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 66.28 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 44 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 47 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62.01 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56.21 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 57.26 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.57 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 50.93 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49.63 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 76 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 78 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68.45 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 74.79 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 57.15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 54.23 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 70.34 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 63.86 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 52 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 98 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.04 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 71.54 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 64 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 37 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 52.71 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49.80 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+]
+
+---
+class: top, left
+### Multiple Regression
+
+.pull-left[
+#### Vorhersagewerte - Anwendung des Modells
+
+* Je besser das Modell passt, desto stärker der Zusammenhang zwischen beobachteten und vorhergesagten Werten:
+]
+
+.pull-right[
+
+![](Statistik_II_6_WS24_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Voraussetzungen der multiplen Regression
+
+**Wie bei einfacher Regression:**
+
+1) Das Kriterium (AV) muss intervallskaliert und normalverteilt sein.
+
+2) Die Prädiktoren (UV) können entweder intervallskaliert und normalverteilt oder dichotom nominalskaliert sein.
+
+3) Die Werte der einzelnen Versuchspersonen müssen unabhängig voneinander sein
+
+4) Die Zusammenhänge müssen theroretisch linear sein (sonst andere Regressionsmodelle nutzen).
+
+5) Streuungen der Wertepaare müssen über ganzen Wertebereich von `\(X\)` und `\(Z\)` homogen sein (Homoskedastizität).
+
+**Nur bei multipler Regression:**
+
+6) Multikollinearität: Prädiktoren sollten nicht zu stark miteinander korrelieren
+
+---
+class: top, left
+### Multiple Regression
+
+#### Voraussetzungen der multiplen Regression
+
+**Normalverteilung der Residuen:**
+
+.code60[
+.pull-left[
+.center[
+
+```r
+qqnorm(rstandard(model1), cex = 1.5)
+qqline(rstandard(model1))
+```
+
+&lt;img src="Statistik_II_6_WS24_files/figure-html/unnamed-chunk-30-1.png" height="300px" /&gt;
+]
+]
+
+.pull-right[
+
+```r
+model1 = lm(Aggression ~ TV + Emotionsregulation, data = df)
+shapiro.test(rstandard(model1))
+```
+
+```
+## 
+## 	Shapiro-Wilk normality test
+## 
+## data:  rstandard(model1)
+## W = 0.98337, p-value = 0.6997
+```
+
+Benchmarks:
+
+* QQ-Plot: Punkte sollten möglichst auf der 45 Grad Diagonalen liegen
+* Shapiro-Wilk Test: p-Wert sollte &gt; als `\(\alpha=.05\)` sein
+
+]
+]
+
+
+---
+class: top, left
+### Multiple Regression
+
+#### Voraussetzungen der multiplen Regression
+
+**Homoskedastizität:**
+
+.pull-left[
+.center[
+
+```r
+model1 = lm(Aggression ~ TV + Emotionsregulation, data = df)
+plot(model1, 1, cex = 2)
+```
+
+&lt;img src="Statistik_II_6_WS24_files/figure-html/unnamed-chunk-32-1.png" height="300px" /&gt;
+]
+]
+
+.pull-right[
+* Plot der standardisierten Residuen gegen die standardisierten vorhergesagten Werte
+
+* Ideal ist eine Punktewolke ohne Systematik (Pattern)
+
+* Die Linie sollte relativ horizontal verlaufen
+
+`\(\rightarrow\)` dann ist Homoskedastizitätsannahme gegeben
+]
+
+---
+class: top, left
+### Multiple Regression
+
+#### Voraussetzungen der multiplen Regression
+
+**Multikollinearität:**
+
+Drei Methoden zur Prüfung von Multikollinearität:
+
+* Korrelationsmatrix für hohe Korrelationen scannen
+
+* Variance inflation factor (VIF) 
+
+* Toleranz-Statistik (1/VIF)
+
+Benchmarks für potentielle Multikolliniaritätsproblematik:
+
+* Korrelationen mit `\(r&gt;.9\)` können Probleme bereiten
+* größter VIF größer als 10 (Bowerman &amp; O‘Connel, 1990)
+* Durchschnittlicher VIF substanziell größer als 1 
+* Toleranz niedriger als 0.1 (ernstes Problem)
+* Toleranz niedriger als 0.2 (potentielles Problem)
+
+
+---
+class: top, left
+### Multiple Regression
+
+#### Voraussetzungen der multiplen Regression
+
+**Multikollinearität:**
+
+Korrelationsmatrix für hohe Korrelationen scannen:
+
+```r
+cor(df[, c("Aggression", "TV", "Emotionsregulation")])
+```
+
+```
+##                    Aggression         TV Emotionsregulation
+## Aggression          1.0000000  0.1357292         -0.6203926
+## TV                  0.1357292  1.0000000         -0.1891767
+## Emotionsregulation -0.6203926 -0.1891767          1.0000000
+```
+
+`\(\rightarrow\)` Keine der bivariaten Korrelationen zwischen den Prädiktoren ist `\(r&gt;.9\)`
+
+
+---
+class: top, left
+### Multiple Regression
+
+#### Voraussetzungen der multiplen Regression
+
+**Multikollinearität:**
+
+VIF und Toleranz berechnen:
+
+
+```r
+library(olsrr)
+
+ols_vif_tol(model1)
+```
+
+```
+##            Variables Tolerance      VIF
+## 1                 TV 0.9642122 1.037116
+## 2 Emotionsregulation 0.9642122 1.037116
+```
+
+* Kein VIF größer als 10
+* Durchschnittlicher VIF nicht substanziell größer als 1 
+* Toleranz nicht niedriger als 0.2
+
+`\(\rightarrow\)` Es scheint kein Multikollinearitätsproblem vorzuliegen.
+
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+* Die Multiple Regression ermöglicht die Erweiterung des Regressionsmodells um **weitere Prädiktoren**.
+
+* Im Gegensatz zur mehrfaktoriellen ANOVA, dürfen **auch stetige UVs** verwendet werden.
+
+* Damit kann die **Modellpassung** und somit die **Vorhersagegüte** erhöht werden.
+
+* Darstellung bei 2 Prädiktoren entspricht einer **Ebene** im 3D Raum.
+
+* Es können **Hypothesentests** für die einzelnen Koeffizienten (Prädiktoren) und für das Gesamtmodell (Omnibustest) geprüft werden.
+
+* Je mehr systematisch prädiktive UVs das Modell enthält, desto eher werden **vorhergesagte Werte** den tatsächlich beobachteten entsprechen.
+
+* Als zusätzliche Modellvoraussetzung muss die **Multikollinearität** geprüft werden
+]
+]
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

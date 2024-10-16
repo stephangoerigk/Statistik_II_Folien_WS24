@@ -1,0 +1,865 @@
+---
+title: "Einheit 11"
+subtitle: "⚔<br/>with xaringan"
+author: "Prof. Dr. Stephan Goerigk"
+institute: "RStudio, PBC"
+date: "2016/12/12 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, "hygge", style.css]
+    lib_dir: libs
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+    seal: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+library(plotly)
+library(htmlwidgets)
+library(plotly)
+library(MASS)
+library(ggpubr)
+library(xaringanthemer)
+library(xaringanExtra)
+library(sjPlot)
+library(sjmisc)
+options(scipen = 999)
+
+style_duo_accent(
+  primary_color = "#621C37",
+  secondary_color = "#EE0071",
+  background_image = "blank.png"
+)
+
+xaringanExtra::use_xaringan_extra(c("tile_view"))
+
+use_scribble(
+  pen_color = "#EE0071",
+  pen_size = 4
+  )
+
+knitr::opts_chunk$set(
+  fig.retina = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+
+Xname = ""
+Yname = ""
+nudgnumber = 3
+my_green = "#EE0071"
+```
+
+name: Title slide
+class: middle, left
+<br><br><br><br><br><br><br>
+# Statistik II
+***
+### Einheit 11: Verfahren für Nominaldaten (2)
+##### `r format(as.Date(data.frame(readxl::read_excel("Modul Quantitative Methoden II_Termine.xlsx"))$Datum), "%d.%m.%Y")[11]` | Prof. Dr. Stephan Goerigk
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Kurzvorstellung:**
+
+* In allen bisher besprochenen Regressionsmodellen war die abhängige Variable (AV) eine stetige Variable.
+
+* Ziel: Regressionsmodelle mit diskreter AV
+
+* Vorteile gegenüber $\chi^2$-Tests 
+
+  * Vorhersage mittels Prädiktoren
+  
+  * Erweiterbarkeit auf **multiple logistische Regression**
+
+  * Testen von Interaktionen zwischen 2 Prädiktoren 
+
+* Logistische Regression bringt Logik und Vorteile anderer Regressionen mit sich
+  
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+```{r echo=FALSE}
+set.seed(123)
+Behandlungserfolg = c("nein", "ja")
+
+data = data.frame(
+   Behandlungserfolg = c("ja", "ja", "nein", "ja", "ja", "nein", "nein", "nein", "ja", "ja", "nein", "nein", "nein", "nein", "ja", "nein", "ja")
+)
+data$Empathie[data$Behandlungserfolg == "ja"] = round(rnorm(n = sum(data$Behandlungserfolg == "ja"), mean = 10, sd = 3))
+data$Empathie[data$Behandlungserfolg == "nein"] = round(rnorm(n = sum(data$Behandlungserfolg == "nein"), mean = 6, sd = 3))
+data$Behandlungserfolg = factor(data$Behandlungserfolg, levels = c("nein", "ja"))
+data$Bindungsstil[data$Behandlungserfolg == "ja"] = sample(size = sum(data$Behandlungserfolg == "ja"), x = c("unsicher", "sicher"), replace = T, prob = c(0.2, 0.8))
+data$Bindungsstil[data$Behandlungserfolg == "nein"] = sample(size = sum(data$Behandlungserfolg == "nein"), x = c("unsicher", "sicher"), replace = T, prob = c(0.8, 0.2))
+data$Bindungsstil = factor(data$Bindungsstil, levels = c("unsicher", "sicher"))
+```
+
+.pull-left[
+#### Logistische Regression
+
+**Beispiel:**
+<small>
+
+* $AV:$ Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * $Y_i$ = 0 falls nein
+  
+  * $Y_i$ = 1 falls ja
+
+* $UV_1:$ (stetige) gemessene Empathie der Therapeut:in
+
+* $UV_2:$ (diskreter) erhobener Bindungsstil der Patient:in
+<br><br><br>
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+```{r echo=FALSE}
+knitr::kable(data,
+             booktabs = T,
+             longtable = F) %>%
+  kable_classic(full_width = T,
+                  font_size = 11,
+                  html_font = "Times New Roman")
+```
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+<small>
+
+Wir beginnen mit einem bivariaten Modell $(AV$ und $UV_1):$
+
+* $AV:$ Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * $Y_i$ = 0 falls nein
+  
+  * $Y_i$ = 1 falls ja
+
+* $UV_1:$ (stetige) gemessene Empathie der Therapeut:in
+
+***
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+
+**Lösungsvorschlag:** Einfaches lineares Regressionsmodell (bereits bekannt)
+
+$$Y_i = a + \beta \cdot x_i + \varepsilon_i$$
+
+**Problem:**
+
+* Die meisten der mit der Gerade vorhergesagten Werte können gar nicht tatsächlich beobachtet werden
+
+* Lediglich Werte 0 und 1 können für die dummy-codierte Variable auftreten
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+.pull-left[
+
+**Lösungsvorschlag:** Einfaches lineares Regressionsmodell
+
+```{r echo = F, out.height = "380px"}
+ggplotly(ggplot(data, aes(x = Empathie, y = as.numeric(Behandlungserfolg)-1)) +
+           geom_hline(yintercept = 1, linetype = "dashed", size = .1) +
+           geom_hline(yintercept = 0, linetype = "dashed", size = .1) +
+           geom_point() +
+           scale_y_continuous(breaks = round(seq(-0.6, 1.6, 0.2),2)) +
+           geom_smooth(method = "lm", se = F, colour = "#EE0071") +
+           labs(y = "Behandlungserfolg") +
+           theme_classic())
+```
+
+]
+
+.pull-right[
+
+$$Y_i = a + \beta \cdot x_i + \varepsilon_i$$
+* Modellierung mittels Y-Achsenabschnitt $(a)$ und Steigung $(\beta)$
+
+* Gerade zeigt positiven Zusammenhang zwischen Empathie und Therapieerfolg
+
+  * je mehr Empathie desto besser die Therapie
+  
+  * Dies erscheint zunächst plausibel
+
+* ABER: Modell ignoriert Begrenzung des numerischen Bereichs der $AV$ auf Werte 0 und 1 (Misserfolg vs. Erfolg)
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Modell für bedingte Wahrscheinlichkeiten:**
+
+* In statistischen Modellen für binäre AVs wird i.d.R. die (bedingte) **Wahrscheinlichkeit** $(P)$ modelliert, dass $Y_i$ die Werte 0 bzw. 1 annimmt.
+
+  * Wahrscheinlichkeit $(P)$ anstelle der Werte von Variable $Y_i$ selbst 
+  
+  * Wahrscheinlichkeit ist "bedingt" bei gegebenen Werten von Prädiktoren $x_{i1},...x_{ik}$
+
+* Wenn 0 und 1 komplementäre Ereignisse sind, reicht es aus nur $P(Y_i = 1|x_{i1},...x_{ik})$ zu modellieren, denn
+
+$$P(Y_i = 1|x_{i1},...x_{ik}) = 1-P(Y_i = 0|x_{i1},...x_{ik})$$
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+.pull-left[
+#### Logistische Regression
+
+**Lineares Wahrscheinlichkeitsmodell**
+<small>
+
+In unserem Beispiel:
+
+* $AV:$ Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * $Y_i$ = 0 falls nein
+  
+  * $Y_i$ = 1 falls ja
+
+* $UV_1:$ (stetige) gemessene Empathie der Therapeut:in
+]
+.pull-right[
+.center[
+```{r echo = F, out.height = "300px", out.width="300px"}
+ggplotly(ggplot(data, aes(x = Empathie, y = as.numeric(Behandlungserfolg)-1)) +
+           geom_hline(yintercept = 1, linetype = "dashed", size = .1) +
+           geom_hline(yintercept = 0, linetype = "dashed", size = .1) +
+           geom_point() +
+           scale_y_continuous(breaks = round(seq(-0.6, 1.6, 0.2),2)) +
+           geom_smooth(method = "lm", se = F, colour = "#EE0071") +
+           labs(y = "P(Yi = 1)") +
+           theme_classic())
+```
+]
+]
+
+
+Wahrscheinlichkeit für Behandlungserfolg $P(Y_i = 1|x_i)$ wird mit Geradengleichung vorhergesagt:
+
+$$P(Y_i = 1|x_i) = a + \beta \cdot x_i + \varepsilon$$
+
+ABER: Das Problem bleibt bestehen
+  * Wahrscheinlichkeit liegt zwischen 0 und 1
+  * Wertebereich von $a + \beta \cdot x_i + \varepsilon$ liegt zwischen $−∞$ und $+∞$
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Die logistische Funktion**
+
+Ziel: Transformation des Wertebereichs $−∞$ bis $+∞$ in Werte zwischen 0 und 1 (Wertebereich von Wahrscheinlichkeiten)
+
+Modellgleichung der einfachen logistischen Regression:
+
+$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$
+
+* Da wir nicht $Y_i$ selbst, sondern die bedingte Wahrscheinlichkeit für $Y_i = 1$ modellieren,
+benötigen wir keinen Fehlerterm
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+.pull-left[
+**Die logistische Funktion**
+
+$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$
+
+* Mit Anwendung der logistischen Funktion auf die lineare Regression lässt sich die Gerade "biegen"
+
+* Sie ist nun auf den Wertebereiche zwischen 0 und 1 begrenzt
+
+* Am Wendepunkt der Kurve ist $P(Y_i = 1|x_i) = 0.5$
+
+* Beide Optionen (Erfolg vs. Misserfolg) sind hier gleich wahrscheinlich
+]
+
+.pull-right[
+.center[
+```{r echo = F, out.height = "400px"}
+ggplotly(ggplot(data, aes(x = Empathie, y = as.numeric(Behandlungserfolg)-1)) +
+           geom_hline(yintercept = 1, linetype = "dashed", size = .1) +
+           geom_hline(yintercept = 0, linetype = "dashed", size = .1) +
+           geom_point() +
+           scale_y_continuous(breaks = round(seq(-0.6, 1.6, 0.2),2)) +
+           geom_smooth(method = "glm", se = F, colour = "#EE0071", 
+                       method.args = list(family = "binomial")) +
+           labs(y = "P(Yi = 1)") +
+           theme_classic())
+```
+]
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Modellparameter**
+
+$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$
+
+
+* Parameter $\beta$ (entspricht dem Steigungsparameter):
+
+>* $𝛽 = 0:$ Wahrscheinlichkeit für $Y_i = 1$ ist unabhängig von der UV (kein Zusammenhang).
+
+>* $𝛽 > 0:$ Je höher der Wert auf der UV, desto höher die Wahrscheinlichkeit für $Y_i = 1$.
+
+>* $𝛽 < 0:$ Je höher der Wert auf der UV, desto niedriger die Wahrscheinlichkeit für $Y_i = 1$.
+
+* Parameter $a$ (entspricht dem Y-Achsenabschnitt)
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Interpretation der Modellparameter - Odds**
+
+* Der Bruch aus der Wahrscheinlichkeit für ein  Ereignis geteilt durch dessen Gegenwahrscheinlichkeit, wird als **Odds** bezeichnet
+
+* In der logistischen Regression relevante Odds:
+
+$$\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)}$$
+
+>* Falls das Ereignis $Y_i = 1$ wahrscheinlicher ist als das Ereignis $Y_i= 0$  $\rightarrow$ Odds > 1
+
+>* Falls das Ereignis $Y_i = 1$ wahrscheinlicher ist als das Ereignis $Y_i= 0$  $\rightarrow$ Odds < 1
+
+>* Sind beide Ereignisse gleich wahrscheinlich $\rightarrow$ Odds = 1
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Ermittlung der Odds für Steigung $(\beta)$**
+
+Odds lassen sich durch Einsetzen der Modellparameter $(a, \beta)$ in die Odds Formel ermitteln:
+
+$$\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)} = \frac{P(Y_i = 1|x_i)}{1- P(Y_i = 1|x_i)}=e^a \cdot e^{\beta \cdot x_i}$$
+Das heißt: Erhöht sich die UV um eine Einheit, erhöhen sich die Odds um den Faktor $e^{\beta}$
+
+>* $e^{\beta}=1:$ kein Einfluss der UV auf die Odds
+
+>* $e^{\beta}>1:$ wenn Wert der UV höher wird, werden auch Odds höher
+
+>* $e^{\beta}<1:$ wenn Wert der UV höher wird, werden  Odds niedriger
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Ermittlung der Odds für Y-Achsenabschnitt $(\beta)$**
+
+Wenn $x_i=0$ gilt für die Odds
+
+$$\frac{P(Y_i = 1|x_i=0)}{P(Y_i = 0|x_i=0)} = e^a \cdot e^{\beta \cdot 0} = e^a \cdot e^0 = e^a $$
+
+* Für Personen mit einem Wert von 0 auf der UV, sind die Odds gleich $e^a$
+
+* Kennen wir bereits von linearer Regression: Y-Achsenabschnitt ist Wert, wenn $x_i = 0$ (UV = 0)
+
+* Auch hier hängt Sinnhaftigkeit der Interpretation des Werts davon ab, ob ein UV-Wert von 0 sinnvoll interpretierbar ist (s.h. z.B. IQ)
+
+* Falls UV-Wert von 0 nicht sinnvoll interpretierbar $\rightarrow$ **Zentrierung der UV** (s.h. lineare Regression)
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Einheit von a und $\beta$ (Log-Odds)**
+
+* Mittels der Odds haben wir also eine inhaltliche Interpretation der Modellparameter
+
+* Wie gesehen, müssen diese dafür jeweils zunächst mittels Euler'scher Zahl $e$  exponiert werden $(e^a$ bzw. $e^{\beta})$
+
+ABER: In welcher Einheit werden a und $\beta$ selbst dann gemessen und warum ist das Exponieren notwendig?
+
+* Nimmt man von den Odds den natürlichen Logarithmus, so erhält man die **„Log–Odds“** bzw. **„Logits“**:
+
+$$ln(\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)})$$
+
+>* Wenn $P(Y_i = 1|x_i) = 0.5$ $\rightarrow$ Log-Odds $= 0$
+
+>* Wenn $P(Y_i = 1|x_i) < P(Y_i = 0|x_i)$ $\rightarrow$ Log-Odds $< 0$
+
+>* Wenn $P(Y_i = 1|x_i) > P(Y_i = 0|x_i)$ $\rightarrow$ Log-Odds $> 0$
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Einheit von a und $\beta$ (Log-Odds)**
+
+<small>
+
+* Einsetzen der Modellgleichung für die Odds in die Definition der Log-Odds ergibt:
+
+$$ln(\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)}) = ln(e^{a+ \beta \cdot x_i}) = a+ \beta \cdot x_i$$
+
+$\rightarrow$ Logistische Regression ist eine **lineare Regression der Log-Odds**
+
+***
+
+Die Parameter $a$ und $\beta$ können damit wie folgt interpretiert werden:
+
+* $a$ entspricht den Log-Odds für Personen mit einem UV-Wert von 0 
+
+  * (wie Y-Achsenabschnitt linearer Regression).
+
+* Wenn sich die UV um eine Einheit erhöht, erhöhen sich die Log-Odds um $\beta$ 
+
+  * (wie Steigung linearer Regression).
+
+* Da die Log-Odds weniger intuitiv als die Odds sind, werden jedoch **meist $e^a$ und $e^{\beta}$ (Odds) statt $a$ und $\beta$ (Log-Odds) interpretiert**.
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+.pull-left[
+#### Logistische Regression
+
+**Zurück zum Beispiel:**
+<small>
+
+* $AV:$ Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * $Y_i$ = 0 falls nein
+  
+  * $Y_i$ = 1 falls ja
+
+* $UV_1:$ (stetige) gemessene Empathie der Therapeut:in
+
+* $UV_2:$ (diskreter) erhobener Bindungsstil der Patient:in
+<br><br><br>
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+```{r echo=FALSE}
+knitr::kable(data,
+             booktabs = T,
+             longtable = F) %>%
+  kable_classic(full_width = T,
+                  font_size = 11,
+                  html_font = "Times New Roman")
+```
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+.pull-left[
+#### Logistische Regression
+
+**Zurück zum Beispiel:**
+<small>
+
+$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$
+**Gedacht in Odds:**
+
+* Die Odds für einen Behandlungserfolg bei einer Therapeut:in mit Empathie von 0 sind $e^a$
+
+* Falls sich die Empathie um 1 Einheit erhöht, erhöhen sich die Odds für den Behandlungserfolg um den Faktor $e^{\beta}$
+
+**Gedacht in Log-Odds:**
+
+* Die Log-Odds für einen Behandlungserfolg bei einer Therapeut:in mit Empathie von 0 sind $a$
+
+* Falls sich die Empathie um 1 Einheit erhöht, erhöhen sich die Log-Odds für den Behandlungserfolg (linear) um $\beta$
+
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+```{r echo=FALSE}
+knitr::kable(data,
+             booktabs = T,
+             longtable = F) %>%
+  kable_classic(full_width = T,
+                  font_size = 11,
+                  html_font = "Times New Roman")
+```
+]
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+<small>
+
+* In R benutzen wir statt `lm` nun `glm` (generalized linear model)
+
+.pull-left[
+.code60[
+```{r}
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+summary(model)
+```
+]
+]
+
+.pull-right[
+* Output zeigt unter `Estimate` immer $a$ und $\beta$ (Log-Odds)
+
+* Diese folgen der Logik des linearen Modells
+
+**Umwandlung Log-Odds in Odds mittels Exponierung (z.B. $e^\beta$):**
+
+.code60[
+```{r}
+exp(-4.5438)
+exp(0.5242)
+```
+]
+
+* 0.01 = Odds für Behandlungserfolg, wenn Empathie = 0 
+
+* Zunahme der Odds um Faktor 1.69, wenn Empathie um 1 Einheit zunimmt
+
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+
+<small>
+
+* In R benutzen wir statt `lm` nun `glm` (generalized linear model)
+
+.pull-left[
+.code60[
+```{r}
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+summary(model)
+```
+]
+]
+
+.pull-right[
+**Hypothesentests:**
+
+* `Pr(>|z|)` zeigt an, das ein Hypothesentest gerechnet wurde
+
+Dieser prüft folgende Hypothesenpaare:
+
+* Für $a$
+  * $H_0:$ $a = 0$
+  * $H_1:$ $a \neq 0$
+* Für $\beta$
+  * $H_0:$ $\beta = 0$
+  * $H_1:$ $\beta \neq 0$
+
+* $p_{\beta} = 0.0474 <.05$
+
+$\rightarrow$ Wir gehen davon aus, dass es einen signifikanten Zusammenhang zwischen Empathie und Therapieerfolg gibt.
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+
+<small>
+
+* In R benutzen wir statt `lm` nun `glm` (generalized linear model)
+
+.pull-left[
+.code60[
+```{r}
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+car::Anova(model)
+```
+]
+]
+
+.pull-right[
+**Hypothesentests (Omnibustest):**
+
+* Auch für Log-Regression lässt sich ein Omnibustest rechnen
+
+* Dieser prüft, ob Hinzunahme des Prädiktors Modellpassung signifikant verbessert (Modell mit Prädiktor mehr Varianz erklärt)
+
+* Prüft *nicht* einzelne Steigungsparameter
+
+* Die Teststatistik ist $\chi^2$-verteilt
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+**Berechnung der Konfidenzintervalle für Log-Odds und Odds:**
+
+.code80[
+```{r}
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+
+# Für Log-Odds
+confint(model)
+
+# Für Odds
+exp(confint(model))
+```
+]
+
+<small>
+
+* Wir gehen davon aus, dass Odds für einen Behandlungserfolg um Faktor 1.11 bis 3.26 steigen, wenn Empathie um 1 Einheit zunimmt
+
+* Gängige Notation (engl.): $OR = 1.69, CI_{95\%}=1.11 \text{ to } 3.26$ 
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression mit zentrierter UV
+
+<small>
+
+.pull-left[
+.code60[
+```{r}
+model = glm(Behandlungserfolg ~ center(Empathie), data = data, family = "binomial")
+summary(model)
+```
+]
+]
+
+.pull-right[
+* Zentrierung (grand mean): Von jedem Wert der UV wird der Durchschnitt der UV abgezogen
+
+* Empathie (zentriert) = 0 ist nun der Durschnittswert der Stichprobe (nur $a$ ändert sich, $\beta$ bleibt unverändert)
+
+**Umwandlung Log-Odds in Odds mittels Exponierung (z.B. $e^\beta$):**
+
+.code60[
+```{r}
+exp(-0.07)
+exp(0.5242)
+```
+]
+
+* 0.93 = Odds für Behandlungserfolg **bei durschnittlicher Empathie**
+
+* Zunahme der Odds um Faktor 1.69, wenn Empathie um 1 Einheit zunimmt
+
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Multiple logistische Regression
+
+* Wie bei der linearen Regression lässt sich auch die einfache logistische Regression zur multiplen logistischen Regression erweitern:
+
+$$P(Y_i = 1|x_{i1},...x_{ik}) = \frac{e^{a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k}}{1+e^{a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k}}$$
+
+Gedacht in Odds:
+
+$$\frac{P(Y_i = 1|x_{i1},...x_{ik})}{P(Y_i = 0|x_{i1},...x_{ik})} = e^{a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k}$$
+
+Gedacht in Log-Odds:
+
+$$ln(\frac{P(Y_i = 1|x_{i1},...x_{ik})}{P(Y_i = 0|x_{i1},...x_{ik})}) = a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k$$
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Multiple logistische Regression
+
+**Interpretation der Modellparameter:**
+
+Gedacht in Odds:
+
+* $e^a$ entspricht den Odds von Personen (z.B. für Behandlungserfolg), die auf allen UVs den Wert 0 haben.
+
+* $e^{\beta_j}$ entspricht dem Faktor, um den sich die Odds erhöhen, falls sich die UV $j$ um eine Einheit erhöht (alle anderen UVs  bleiben konstant).
+
+Gedacht in Log-Odds:
+
+* $a$ entspricht den Log-Odds von Personen (z.B. für Behandlungserfolg), die auf allen UVs den Wert 0 haben.
+
+* $\beta_j$ entspricht Zunahme der Log-Odds, falls sich die UV $j$ um eine Einheit erhöht (alle anderen UVs bleiben konstant).
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+.pull-left[
+#### Multiple logistische Regression
+
+**Zurück zum Beispiel Beispiel:**
+<small>
+
+* $AV:$ Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * $Y_i$ = 0 falls nein
+  
+  * $Y_i$ = 1 falls ja
+
+* $UV_1:$ (stetige) gemessene Empathie der Therapeut:in
+
+* $UV_2:$ (diskreter) erhobener Bindungsstil der Patient:in
+<br><br><br>
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+```{r echo=FALSE}
+knitr::kable(data,
+             booktabs = T,
+             longtable = F) %>%
+  kable_classic(full_width = T,
+                  font_size = 11,
+                  html_font = "Times New Roman")
+```
+]
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Multiple logistische Regression mit zentrierter UV
+
+```{r echo=FALSE}
+set.seed(123)
+
+data = data.frame(
+   Behandlungserfolg = sample(x = c("nein", "ja"), size = 60, replace = T, prob = c(0.5,0.5))
+)
+data$Empathie[data$Behandlungserfolg == "ja"] = round(rnorm(n = sum(data$Behandlungserfolg == "ja"), mean = 10, sd = 3))
+data$Empathie[data$Behandlungserfolg == "nein"] = round(rnorm(n = sum(data$Behandlungserfolg == "nein"), mean = 6, sd = 3))
+data$Behandlungserfolg = factor(data$Behandlungserfolg, levels = c("nein", "ja"))
+data$Bindungsstil[data$Behandlungserfolg == "ja"] = sample(size = sum(data$Behandlungserfolg == "ja"), x = c("unsicher", "sicher"), replace = T, prob = c(0.2, 0.8))
+data$Bindungsstil[data$Behandlungserfolg == "nein"] = sample(size = sum(data$Behandlungserfolg == "nein"), x = c("unsicher", "sicher"), replace = T, prob = c(0.8, 0.2))
+data$Bindungsstil = factor(data$Bindungsstil, levels = c("unsicher", "sicher"))
+```
+
+<small>
+
+.pull-left[
+.code60[
+```{r}
+model = glm(Behandlungserfolg ~ center(Empathie) * Bindungsstil, data = data, family = "binomial")
+car::Anova(model)
+```
+]
+]
+
+.pull-right[
+**Omnibustest**
+
+* Haupteffekt Empathie ist signifikant $(\chi^2_1=20.92, p<.001)$
+
+* Haupteffekt Bindungsstil ist signifikant $(\chi^2_1=5.00, p=.025)$
+
+* Keine signifikante Interaktion $(\chi^2_1=1.68, p=.195)$
+
+$\rightarrow$ Empathie und Bindungsstil können Behandlungserfolg beide signifikant vorhersagen (Haupteffekte).
+
+$\rightarrow$ Empathie scheint bei sicher und unsicher gebundenen Personen gleich wichtig für Behandlungserfolg zu sein (Interaktion).
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+**Effektstärken, Stichprobenplanung und Regressionsdiagnostik (s.h. Bühner et al. 2023)**
+
+* Auch für die logistische Regression spielen in der Praxis Effektstärken, Stichprobenplanung und Regressionsdiagnostik eine wichtige Rolle. Bei allen drei Themen existiert aber häufig keine eindeutig beste Variante, weshalb wir hier auf eine Beschreibung der Methoden verzichten.
+
+* Bemerkung 1: In der logistischen Regression gibt es mehrere Möglichkeiten, eine globale Effektstärke in Anlehnung an $R^2$ in der linearen Regression zu definieren.
+
+* Bemerkung 2: Für die Stichprobenplanung in der logistischen Regression müssen meist individuell Daten simuliert werden. 
+
+* Bemerkung 3: Für die Regressionsdiagnostik in der logistischen Regression gibt es mehrere Möglichkeiten, Residuen mit sinnvollen Eigenschaften zu definieren.
+
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+* Die **logistische Regression** ist ein statistisches Modell zur Vorhersage von binären oder kategorialen Ergebnissen (z.B. Ja/Nein, Erfolg/Misserfolg oder Krank/gesund).
+
+* Mithilfe der **logsitischen Funktion** (aka. sigmoide Funktion) wird Wertebereich zwischen 0 und 1 begrenzt (Wahrscheinlichkeiten).
+
+* Modellparameter werden in **Log-Odds** angegeben (linear skaliert). Diese können durch Exponierung in besser interpretierbare **Odds** umgewandelt werden.
+
+* **Statistische Inferenz** (Hypothesentesten) funktioniert entweder über Prüfung einzelner Modellparameter vs. 0 oder mittels Omnibustest $(\chi^2$-verteilt $)$.
+
+* Einfache logistische Regression kann zur **multiplen logistischen Regression** erweitert werden.
+
+* **Powerberechnung** kann kompliziert sein und Simulation erfordern, **Effektstärken** werden uneinheitlich angegeben.
+
+]
+]
+
+
+
+

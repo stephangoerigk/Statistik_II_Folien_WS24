@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Einheit 7</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Dr. Stephan Goerigk" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/hygge.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#EE0071"],"pen_size":4,"eraser_size":40,"palette":[]}) })</script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link href="libs/htmltools-fill/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/plotly-binding/plotly.js"></script>
+    <script src="libs/typedarray/typedarray.min.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <link href="libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+name: Title slide
+class: middle, left
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+# Statistik II
+***
+### Einheit 7: Regressionsmodelle mit Interaktionen
+##### 04.12.2024 | Prof. Dr. Stephan Goerigk
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Wiederholung:
+
+**Effektarten:**
+
+1. Haupteffekt 
+
+  * Haupteffekte beschreiben den Einfluss einer UV auf die AV unabhängig von anderen UVs (Konstanthaltung)
+
+2. Interaktionseffekt
+
+  * Wechselwirkung zwei UVs/Pädiktoen (Interaktion) auf die AV
+
+**Abgrenzung zur mehrfaktoriellen ANOVA:**
+
+* Bei der ANOVA sind UVs immer kategorial (Mittelwertesvergleiche zw. Gruppen/Kategorien)
+
+* Im Regressionsmodell können kategoriale und stetige UVs verwendet und auch kombiniert werden
+
+`\(\rightarrow\)` Im multiplen Regressionsmodell sind weitere Arten von Interaktionen möglich
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Mögliche Interaktionen von 2 Prädiktoren im multiplen Regressionsmodell
+
+Die Regression erlaubt alle Kombinationen von Prädiktorentypen (Erweiterung des multiplen Regressionsmodells):
+
+1. stetig x stetig
+
+2. stetig x diskret
+
+3. diskret x diskret
+
+`\(\rightarrow\)` Dabei dürfen die diskreten Prädiktoren 2 oder `\(\geq\)` 2 Stufen haben.
+
+&lt;br&gt;&lt;br&gt;
+Zum Vergleich - ANOVA erlaubt lediglich die Prüfung einer Art von Interaktion:
+
+1. diskret x diskret
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+
+
+.pull-left[
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+&lt;small&gt;
+
+* Datensatz für `\(N=52\)` Therapeut:innen
+
+* **Forschungsfrage:** Was kann als Prädiktor für Therapieerfolg gelten? Gibt es Interaktionen?
+
+* Es wurden folgende Variablen gemessen:
+  
+  * Therapieerfolg (AV; 0-100 Punkte) 
+  
+  * Therapieerfahrung der Therapeut:in (UV; niedrig, hoch)
+  
+  * Bereitschaft Patient:in zu konfrontieren (UV 0-100 Punkte) 
+  
+  * Empathiefähigkeit der Therapeut:in (UV; niedrig, hoch)
+  
+  * IQ der Therapeut:in (UV; `\(\mu=100,\sigma=15\)`)
+
+  
+* Die ersten 15 Fälle sind in der Tabelle rechts dargestellt.
+
+&lt;/small&gt;
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 13px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Therapieerfolg &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Erfahrung &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Konfrontativ &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Empathie &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; IQ &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 89 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 88 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 69 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 77 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 90 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 77 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 39 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 87 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 41 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 46 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 114 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 95 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 71 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 109 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 50 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 92 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 75 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 44 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 96 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 51 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 39 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 87 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 66 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 93 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 73 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+.pull-left[
+
+**Kodierung der diskreten Variablen:**
+
+Erinnerung - Diskrete Variablen werden im Regressionsmodell dummy-kodiert:
+
+* Therapieerfahrung (rechts dargestellt)
+
+  * niedrig = 0 (Referenz)
+  * hoch = 1
+  
+* Empathiefähigkeit
+
+  * niedrig = 0 (Referenz)
+  * hoch = 1
+]
+.pull-right[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.720  -6.753  -1.786   6.497  20.148 
+## 
+## Coefficients:
+##               Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)     51.720      1.955  26.453 &lt; 0.0000000000000002 ***
+## Erfahrunghoch   23.132      2.713   8.525      0.0000000000259 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.776 on 50 degrees of freedom
+## Multiple R-squared:  0.5924,	Adjusted R-squared:  0.5843 
+## F-statistic: 72.68 on 1 and 50 DF,  p-value: 0.00000000002591
+```
+]
+]
+
+`\(\rightarrow\)` Im Modell berechnete Steigung `\((\beta)\)` repräsentiert durchschnittlichen Unterschied in AV, wenn Person nicht zu Referenzkategoie gehört
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+.pull-left[
+
+**Kodierung der diskreten Variablen:**
+
+Interpretation der Koeffizienten:
+
+* Theapeut:innen mit niedriger Erfahrung (Erfahrung = 0) haben Thearapieefolg von 51.72 Punkten.
+
+* Theapeut:innen mit hoher Erfahrung (Erfahrung = 1) haben 23.13 Punkte Thearapieefolg mehr.
+
+* Theapeut:innen mit hoher Erfahrung (Erfahrung = 1) haben Thearapieefolg von 51.72 + 23.13 = 74.85 Punkte
+
+]
+.pull-right[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.720  -6.753  -1.786   6.497  20.148 
+## 
+## Coefficients:
+##               Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)     51.720      1.955  26.453 &lt; 0.0000000000000002 ***
+## Erfahrunghoch   23.132      2.713   8.525      0.0000000000259 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.776 on 50 degrees of freedom
+## Multiple R-squared:  0.5924,	Adjusted R-squared:  0.5843 
+## F-statistic: 72.68 on 1 and 50 DF,  p-value: 0.00000000002591
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+Modell mit 2 Prädiktoren: Erfahrung und Konfrontationsbereitschaft:
+
+&lt;small&gt;
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+`$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} + \epsilon_i$$`
+
+`$$Erfolg = \beta_1 \cdot Erfahrung_{(hoch)} + \beta_2 \cdot Konfrontationsb. + \epsilon_i$$`
+
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+`$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} +  \beta_3 \cdot (X_{i1} \cdot X_{i2}) + \epsilon_i$$`
+
+`$$Erfolg = \beta_1 \cdot Erfahrung_{(hoch)} + \beta_2 \cdot Konfrontationsb. +  \beta_3 \cdot (Erfahrung_{(hoch)} \cdot Konfrontationsb.)+ \epsilon_i$$`
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+Mögliche Forschungsfragen im Modell:
+
+1. Besteht ein Unterschied zwischen unerfahrenen und erfahrenen Therapeut:innen hinsichtlich des Therapieerfolgs? `\(\rightarrow\)` Steigung Erfahrung
+
+2. Verändert sich der Therapieerfolg mit zunehmender Konfrontationsbereitschaft? `\(\rightarrow\)` Steigung Konfrontationsbereitschaft
+
+3. Wie viel Varianz der AV (Therapieerfolg) kann das Gesamtmodell mit beiden Prädiktoren erklären `\(\rightarrow\)` Bestimmtheitsmaß `\(R^2\)`
+
+`\(\rightarrow\)` Für Fragen 1 und 2 wird der jeweils andere Prädiktor konstant gehalten.
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.0175  -5.7825  -0.4526   4.4386  18.8281 
+## 
+## Coefficients:
+##               Estimate Std. Error t value           Pr(&gt;|t|)    
+## (Intercept)   44.67633    4.19638  10.646 0.0000000000000242 ***
+## Erfahrunghoch 23.64821    2.66084   8.887 0.0000000000086793 ***
+## Konfrontativ   0.14565    0.07729   1.884             0.0655 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.536 on 49 degrees of freedom
+## Multiple R-squared:   0.62,	Adjusted R-squared:  0.6045 
+## F-statistic: 39.97 on 2 and 49 DF,  p-value: 0.00000000005077
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+&lt;small&gt;
+* Y-Achsenabschnitt (aka. Intercept, `\(a\)`): Therapeut:innen mit Erfahrung = 0 (niedrig) und Konfrontationsbereitschaft = 0 haben 44.68 Punkte Therapieerfolg.
+
+* Mit 1 Einheit mehr Erfahrung (1 = hoch) haben Therapeut:innen 23.65 Punkte zusätzlichen Therapieerfolg (bei Konstanthaltung von Konfrontationsbereitschaft).
+
+* Mit 1 Einheit mehr Konfrontationsbereitschaft haben Therapeut:innen 0.15 Punkte zusätzlichen Therapieerfolg (bei Konstanthaltung von Erfahrung).
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.0175  -5.7825  -0.4526   4.4386  18.8281 
+## 
+## Coefficients:
+##               Estimate Std. Error t value           Pr(&gt;|t|)    
+## (Intercept)   44.67633    4.19638  10.646 0.0000000000000242 ***
+## Erfahrunghoch 23.64821    2.66084   8.887 0.0000000000086793 ***
+## Konfrontativ   0.14565    0.07729   1.884             0.0655 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.536 on 49 degrees of freedom
+## Multiple R-squared:   0.62,	Adjusted R-squared:  0.6045 
+## F-statistic: 39.97 on 2 and 49 DF,  p-value: 0.00000000005077
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+&lt;small&gt;
+
+* Bei Konstanthaltung von Konfrontationsbereitschaft ist Erfahrung signifikant mit Therapieerfolg assoziiert `\((t_{(49)}=8.89, p&lt;.001)\)`.
+
+* Bei Konstanthaltung von Erfahrung ist Konfrontationsbereitschaft nicht signifikant mit Therapieerfolg assoziiert `\((t_{(49)}=1.89, p=.066)\)`.
+
+* Das Gesamtmodell kann 62% der Varianz des Therapieerfolgs erklären `\((R^2=0.62)\)`.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.0175  -5.7825  -0.4526   4.4386  18.8281 
+## 
+## Coefficients:
+##               Estimate Std. Error t value           Pr(&gt;|t|)    
+## (Intercept)   44.67633    4.19638  10.646 0.0000000000000242 ***
+## Erfahrunghoch 23.64821    2.66084   8.887 0.0000000000086793 ***
+## Konfrontativ   0.14565    0.07729   1.884             0.0655 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.536 on 49 degrees of freedom
+## Multiple R-squared:   0.62,	Adjusted R-squared:  0.6045 
+## F-statistic: 39.97 on 2 and 49 DF,  p-value: 0.00000000005077
+```
+]
+]
+
+.pull-right[
+Berechnung der Konfidenzintervalle: 
+.code60[
+
+```r
+confint(model)
+```
+
+```
+##                      2.5 %     97.5 %
+## (Intercept)   36.243399754 53.1092660
+## Erfahrunghoch 18.301052243 28.9953688
+## Konfrontativ  -0.009678479  0.3009798
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-776dda7a9cc39817ea9c" style="width:504px;height:420px;"></div>
+<script type="application/json" data-for="htmlwidget-776dda7a9cc39817ea9c">{"x":{"data":[{"x":[2,1,2,1,1,2,1,1,1,2,1,2,1,1,2,1,2,2,2,1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2],"y":[89,54,62,36,54,77,41,46,54,71,50,75,51,66,73,63,67,95,82,67,57,49,57,46,70,67,49,29,68,82,58,48,48,46,79,65,45,64,65,90,75,78,84,87,71,65,87,70,67,42,60,73],"text":["Erfahrung: hoch<br />Therapieerfolg: 89","Erfahrung: niedrig<br />Therapieerfolg: 54","Erfahrung: hoch<br />Therapieerfolg: 62","Erfahrung: niedrig<br />Therapieerfolg: 36","Erfahrung: niedrig<br />Therapieerfolg: 54","Erfahrung: hoch<br />Therapieerfolg: 77","Erfahrung: niedrig<br />Therapieerfolg: 41","Erfahrung: niedrig<br />Therapieerfolg: 46","Erfahrung: niedrig<br />Therapieerfolg: 54","Erfahrung: hoch<br />Therapieerfolg: 71","Erfahrung: niedrig<br />Therapieerfolg: 50","Erfahrung: hoch<br />Therapieerfolg: 75","Erfahrung: niedrig<br />Therapieerfolg: 51","Erfahrung: niedrig<br />Therapieerfolg: 66","Erfahrung: hoch<br />Therapieerfolg: 73","Erfahrung: niedrig<br />Therapieerfolg: 63","Erfahrung: hoch<br />Therapieerfolg: 67","Erfahrung: hoch<br />Therapieerfolg: 95","Erfahrung: hoch<br />Therapieerfolg: 82","Erfahrung: niedrig<br />Therapieerfolg: 67","Erfahrung: niedrig<br />Therapieerfolg: 57","Erfahrung: niedrig<br />Therapieerfolg: 49","Erfahrung: niedrig<br />Therapieerfolg: 57","Erfahrung: niedrig<br />Therapieerfolg: 46","Erfahrung: niedrig<br />Therapieerfolg: 70","Erfahrung: niedrig<br />Therapieerfolg: 67","Erfahrung: niedrig<br />Therapieerfolg: 49","Erfahrung: niedrig<br />Therapieerfolg: 29","Erfahrung: hoch<br />Therapieerfolg: 68","Erfahrung: hoch<br />Therapieerfolg: 82","Erfahrung: niedrig<br />Therapieerfolg: 58","Erfahrung: niedrig<br />Therapieerfolg: 48","Erfahrung: niedrig<br />Therapieerfolg: 48","Erfahrung: niedrig<br />Therapieerfolg: 46","Erfahrung: hoch<br />Therapieerfolg: 79","Erfahrung: hoch<br />Therapieerfolg: 65","Erfahrung: niedrig<br />Therapieerfolg: 45","Erfahrung: hoch<br />Therapieerfolg: 64","Erfahrung: hoch<br />Therapieerfolg: 65","Erfahrung: hoch<br />Therapieerfolg: 90","Erfahrung: hoch<br />Therapieerfolg: 75","Erfahrung: hoch<br />Therapieerfolg: 78","Erfahrung: hoch<br />Therapieerfolg: 84","Erfahrung: hoch<br />Therapieerfolg: 87","Erfahrung: hoch<br />Therapieerfolg: 71","Erfahrung: hoch<br />Therapieerfolg: 65","Erfahrung: hoch<br />Therapieerfolg: 87","Erfahrung: hoch<br />Therapieerfolg: 70","Erfahrung: hoch<br />Therapieerfolg: 67","Erfahrung: niedrig<br />Therapieerfolg: 42","Erfahrung: hoch<br />Therapieerfolg: 60","Erfahrung: hoch<br />Therapieerfolg: 73"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013],"base":[0,0],"x":[1,2],"y":[51.719999999999999,74.851851851851848],"text":["Erfahrung: niedrig<br />Therapieerfolg: 51.72000","Erfahrung: hoch<br />Therapieerfolg: 74.85185"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"transparent","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":58.779576587795773,"l":69.406392694063939},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":26.567040265670411},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["niedrig","hoch"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["niedrig","hoch"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":21.253632212536321},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Erfahrung","font":{"color":"rgba(0,0,0,1)","family":"","size":26.567040265670411}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-5,105],"tickmode":"array","ticktext":["0","25","50","75","100"],"tickvals":[0,24.999999999999996,50,75,100],"categoryorder":"array","categoryarray":["0","25","50","75","100"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":21.253632212536321},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Therapieerfolg","font":{"color":"rgba(0,0,0,1)","family":"","size":26.567040265670411}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":21.253632212536321}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b345aeca3c6":{"x":{},"y":{},"type":"scatter"},"9b3465f44acc":{"x":{},"y":{}}},"cur_data":"9b345aeca3c6","visdat":{"9b345aeca3c6":["function (y) ","x"],"9b3465f44acc":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+
+.pull-right[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-e4db7fbec2862db4622f" style="width:504px;height:420px;"></div>
+<script type="application/json" data-for="htmlwidget-e4db7fbec2862db4622f">{"x":{"data":[{"x":[61,48,23,69,53,39,62,62,61,58,56,44,39,38,32,41,21,86,68,24,37,36,60,43,50,44,44,71,41,74,16,56,47,49,52,35,39,26,25,51,54,46,63,84,36,1,64,32,32,64,40,22],"y":[89,54,62,36,54,77,41,46,54,71,50,75,51,66,73,63,67,95,82,67,57,49,57,46,70,67,49,29,68,82,58,48,48,46,79,65,45,64,65,90,75,78,84,87,71,65,87,70,67,42,60,73],"text":["Konfrontativ: 61<br />Therapieerfolg: 89","Konfrontativ: 48<br />Therapieerfolg: 54","Konfrontativ: 23<br />Therapieerfolg: 62","Konfrontativ: 69<br />Therapieerfolg: 36","Konfrontativ: 53<br />Therapieerfolg: 54","Konfrontativ: 39<br />Therapieerfolg: 77","Konfrontativ: 62<br />Therapieerfolg: 41","Konfrontativ: 62<br />Therapieerfolg: 46","Konfrontativ: 61<br />Therapieerfolg: 54","Konfrontativ: 58<br />Therapieerfolg: 71","Konfrontativ: 56<br />Therapieerfolg: 50","Konfrontativ: 44<br />Therapieerfolg: 75","Konfrontativ: 39<br />Therapieerfolg: 51","Konfrontativ: 38<br />Therapieerfolg: 66","Konfrontativ: 32<br />Therapieerfolg: 73","Konfrontativ: 41<br />Therapieerfolg: 63","Konfrontativ: 21<br />Therapieerfolg: 67","Konfrontativ: 86<br />Therapieerfolg: 95","Konfrontativ: 68<br />Therapieerfolg: 82","Konfrontativ: 24<br />Therapieerfolg: 67","Konfrontativ: 37<br />Therapieerfolg: 57","Konfrontativ: 36<br />Therapieerfolg: 49","Konfrontativ: 60<br />Therapieerfolg: 57","Konfrontativ: 43<br />Therapieerfolg: 46","Konfrontativ: 50<br />Therapieerfolg: 70","Konfrontativ: 44<br />Therapieerfolg: 67","Konfrontativ: 44<br />Therapieerfolg: 49","Konfrontativ: 71<br />Therapieerfolg: 29","Konfrontativ: 41<br />Therapieerfolg: 68","Konfrontativ: 74<br />Therapieerfolg: 82","Konfrontativ: 16<br />Therapieerfolg: 58","Konfrontativ: 56<br />Therapieerfolg: 48","Konfrontativ: 47<br />Therapieerfolg: 48","Konfrontativ: 49<br />Therapieerfolg: 46","Konfrontativ: 52<br />Therapieerfolg: 79","Konfrontativ: 35<br />Therapieerfolg: 65","Konfrontativ: 39<br />Therapieerfolg: 45","Konfrontativ: 26<br />Therapieerfolg: 64","Konfrontativ: 25<br />Therapieerfolg: 65","Konfrontativ: 51<br />Therapieerfolg: 90","Konfrontativ: 54<br />Therapieerfolg: 75","Konfrontativ: 46<br />Therapieerfolg: 78","Konfrontativ: 63<br />Therapieerfolg: 84","Konfrontativ: 84<br />Therapieerfolg: 87","Konfrontativ: 36<br />Therapieerfolg: 71","Konfrontativ:  1<br />Therapieerfolg: 65","Konfrontativ: 64<br />Therapieerfolg: 87","Konfrontativ: 32<br />Therapieerfolg: 70","Konfrontativ: 32<br />Therapieerfolg: 67","Konfrontativ: 64<br />Therapieerfolg: 42","Konfrontativ: 40<br />Therapieerfolg: 60","Konfrontativ: 22<br />Therapieerfolg: 73"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2.0759493670886076,3.1518987341772151,4.2278481012658222,5.3037974683544302,6.3797468354430382,7.4556962025316453,8.5316455696202524,9.6075949367088604,10.683544303797468,11.759493670886076,12.835443037974683,13.911392405063291,14.987341772151899,16.063291139240505,17.139240506329113,18.215189873417721,19.291139240506329,20.367088607594937,21.443037974683545,22.518987341772153,23.594936708860757,24.670886075949365,25.746835443037973,26.822784810126581,27.898734177215189,28.974683544303797,30.050632911392405,31.12658227848101,32.202531645569621,33.278481012658226,34.354430379746837,35.430379746835442,36.506329113924046,37.582278481012658,38.658227848101262,39.734177215189874,40.810126582278478,41.88607594936709,42.962025316455694,44.037974683544306,45.11392405063291,46.189873417721515,47.265822784810126,48.341772151898731,49.417721518987342,50.493670886075947,51.569620253164558,52.645569620253163,53.721518987341767,54.797468354430379,55.873417721518983,56.949367088607595,58.025316455696199,59.101265822784811,60.177215189873415,61.25316455696202,62.329113924050631,63.405063291139236,64.481012658227854,65.556962025316452,66.632911392405063,67.708860759493675,68.784810126582272,69.860759493670884,70.936708860759495,72.012658227848092,73.088607594936704,74.164556962025316,75.240506329113927,76.316455696202524,77.392405063291136,78.468354430379748,79.544303797468345,80.620253164556956,81.696202531645568,82.77215189873418,83.848101265822777,84.924050632911388,86],"y":[60.321130370101841,60.401724850986952,60.482319331872063,60.562913812757181,60.643508293642292,60.724102774527402,60.80469725541252,60.885291736297631,60.965886217182742,61.04648069806786,61.127075178952971,61.207669659838082,61.288264140723193,61.368858621608311,61.449453102493422,61.530047583378533,61.610642064263651,61.691236545148762,61.771831026033873,61.852425506918991,61.933019987804101,62.013614468689212,62.09420894957433,62.174803430459441,62.255397911344552,62.33599239222967,62.416586873114781,62.497181353999892,62.57777583488501,62.658370315770121,62.738964796655232,62.81955927754035,62.900153758425461,62.980748239310572,63.061342720195682,63.1419372010808,63.222531681965911,63.303126162851022,63.38372064373614,63.464315124621251,63.544909605506362,63.62550408639148,63.706098567276591,63.786693048161702,63.86728752904682,63.947882009931931,64.028476490817042,64.109070971702153,64.189665452587263,64.270259933472389,64.350854414357499,64.43144889524261,64.512043376127721,64.592637857012832,64.673232337897943,64.753826818783068,64.834421299668179,64.91501578055329,64.995610261438401,65.076204742323512,65.156799223208623,65.237393704093748,65.317988184978859,65.39858266586397,65.47917714674908,65.559771627634191,65.640366108519302,65.720960589404413,65.801555070289538,65.882149551174649,65.96274403205976,66.043338512944871,66.123932993829982,66.204527474715093,66.285121955600218,66.365716436485329,66.44631091737044,66.52690539825555,66.607499879140661,66.688094360025772],"text":["Konfrontativ:  1.000000<br />Therapieerfolg: 60.32113","Konfrontativ:  2.075949<br />Therapieerfolg: 60.40172","Konfrontativ:  3.151899<br />Therapieerfolg: 60.48232","Konfrontativ:  4.227848<br />Therapieerfolg: 60.56291","Konfrontativ:  5.303797<br />Therapieerfolg: 60.64351","Konfrontativ:  6.379747<br />Therapieerfolg: 60.72410","Konfrontativ:  7.455696<br />Therapieerfolg: 60.80470","Konfrontativ:  8.531646<br />Therapieerfolg: 60.88529","Konfrontativ:  9.607595<br />Therapieerfolg: 60.96589","Konfrontativ: 10.683544<br />Therapieerfolg: 61.04648","Konfrontativ: 11.759494<br />Therapieerfolg: 61.12708","Konfrontativ: 12.835443<br />Therapieerfolg: 61.20767","Konfrontativ: 13.911392<br />Therapieerfolg: 61.28826","Konfrontativ: 14.987342<br />Therapieerfolg: 61.36886","Konfrontativ: 16.063291<br />Therapieerfolg: 61.44945","Konfrontativ: 17.139241<br />Therapieerfolg: 61.53005","Konfrontativ: 18.215190<br />Therapieerfolg: 61.61064","Konfrontativ: 19.291139<br />Therapieerfolg: 61.69124","Konfrontativ: 20.367089<br />Therapieerfolg: 61.77183","Konfrontativ: 21.443038<br />Therapieerfolg: 61.85243","Konfrontativ: 22.518987<br />Therapieerfolg: 61.93302","Konfrontativ: 23.594937<br />Therapieerfolg: 62.01361","Konfrontativ: 24.670886<br />Therapieerfolg: 62.09421","Konfrontativ: 25.746835<br />Therapieerfolg: 62.17480","Konfrontativ: 26.822785<br />Therapieerfolg: 62.25540","Konfrontativ: 27.898734<br />Therapieerfolg: 62.33599","Konfrontativ: 28.974684<br />Therapieerfolg: 62.41659","Konfrontativ: 30.050633<br />Therapieerfolg: 62.49718","Konfrontativ: 31.126582<br />Therapieerfolg: 62.57778","Konfrontativ: 32.202532<br />Therapieerfolg: 62.65837","Konfrontativ: 33.278481<br />Therapieerfolg: 62.73896","Konfrontativ: 34.354430<br />Therapieerfolg: 62.81956","Konfrontativ: 35.430380<br />Therapieerfolg: 62.90015","Konfrontativ: 36.506329<br />Therapieerfolg: 62.98075","Konfrontativ: 37.582278<br />Therapieerfolg: 63.06134","Konfrontativ: 38.658228<br />Therapieerfolg: 63.14194","Konfrontativ: 39.734177<br />Therapieerfolg: 63.22253","Konfrontativ: 40.810127<br />Therapieerfolg: 63.30313","Konfrontativ: 41.886076<br />Therapieerfolg: 63.38372","Konfrontativ: 42.962025<br />Therapieerfolg: 63.46432","Konfrontativ: 44.037975<br />Therapieerfolg: 63.54491","Konfrontativ: 45.113924<br />Therapieerfolg: 63.62550","Konfrontativ: 46.189873<br />Therapieerfolg: 63.70610","Konfrontativ: 47.265823<br />Therapieerfolg: 63.78669","Konfrontativ: 48.341772<br />Therapieerfolg: 63.86729","Konfrontativ: 49.417722<br />Therapieerfolg: 63.94788","Konfrontativ: 50.493671<br />Therapieerfolg: 64.02848","Konfrontativ: 51.569620<br />Therapieerfolg: 64.10907","Konfrontativ: 52.645570<br />Therapieerfolg: 64.18967","Konfrontativ: 53.721519<br />Therapieerfolg: 64.27026","Konfrontativ: 54.797468<br />Therapieerfolg: 64.35085","Konfrontativ: 55.873418<br />Therapieerfolg: 64.43145","Konfrontativ: 56.949367<br />Therapieerfolg: 64.51204","Konfrontativ: 58.025316<br />Therapieerfolg: 64.59264","Konfrontativ: 59.101266<br />Therapieerfolg: 64.67323","Konfrontativ: 60.177215<br />Therapieerfolg: 64.75383","Konfrontativ: 61.253165<br />Therapieerfolg: 64.83442","Konfrontativ: 62.329114<br />Therapieerfolg: 64.91502","Konfrontativ: 63.405063<br />Therapieerfolg: 64.99561","Konfrontativ: 64.481013<br />Therapieerfolg: 65.07620","Konfrontativ: 65.556962<br />Therapieerfolg: 65.15680","Konfrontativ: 66.632911<br />Therapieerfolg: 65.23739","Konfrontativ: 67.708861<br />Therapieerfolg: 65.31799","Konfrontativ: 68.784810<br />Therapieerfolg: 65.39858","Konfrontativ: 69.860759<br />Therapieerfolg: 65.47918","Konfrontativ: 70.936709<br />Therapieerfolg: 65.55977","Konfrontativ: 72.012658<br />Therapieerfolg: 65.64037","Konfrontativ: 73.088608<br />Therapieerfolg: 65.72096","Konfrontativ: 74.164557<br />Therapieerfolg: 65.80156","Konfrontativ: 75.240506<br />Therapieerfolg: 65.88215","Konfrontativ: 76.316456<br />Therapieerfolg: 65.96274","Konfrontativ: 77.392405<br />Therapieerfolg: 66.04334","Konfrontativ: 78.468354<br />Therapieerfolg: 66.12393","Konfrontativ: 79.544304<br />Therapieerfolg: 66.20453","Konfrontativ: 80.620253<br />Therapieerfolg: 66.28512","Konfrontativ: 81.696203<br />Therapieerfolg: 66.36572","Konfrontativ: 82.772152<br />Therapieerfolg: 66.44631","Konfrontativ: 83.848101<br />Therapieerfolg: 66.52691","Konfrontativ: 84.924051<br />Therapieerfolg: 66.60750","Konfrontativ: 86.000000<br />Therapieerfolg: 66.68809"],"type":"scatter","mode":"lines","name":"fitted values","line":{"width":3.7795275590551185,"color":"rgba(51,102,255,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2.0759493670886076,3.1518987341772151,4.2278481012658222,5.3037974683544302,6.3797468354430382,7.4556962025316453,8.5316455696202524,9.6075949367088604,10.683544303797468,11.759493670886076,12.835443037974683,13.911392405063291,14.987341772151899,16.063291139240505,17.139240506329113,18.215189873417721,19.291139240506329,20.367088607594937,21.443037974683545,22.518987341772153,23.594936708860757,24.670886075949365,25.746835443037973,26.822784810126581,27.898734177215189,28.974683544303797,30.050632911392405,31.12658227848101,32.202531645569621,33.278481012658226,34.354430379746837,35.430379746835442,36.506329113924046,37.582278481012658,38.658227848101262,39.734177215189874,40.810126582278478,41.88607594936709,42.962025316455694,44.037974683544306,45.11392405063291,46.189873417721515,47.265822784810126,48.341772151898731,49.417721518987342,50.493670886075947,51.569620253164558,52.645569620253163,53.721518987341767,54.797468354430379,55.873417721518983,56.949367088607595,58.025316455696199,59.101265822784811,60.177215189873415,61.25316455696202,62.329113924050631,63.405063291139236,64.481012658227854,65.556962025316452,66.632911392405063,67.708860759493675,68.784810126582272,69.860759493670884,70.936708860759495,72.012658227848092,73.088607594936704,74.164556962025316,75.240506329113927,76.316455696202524,77.392405063291136,78.468354430379748,79.544303797468345,80.620253164556956,81.696202531645568,82.77215189873418,83.848101265822777,84.924050632911388,86,86,86,84.924050632911388,83.848101265822777,82.77215189873418,81.696202531645568,80.620253164556956,79.544303797468345,78.468354430379748,77.392405063291136,76.316455696202524,75.240506329113927,74.164556962025316,73.088607594936704,72.012658227848092,70.936708860759495,69.860759493670884,68.784810126582272,67.708860759493675,66.632911392405063,65.556962025316452,64.481012658227854,63.405063291139236,62.329113924050631,61.25316455696202,60.177215189873415,59.101265822784811,58.025316455696199,56.949367088607595,55.873417721518983,54.797468354430379,53.721518987341767,52.645569620253163,51.569620253164558,50.493670886075947,49.417721518987342,48.341772151898731,47.265822784810126,46.189873417721515,45.11392405063291,44.037974683544306,42.962025316455694,41.88607594936709,40.810126582278478,39.734177215189874,38.658227848101262,37.582278481012658,36.506329113924046,35.430379746835442,34.354430379746837,33.278481012658226,32.202531645569621,31.12658227848101,30.050632911392405,28.974683544303797,27.898734177215189,26.822784810126581,25.746835443037973,24.670886075949365,23.594936708860757,22.518987341772153,21.443037974683545,20.367088607594937,19.291139240506329,18.215189873417721,17.139240506329113,16.063291139240505,14.987341772151899,13.911392405063291,12.835443037974683,11.759493670886076,10.683544303797468,9.6075949367088604,8.5316455696202524,7.4556962025316453,6.3797468354430382,5.3037974683544302,4.2278481012658222,3.1518987341772151,2.0759493670886076,1,1],"y":[48.298706969259435,48.627599620226313,48.955710124164938,49.282986992878605,49.609374315232998,49.934811296297241,50.259231741363998,50.582563477684943,50.904727705823369,51.22563827149186,51.545200847611312,51.863312015105826,52.179858229656134,52.494714660306492,52.807743884513975,53.118794423036412,53.42769909711101,53.734273189883545,54.038312394295332,54.339590531031803,54.637857023247811,54.932834120379667,55.224213872455813,55.511654870258205,55.794778787139506,56.073166787294682,56.346355905131134,56.613835553474559,56.875044386753892,57.129367830013649,57.376136684310779,57.614627328450545,57.844064144522967,58.063624880066605,58.272449692231319,58.469654558345894,58.654349536848329,58.825661982604196,58.982764245762084,59.124904645604857,59.25143970914295,59.361864965451069,59.455841197034019,59.533213151648482,59.594018393614789,59.638485145557169,59.667019403720673,59.680182977234878,59.678665101274646,59.663250726991251,59.634788485565323,59.594160789508166,59.542257772291421,59.479955974148396,59.408101999559207,59.327500871968518,59.238908504623936,59.143027565476281,59.040505994716867,58.93193749088374,58.817863378466342,58.698775380055032,58.575118922698564,58.447296702388797,58.315672308971514,58.18057377605362,58.042296968156528,57.901108752716709,57.757249929954796,57.610937911339946,57.462369149261285,57.311721328119461,57.159155331577622,57.004817003077832,56.848838717622527,56.691340782740099,56.532432685857252,56.372214204240009,56.210776392415838,56.048202460665721,56.048202460665721,77.327986259385824,77.004223365865485,76.681596592271092,76.36018914888362,76.040092090230559,75.721405193577908,75.404237946352353,75.088710656082341,74.774955697770281,74.463118914858242,74.153361191009353,73.845860210624281,73.540812426092117,73.23843524888207,72.938969479214762,72.642681984526646,72.349868629339142,72.060857447259153,71.77601202813247,71.495735067950903,71.220471993763283,70.950714528159935,70.687003995630292,70.429934094712422,70.180152765597626,69.938362676236679,69.705319739877268,69.481828979964021,69.268737000977055,69.066920343149675,68.877269139953526,68.700665803899881,68.537958966169427,68.389933577913411,68.257278874306692,68.140556664478851,68.040172944674921,67.956355937519163,67.889143207331898,67.838379501869781,67.803725603637645,67.784677041710196,67.780590343097856,67.790713827083493,67.814219843815707,67.850235748160046,67.897871598554531,67.956243372327961,68.024491226630161,68.101792908999684,68.187372801526593,68.280507283016135,68.380527154525225,68.486817841098429,68.598817997164659,68.716017035549598,68.837951990660684,68.964204026692855,69.094394816998758,69.228182952360399,69.365260482806178,69.505349657772413,69.648199900413971,69.793585031416285,69.94130074372066,70.091162320472861,70.243002582910137,70.396670051790252,70.552027304570345,70.70894951029463,70.86732312464386,71.027044728542123,71.18801999491032,71.350162769461036,71.513394252757564,71.677642272051585,71.842840632635756,72.008928539579188,72.175850081747598,72.343553770944254,48.298706969259435],"text":["Konfrontativ:  1.000000<br />Therapieerfolg: 60.32113","Konfrontativ:  2.075949<br />Therapieerfolg: 60.40172","Konfrontativ:  3.151899<br />Therapieerfolg: 60.48232","Konfrontativ:  4.227848<br />Therapieerfolg: 60.56291","Konfrontativ:  5.303797<br />Therapieerfolg: 60.64351","Konfrontativ:  6.379747<br />Therapieerfolg: 60.72410","Konfrontativ:  7.455696<br />Therapieerfolg: 60.80470","Konfrontativ:  8.531646<br />Therapieerfolg: 60.88529","Konfrontativ:  9.607595<br />Therapieerfolg: 60.96589","Konfrontativ: 10.683544<br />Therapieerfolg: 61.04648","Konfrontativ: 11.759494<br />Therapieerfolg: 61.12708","Konfrontativ: 12.835443<br />Therapieerfolg: 61.20767","Konfrontativ: 13.911392<br />Therapieerfolg: 61.28826","Konfrontativ: 14.987342<br />Therapieerfolg: 61.36886","Konfrontativ: 16.063291<br />Therapieerfolg: 61.44945","Konfrontativ: 17.139241<br />Therapieerfolg: 61.53005","Konfrontativ: 18.215190<br />Therapieerfolg: 61.61064","Konfrontativ: 19.291139<br />Therapieerfolg: 61.69124","Konfrontativ: 20.367089<br />Therapieerfolg: 61.77183","Konfrontativ: 21.443038<br />Therapieerfolg: 61.85243","Konfrontativ: 22.518987<br />Therapieerfolg: 61.93302","Konfrontativ: 23.594937<br />Therapieerfolg: 62.01361","Konfrontativ: 24.670886<br />Therapieerfolg: 62.09421","Konfrontativ: 25.746835<br />Therapieerfolg: 62.17480","Konfrontativ: 26.822785<br />Therapieerfolg: 62.25540","Konfrontativ: 27.898734<br />Therapieerfolg: 62.33599","Konfrontativ: 28.974684<br />Therapieerfolg: 62.41659","Konfrontativ: 30.050633<br />Therapieerfolg: 62.49718","Konfrontativ: 31.126582<br />Therapieerfolg: 62.57778","Konfrontativ: 32.202532<br />Therapieerfolg: 62.65837","Konfrontativ: 33.278481<br />Therapieerfolg: 62.73896","Konfrontativ: 34.354430<br />Therapieerfolg: 62.81956","Konfrontativ: 35.430380<br />Therapieerfolg: 62.90015","Konfrontativ: 36.506329<br />Therapieerfolg: 62.98075","Konfrontativ: 37.582278<br />Therapieerfolg: 63.06134","Konfrontativ: 38.658228<br />Therapieerfolg: 63.14194","Konfrontativ: 39.734177<br />Therapieerfolg: 63.22253","Konfrontativ: 40.810127<br />Therapieerfolg: 63.30313","Konfrontativ: 41.886076<br />Therapieerfolg: 63.38372","Konfrontativ: 42.962025<br />Therapieerfolg: 63.46432","Konfrontativ: 44.037975<br />Therapieerfolg: 63.54491","Konfrontativ: 45.113924<br />Therapieerfolg: 63.62550","Konfrontativ: 46.189873<br />Therapieerfolg: 63.70610","Konfrontativ: 47.265823<br />Therapieerfolg: 63.78669","Konfrontativ: 48.341772<br />Therapieerfolg: 63.86729","Konfrontativ: 49.417722<br />Therapieerfolg: 63.94788","Konfrontativ: 50.493671<br />Therapieerfolg: 64.02848","Konfrontativ: 51.569620<br />Therapieerfolg: 64.10907","Konfrontativ: 52.645570<br />Therapieerfolg: 64.18967","Konfrontativ: 53.721519<br />Therapieerfolg: 64.27026","Konfrontativ: 54.797468<br />Therapieerfolg: 64.35085","Konfrontativ: 55.873418<br />Therapieerfolg: 64.43145","Konfrontativ: 56.949367<br />Therapieerfolg: 64.51204","Konfrontativ: 58.025316<br />Therapieerfolg: 64.59264","Konfrontativ: 59.101266<br />Therapieerfolg: 64.67323","Konfrontativ: 60.177215<br />Therapieerfolg: 64.75383","Konfrontativ: 61.253165<br />Therapieerfolg: 64.83442","Konfrontativ: 62.329114<br />Therapieerfolg: 64.91502","Konfrontativ: 63.405063<br />Therapieerfolg: 64.99561","Konfrontativ: 64.481013<br />Therapieerfolg: 65.07620","Konfrontativ: 65.556962<br />Therapieerfolg: 65.15680","Konfrontativ: 66.632911<br />Therapieerfolg: 65.23739","Konfrontativ: 67.708861<br />Therapieerfolg: 65.31799","Konfrontativ: 68.784810<br />Therapieerfolg: 65.39858","Konfrontativ: 69.860759<br />Therapieerfolg: 65.47918","Konfrontativ: 70.936709<br />Therapieerfolg: 65.55977","Konfrontativ: 72.012658<br />Therapieerfolg: 65.64037","Konfrontativ: 73.088608<br />Therapieerfolg: 65.72096","Konfrontativ: 74.164557<br />Therapieerfolg: 65.80156","Konfrontativ: 75.240506<br />Therapieerfolg: 65.88215","Konfrontativ: 76.316456<br />Therapieerfolg: 65.96274","Konfrontativ: 77.392405<br />Therapieerfolg: 66.04334","Konfrontativ: 78.468354<br />Therapieerfolg: 66.12393","Konfrontativ: 79.544304<br />Therapieerfolg: 66.20453","Konfrontativ: 80.620253<br />Therapieerfolg: 66.28512","Konfrontativ: 81.696203<br />Therapieerfolg: 66.36572","Konfrontativ: 82.772152<br />Therapieerfolg: 66.44631","Konfrontativ: 83.848101<br />Therapieerfolg: 66.52691","Konfrontativ: 84.924051<br />Therapieerfolg: 66.60750","Konfrontativ: 86.000000<br />Therapieerfolg: 66.68809","Konfrontativ: 86.000000<br />Therapieerfolg: 66.68809","Konfrontativ: 86.000000<br />Therapieerfolg: 66.68809","Konfrontativ: 84.924051<br />Therapieerfolg: 66.60750","Konfrontativ: 83.848101<br />Therapieerfolg: 66.52691","Konfrontativ: 82.772152<br />Therapieerfolg: 66.44631","Konfrontativ: 81.696203<br />Therapieerfolg: 66.36572","Konfrontativ: 80.620253<br />Therapieerfolg: 66.28512","Konfrontativ: 79.544304<br />Therapieerfolg: 66.20453","Konfrontativ: 78.468354<br />Therapieerfolg: 66.12393","Konfrontativ: 77.392405<br />Therapieerfolg: 66.04334","Konfrontativ: 76.316456<br />Therapieerfolg: 65.96274","Konfrontativ: 75.240506<br />Therapieerfolg: 65.88215","Konfrontativ: 74.164557<br />Therapieerfolg: 65.80156","Konfrontativ: 73.088608<br />Therapieerfolg: 65.72096","Konfrontativ: 72.012658<br />Therapieerfolg: 65.64037","Konfrontativ: 70.936709<br />Therapieerfolg: 65.55977","Konfrontativ: 69.860759<br />Therapieerfolg: 65.47918","Konfrontativ: 68.784810<br />Therapieerfolg: 65.39858","Konfrontativ: 67.708861<br />Therapieerfolg: 65.31799","Konfrontativ: 66.632911<br />Therapieerfolg: 65.23739","Konfrontativ: 65.556962<br />Therapieerfolg: 65.15680","Konfrontativ: 64.481013<br />Therapieerfolg: 65.07620","Konfrontativ: 63.405063<br />Therapieerfolg: 64.99561","Konfrontativ: 62.329114<br />Therapieerfolg: 64.91502","Konfrontativ: 61.253165<br />Therapieerfolg: 64.83442","Konfrontativ: 60.177215<br />Therapieerfolg: 64.75383","Konfrontativ: 59.101266<br />Therapieerfolg: 64.67323","Konfrontativ: 58.025316<br />Therapieerfolg: 64.59264","Konfrontativ: 56.949367<br />Therapieerfolg: 64.51204","Konfrontativ: 55.873418<br />Therapieerfolg: 64.43145","Konfrontativ: 54.797468<br />Therapieerfolg: 64.35085","Konfrontativ: 53.721519<br />Therapieerfolg: 64.27026","Konfrontativ: 52.645570<br />Therapieerfolg: 64.18967","Konfrontativ: 51.569620<br />Therapieerfolg: 64.10907","Konfrontativ: 50.493671<br />Therapieerfolg: 64.02848","Konfrontativ: 49.417722<br />Therapieerfolg: 63.94788","Konfrontativ: 48.341772<br />Therapieerfolg: 63.86729","Konfrontativ: 47.265823<br />Therapieerfolg: 63.78669","Konfrontativ: 46.189873<br />Therapieerfolg: 63.70610","Konfrontativ: 45.113924<br />Therapieerfolg: 63.62550","Konfrontativ: 44.037975<br />Therapieerfolg: 63.54491","Konfrontativ: 42.962025<br />Therapieerfolg: 63.46432","Konfrontativ: 41.886076<br />Therapieerfolg: 63.38372","Konfrontativ: 40.810127<br />Therapieerfolg: 63.30313","Konfrontativ: 39.734177<br />Therapieerfolg: 63.22253","Konfrontativ: 38.658228<br />Therapieerfolg: 63.14194","Konfrontativ: 37.582278<br />Therapieerfolg: 63.06134","Konfrontativ: 36.506329<br />Therapieerfolg: 62.98075","Konfrontativ: 35.430380<br />Therapieerfolg: 62.90015","Konfrontativ: 34.354430<br />Therapieerfolg: 62.81956","Konfrontativ: 33.278481<br />Therapieerfolg: 62.73896","Konfrontativ: 32.202532<br />Therapieerfolg: 62.65837","Konfrontativ: 31.126582<br />Therapieerfolg: 62.57778","Konfrontativ: 30.050633<br />Therapieerfolg: 62.49718","Konfrontativ: 28.974684<br />Therapieerfolg: 62.41659","Konfrontativ: 27.898734<br />Therapieerfolg: 62.33599","Konfrontativ: 26.822785<br />Therapieerfolg: 62.25540","Konfrontativ: 25.746835<br />Therapieerfolg: 62.17480","Konfrontativ: 24.670886<br />Therapieerfolg: 62.09421","Konfrontativ: 23.594937<br />Therapieerfolg: 62.01361","Konfrontativ: 22.518987<br />Therapieerfolg: 61.93302","Konfrontativ: 21.443038<br />Therapieerfolg: 61.85243","Konfrontativ: 20.367089<br />Therapieerfolg: 61.77183","Konfrontativ: 19.291139<br />Therapieerfolg: 61.69124","Konfrontativ: 18.215190<br />Therapieerfolg: 61.61064","Konfrontativ: 17.139241<br />Therapieerfolg: 61.53005","Konfrontativ: 16.063291<br />Therapieerfolg: 61.44945","Konfrontativ: 14.987342<br />Therapieerfolg: 61.36886","Konfrontativ: 13.911392<br />Therapieerfolg: 61.28826","Konfrontativ: 12.835443<br />Therapieerfolg: 61.20767","Konfrontativ: 11.759494<br />Therapieerfolg: 61.12708","Konfrontativ: 10.683544<br />Therapieerfolg: 61.04648","Konfrontativ:  9.607595<br />Therapieerfolg: 60.96589","Konfrontativ:  8.531646<br />Therapieerfolg: 60.88529","Konfrontativ:  7.455696<br />Therapieerfolg: 60.80470","Konfrontativ:  6.379747<br />Therapieerfolg: 60.72410","Konfrontativ:  5.303797<br />Therapieerfolg: 60.64351","Konfrontativ:  4.227848<br />Therapieerfolg: 60.56291","Konfrontativ:  3.151899<br />Therapieerfolg: 60.48232","Konfrontativ:  2.075949<br />Therapieerfolg: 60.40172","Konfrontativ:  1.000000<br />Therapieerfolg: 60.32113","Konfrontativ:  1.000000<br />Therapieerfolg: 60.32113"],"type":"scatter","mode":"lines","line":{"width":3.7795275590551185,"color":"transparent","dash":"solid"},"fill":"toself","fillcolor":"rgba(153,153,153,0.4)","hoveron":"points","hoverinfo":"x+y","showlegend":false,"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":58.779576587795773,"l":69.406392694063939},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":26.567040265670411},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-3.25,90.25],"tickmode":"array","ticktext":["0","25","50","75"],"tickvals":[0,25,49.999999999999993,75],"categoryorder":"array","categoryarray":["0","25","50","75"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":21.253632212536321},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Konfrontativ","font":{"color":"rgba(0,0,0,1)","family":"","size":26.567040265670411}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-5,105],"tickmode":"array","ticktext":["0","25","50","75","100"],"tickvals":[0,24.999999999999996,50,75,100],"categoryorder":"array","categoryarray":["0","25","50","75","100"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":21.253632212536321},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Therapieerfolg","font":{"color":"rgba(0,0,0,1)","family":"","size":26.567040265670411}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":21.253632212536321}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b3455a70d73":{"x":{},"y":{},"type":"scatter"},"9b344a6424f3":{"x":{},"y":{}}},"cur_data":"9b3455a70d73","visdat":{"9b3455a70d73":["function (y) ","x"],"9b344a6424f3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Achtung: Unterschiedliche Steigungsparameter für selben Pädiktor (Erfahrung) nach Hinzunahme weiterer Prädiktoren**
+
+.pull-left[
+.code60[
+
+```r
+model1 = lm(Therapieerfolg ~ Erfahrung, data = df)
+summary(model1)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.720  -6.753  -1.786   6.497  20.148 
+## 
+## Coefficients:
+##               Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)     51.720      1.955  26.453 &lt; 0.0000000000000002 ***
+## Erfahrunghoch   23.132      2.713   8.525      0.0000000000259 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.776 on 50 degrees of freedom
+## Multiple R-squared:  0.5924,	Adjusted R-squared:  0.5843 
+## F-statistic: 72.68 on 1 and 50 DF,  p-value: 0.00000000002591
+```
+]
+]
+
+.pull-right[
+.code60[
+
+```r
+model2 = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model2)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.0175  -5.7825  -0.4526   4.4386  18.8281 
+## 
+## Coefficients:
+##               Estimate Std. Error t value           Pr(&gt;|t|)    
+## (Intercept)   44.67633    4.19638  10.646 0.0000000000000242 ***
+## Erfahrunghoch 23.64821    2.66084   8.887 0.0000000000086793 ***
+## Konfrontativ   0.14565    0.07729   1.884             0.0655 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.536 on 49 degrees of freedom
+## Multiple R-squared:   0.62,	Adjusted R-squared:  0.6045 
+## F-statistic: 39.97 on 2 and 49 DF,  p-value: 0.00000000005077
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Achtung: Unterschiedliche Steigungsparameter für selben Pädiktor (Erfahrung) nach Hinzunahme weiterer Prädiktoren**
+
+* Steigungsparameter unterscheiden sich marginal:
+
+  * Modell ohne Konfrontationsbereitschaft: `\(\beta_{Erfahrung=hoch}=\)` 23.13
+
+  * Modell mit Konfrontationsbereitschaft `\(\beta_{Erfahrung=hoch}=\)` 23.65
+
+**Begründung:**
+
+* Im zweiten Modell ist der Steigungsparameter von Erfahrung für den Einfluss von Konfrontationsbereitschaft **kontrolliert** (Einfluss wurde herausgerechnet)
+
+* Man spricht dann bei der Konfrontationsbereitschaft von einer **Kovariaten** (Kontrollvariable)
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+&lt;small&gt;
+
+1. Verändert sich der Therapieerfolg von unerfahrenen Therapeut:innen mit zunehmender Konfrontationsbereitschaft?
+
+2. Verändert sich der Therapieerfolg von erfahrenen Therapeut:innen mit zunehmender Konfrontationsbereitschaft?
+
+3. Ist der Effekt der Konfrontationsbereitschaft auf den Therapieerfolg in den Gruppen signifikant unterschiedlich?
+
+`\(\rightarrow\)` Die dritte Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/Moderation.png" width="950px" /&gt;
+]
+
+* AV: Therapieerfolg
+* UV: Konfrontationsbereitschaft
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Erfahrung den Effekt der Konfrontationsbereitschaft auf den Therapieerfolg?* (Beispielserklärung: Erfahrenere Therapeut:innen können besser konfrontieren.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.0279  -4.6580  -0.1674   4.3870  19.0061 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 73.1303     5.3550  13.657 &lt; 0.0000000000000002 ***
+## Erfahrunghoch              -15.2556     6.2921  -2.425             0.019140 *  
+## Konfrontativ                -0.4427     0.1069  -4.143             0.000138 ***
+## Erfahrunghoch:Konfrontativ   0.8216     0.1263   6.507          0.000000042 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.023 on 48 degrees of freedom
+## Multiple R-squared:  0.7981,	Adjusted R-squared:  0.7855 
+## F-statistic: 63.24 on 3 and 48 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einer Konfrontationsbereitschaft = 0 einen geschätzten Therapieerfolg von 73.13 Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben bei einer Konfrontationsbereitschaft = 0 einen geschätzten Therapieerfolg von -15.26 Punkten weniger, als die Referenzgruppe
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.0279  -4.6580  -0.1674   4.3870  19.0061 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 73.1303     5.3550  13.657 &lt; 0.0000000000000002 ***
+## Erfahrunghoch              -15.2556     6.2921  -2.425             0.019140 *  
+## Konfrontativ                -0.4427     0.1069  -4.143             0.000138 ***
+## Erfahrunghoch:Konfrontativ   0.8216     0.1263   6.507          0.000000042 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.023 on 48 degrees of freedom
+## Multiple R-squared:  0.7981,	Adjusted R-squared:  0.7855 
+## F-statistic: 63.24 on 3 and 48 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+&lt;small&gt;
+* Mit 1 Einheit zusätzlicher Konfrontationsbereitschaft nimmt der Therapieerfolg von Therapeut:innen mit niedriger Erfahrung um -0.44 Punkte ab `\((t_{48}=-4.14, p&lt;.001)\)`.
+
+* Mit 1 Einheit zusätzlicher Konfrontationsbereitschaft nimmt der Therapieerfolg von Therapeut:innen mit hoher Erfahrung um 0.82 Punkte mehr zu, als bei der Referenzgruppe `\((t_{48}=6.51, p&lt;.001)\)`.
+
+* Insgesamt nimmt der Therapieerfolg bei von Therapeut:innen mit hoher Erfahrung mit 1 Einheit zusätzlicher Konfrontationsbereitschaft also um -0.44 + 0.82 = 0.38 Punkte zu
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.0279  -4.6580  -0.1674   4.3870  19.0061 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 73.1303     5.3550  13.657 &lt; 0.0000000000000002 ***
+## Erfahrunghoch              -15.2556     6.2921  -2.425             0.019140 *  
+## Konfrontativ                -0.4427     0.1069  -4.143             0.000138 ***
+## Erfahrunghoch:Konfrontativ   0.8216     0.1263   6.507          0.000000042 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.023 on 48 degrees of freedom
+## Multiple R-squared:  0.7981,	Adjusted R-squared:  0.7855 
+## F-statistic: 63.24 on 3 and 48 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+]
+
+.pull-right[
+Berechnung der Konfidenzintervalle:
+.code60[
+
+```r
+confint(model)
+```
+
+```
+##                                  2.5 %    97.5 %
+## (Intercept)                 62.3634902 83.897191
+## Erfahrunghoch              -27.9066443 -2.604596
+## Konfrontativ                -0.6575726 -0.227884
+## Erfahrunghoch:Konfrontativ   0.5676853  1.075428
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.0279  -4.6580  -0.1674   4.3870  19.0061 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 73.1303     5.3550  13.657 &lt; 0.0000000000000002 ***
+## Erfahrunghoch              -15.2556     6.2921  -2.425             0.019140 *  
+## Konfrontativ                -0.4427     0.1069  -4.143             0.000138 ***
+## Erfahrunghoch:Konfrontativ   0.8216     0.1263   6.507          0.000000042 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.023 on 48 degrees of freedom
+## Multiple R-squared:  0.7981,	Adjusted R-squared:  0.7855 
+## F-statistic: 63.24 on 3 and 48 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+Moderationseffekt:
+
+* Der Unterschied zwischen den Steigungen der Gruppen mit niedriger und hoher Erfahrung ist signifikant `\((\beta = 0.82, t_{(48)}=6.51, p&lt;.001)\)`
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.0279  -4.6580  -0.1674   4.3870  19.0061 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 73.1303     5.3550  13.657 &lt; 0.0000000000000002 ***
+## Erfahrunghoch              -15.2556     6.2921  -2.425             0.019140 *  
+## Konfrontativ                -0.4427     0.1069  -4.143             0.000138 ***
+## Erfahrunghoch:Konfrontativ   0.8216     0.1263   6.507          0.000000042 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.023 on 48 degrees of freedom
+## Multiple R-squared:  0.7981,	Adjusted R-squared:  0.7855 
+## F-statistic: 63.24 on 3 and 48 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+]
+
+.pull-right[
+.right[
+&lt;img src="Statistik_II_7_WS24_files/figure-html/unnamed-chunk-20-1.png" height="420px" /&gt;
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.0279  -4.6580  -0.1674   4.3870  19.0061 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 73.1303     5.3550  13.657 &lt; 0.0000000000000002 ***
+## Erfahrunghoch              -15.2556     6.2921  -2.425             0.019140 *  
+## Konfrontativ                -0.4427     0.1069  -4.143             0.000138 ***
+## Erfahrunghoch:Konfrontativ   0.8216     0.1263   6.507          0.000000042 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.023 on 48 degrees of freedom
+## Multiple R-squared:  0.7981,	Adjusted R-squared:  0.7855 
+## F-statistic: 63.24 on 3 and 48 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+]
+
+.pull-right[
+**Anmerkung:**
+&lt;small&gt;
+* Output des Regressionsmodells enthält lediglich einen Signifikanztest für die Steigung der Referenzkategorie `\((\beta_{Konfrontativ|Erfahrung=0}=-0.44, t_{48}=-4.14, p&lt;.001)\)`
+
+* Steigung der anderen Gruppe lässt sich "per Hand" ausrechnen `\((\beta_{Konfrontativ|Erfahrung=1} =\)` -0.44 + 0.82 = 0.38
+
+* Signifikanztest prüft jedoch nur, ob `\(\beta_{Konfrontativ|Erfahrung=0} \neq \beta_{Konfrontativ|Erfahrung=1}\)` `\((t_{48}=6.51, p&lt;.001)\)`, nicht ob `\((\beta_{Erfahrung=1} \neq 0\)`
+
+`\(\rightarrow\)` Dafür müsste die Referenzkategorie getauscht werden, sodass hohe Erfahrung = 0 und niedrige Erfahrung = 1.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ relevel(Erfahrung, "hoch") * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ relevel(Erfahrung, "hoch") * Konfrontativ, 
+##     data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.0279  -4.6580  -0.1674   4.3870  19.0061 
+## 
+## Coefficients:
+##                                                Estimate Std. Error t value             Pr(&gt;|t|)
+## (Intercept)                                    57.87472    3.30370  17.518 &lt; 0.0000000000000002
+## relevel(Erfahrung, "hoch")niedrig              15.25562    6.29205   2.425               0.0191
+## Konfrontativ                                    0.37883    0.06727   5.632          0.000000911
+## relevel(Erfahrung, "hoch")niedrig:Konfrontativ -0.82156    0.12626  -6.507          0.000000042
+##                                                   
+## (Intercept)                                    ***
+## relevel(Erfahrung, "hoch")niedrig              *  
+## Konfrontativ                                   ***
+## relevel(Erfahrung, "hoch")niedrig:Konfrontativ ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.023 on 48 degrees of freedom
+## Multiple R-squared:  0.7981,	Adjusted R-squared:  0.7855 
+## F-statistic: 63.24 on 3 and 48 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+]
+
+.pull-right[
+**Anmerkung:**
+&lt;small&gt;
+* Nun ist "hohe Erfahrung" die Referenzkategorie
+* Y-Achsenabschnitt (Intercept) und Steigungen beziehen sich jetzt auf "hohe Erfahrung" = 0
+* Signifikanztest für die Steigung der Referenzkategorie (hohe Erfahrung = 0) nun möglich `\((\beta_{Konfrontativ|Erfahrung=0}=0.38, t_{48}=5.63, p&lt;.001)\)`
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+Die einzelnen Steigungen un deren KIs lassen sich jedoch auch automatisch anzeigen:
+
+
+
+
+```r
+library(emmeans)
+emtrends(model, pairwise ~ Erfahrung, var = "Konfrontativ")
+```
+
+```
+## $emtrends
+##  Erfahrung Konfrontativ.trend     SE df lower.CL upper.CL
+##  niedrig               -0.443 0.1069 48   -0.658   -0.228
+##  hoch                   0.379 0.0673 48    0.244    0.514
+## 
+## Confidence level used: 0.95 
+## 
+## $contrasts
+##  contrast       estimate    SE df t.ratio p.value
+##  niedrig - hoch   -0.822 0.126 48  -6.507  &lt;.0001
+```
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+Signifikanz kann auch mittels Omnibustest ermittelt werden:
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+anova(model)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: Therapieerfolg
+##                        Df Sum Sq Mean Sq  F value                Pr(&gt;F)    
+## Erfahrung               1 6945.8  6945.8 140.8252 0.0000000000000006985 ***
+## Konfrontativ            1  322.9   322.9   6.5463               0.01372 *  
+## Erfahrung:Konfrontativ  1 2088.1  2088.1  42.3364 0.0000000420103645563 ***
+## Residuals              48 2367.5    49.3                                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+]
+
+.pull-right[
+&lt;small&gt;
+
+Für jeden Modellfaktor stellt sich die Frage: "*Erklärt das Modell mit diesem Faktor signifikant mehr Varinaz als ohne den Faktor?*"
+
+* Alle 3 Effekte (2 Haupeffekt + 1 Interaktion signifikant)
+
+* Vorsicht: Bei signifikanter Interaktion muss bei Interpretation der Haupteffekte aufgepasst werden!
+
+`\(\rightarrow\)` Haupteffekt Konfrontationsbereitschaft deutlich größerer p-Wert, da Effekt in beiden Gruppen gegenläufig (disordinale Interaktion)
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+&lt;small&gt;
+
+1. Verändert sich der Therapieerfolg von unerfahrenen Therapeut:innen mit zunehmender Empathiefähigkeit?
+
+2. Verändert sich der Therapieerfolg von erfahrenen Therapeut:innen mit zunehmender Empathiefähigkeit?
+
+3. Ist der Effekt der Empathiefähigkeit auf den Therapieerfolg in den Gruppen signifikant unterschiedlich?
+
+`\(\rightarrow\)` Die dritte Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/Moderation.png" width="950px" /&gt;
+]
+
+* AV: Therapieerfolg
+* UV: Empathiefähigkeit
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Erfahrung den Effekt der Empathiefähigkeit auf den Therapieerfolg?* (Beispielserklärung: Erfahrenere Therapeut:innen können Empathie besser ausdrücken.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Empathie, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -19.875  -5.535  -1.665   6.795  18.546 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 48.8750     2.2992  21.258 &lt; 0.0000000000000002 ***
+## Erfahrunghoch               21.5795     3.6021   5.991          0.000000259 ***
+## Empathiehoch                 7.9028     3.8319   2.062               0.0446 *  
+## Erfahrunghoch:Empathiehoch  -0.4823     5.2592  -0.092               0.9273    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.197 on 48 degrees of freedom
+## Multiple R-squared:  0.6537,	Adjusted R-squared:  0.6321 
+## F-statistic: 30.21 on 3 and 48 DF,  p-value: 0.00000000004051
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einer niedrigen Empathie (Empathie = 0) einen geschätzten Therapieerfolg von 48.88 Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben bei einer niedrigen Empathie (Empathie = 0) einen geschätzten Therapieerfolg von 21.58 Punkten mehr, als die Referenzgruppe
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Empathie, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -19.875  -5.535  -1.665   6.795  18.546 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 48.8750     2.2992  21.258 &lt; 0.0000000000000002 ***
+## Erfahrunghoch               21.5795     3.6021   5.991          0.000000259 ***
+## Empathiehoch                 7.9028     3.8319   2.062               0.0446 *  
+## Erfahrunghoch:Empathiehoch  -0.4823     5.2592  -0.092               0.9273    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.197 on 48 degrees of freedom
+## Multiple R-squared:  0.6537,	Adjusted R-squared:  0.6321 
+## F-statistic: 30.21 on 3 and 48 DF,  p-value: 0.00000000004051
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+&lt;small&gt;
+* Mit 1 Einheit zusätzlicher Empathiefähigkeit (Empathie=hoch) nimmt der Therapieerfolg von Therapeut:innen mit niedriger Erfahrung um 7.9 Punkte zu `\((t_{48}=2.06, p=.045)\)`.
+
+* Mit 1 Einheit zusätzlicher Empathiefähigkeit (Empathie=hoch)  nimmt der Therapieerfolg von Therapeut:innen mit hoher Erfahrung um -0.48 Punkte weniger zu, als bei der Referenzgruppe `\((t_{48}=-0.09, p=.927)\)`.
+
+* Insgesamt nimmt der Therapieerfolg bei von Therapeut:innen mit hoher Erfahrung mit 1 Einheit zusätzlicher Empathiefähigkeit also um 7.9 + (-0.48) = 7.42 Punkte zu.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Empathie, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -19.875  -5.535  -1.665   6.795  18.546 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 48.8750     2.2992  21.258 &lt; 0.0000000000000002 ***
+## Erfahrunghoch               21.5795     3.6021   5.991          0.000000259 ***
+## Empathiehoch                 7.9028     3.8319   2.062               0.0446 *  
+## Erfahrunghoch:Empathiehoch  -0.4823     5.2592  -0.092               0.9273    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.197 on 48 degrees of freedom
+## Multiple R-squared:  0.6537,	Adjusted R-squared:  0.6321 
+## F-statistic: 30.21 on 3 and 48 DF,  p-value: 0.00000000004051
+```
+]
+]
+
+.pull-right[
+Berechnung der Konfidenzintervalle:
+
+.code60[
+
+```r
+confint(model)
+```
+
+```
+##                                  2.5 %   97.5 %
+## (Intercept)                 44.2522120 53.49779
+## Erfahrunghoch               14.3370286 28.82206
+## Empathiehoch                 0.1981311 15.60742
+## Erfahrunghoch:Empathiehoch -11.0566143 10.09197
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Empathie, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -19.875  -5.535  -1.665   6.795  18.546 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                 48.8750     2.2992  21.258 &lt; 0.0000000000000002 ***
+## Erfahrunghoch               21.5795     3.6021   5.991          0.000000259 ***
+## Empathiehoch                 7.9028     3.8319   2.062               0.0446 *  
+## Erfahrunghoch:Empathiehoch  -0.4823     5.2592  -0.092               0.9273    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.197 on 48 degrees of freedom
+## Multiple R-squared:  0.6537,	Adjusted R-squared:  0.6321 
+## F-statistic: 30.21 on 3 and 48 DF,  p-value: 0.00000000004051
+```
+]
+]
+
+.pull-right[
+.right[
+&lt;img src="Statistik_II_7_WS24_files/figure-html/unnamed-chunk-32-1.png" height="420px" /&gt;
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+&lt;small&gt;
+
+1. Verändert sich der Therapieerfolg von unerfahrenen Therapeut:innen mit zunehmendem IQ?
+
+2. Verändert sich der Therapieerfolg von erfahrenen Therapeut:innen mit zunehmendem IQ?
+
+3. Ist der Effekt des IQ auf den Therapieerfolg in den Gruppen signifikant unterschiedlich?
+
+`\(\rightarrow\)` Die dritte Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/Moderation.png" width="950px" /&gt;
+]
+
+* AV: Therapieerfolg
+* UV: IQ
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Erfahrung den Effekt der Empathiefähigkeit auf den Therapieerfolg?* (Beispielserklärung: Erfahrenere Therapeut:innen können Intelligenz besser einsetzen / geringe Intelligenz kompensieren.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+df$IQ_cent = round(df$IQ - mean(df$IQ))
+
+model = lm(Therapieerfolg ~ Erfahrung * IQ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * IQ, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.096  -6.900  -1.909   6.275  20.129 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value  Pr(&gt;|t|)    
+## (Intercept)       64.1096    13.8693   4.622 0.0000288 ***
+## Erfahrunghoch     10.4164    21.5182   0.484     0.631    
+## IQ                -0.1288     0.1428  -0.903     0.371    
+## Erfahrunghoch:IQ   0.1320     0.2125   0.621     0.537    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.894 on 48 degrees of freedom
+## Multiple R-squared:  0.5992,	Adjusted R-squared:  0.5742 
+## F-statistic: 23.92 on 3 and 48 DF,  p-value: 0.000000001298
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+&lt;small&gt;
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einem IQ von 0 einen geschätzten Therapieerfolg von 64.11 Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben  bei einem IQ von 0 einen geschätzten Therapieerfolg von 10.42 Punkten mehr, als die Referenzgruppe
+
+**VORSICHT:** Effekt von Erfahrung in diesem Modell nicht mehr signifikant `\((t_{48}=0.48, p=.631)\)` - Wie kann dies sein?
+
+`\(\rightarrow\)` IQ = 0 ist kein sinnvoller Wert! `\(\rightarrow\)` Lösung: **Zentrierung** (folgt gleich)
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * IQ, data = df)
+anova(model)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: Therapieerfolg
+##              Df Sum Sq Mean Sq F value           Pr(&gt;F)    
+## Erfahrung     1 6945.8  6945.8 70.9557 0.00000000005083 ***
+## IQ            1   42.0    42.0  0.4291           0.5156    
+## Erfahrung:IQ  1   37.8    37.8  0.3859           0.5374    
+## Residuals    48 4698.7    97.9                             
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+]
+
+.pull-right[
+* Im Omnibustest ist der Haupteffekt von Erfahrung signifikant `\((F_{1,48}=70.96, p&lt;.001)\)` 
+
+* Der Faktor Erfahrung scheint also ein signifikantes Maß an Varianz zu erklären.
+
+* Dennoch ist die Steigung nicht signifikant... 
+
+`\(\rightarrow\)` IQ = 0 ist kein sinnvoller Wert! `\(\rightarrow\)` Lösung: **Zentrierung** (nächste Folie)
+]
+
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Zentrierung - Prädiktoren ohne sinnhaften 0-Punkt:**
+
+* Einige Koeffizienten im Regressionsmodell gehen von Prädiktor = 0 aus
+
+* Wenn 0 des Prädiktors kein sinnvoller Wert ist, wendet man eine Zentrierung an:
+
+`$$x_{izentriert} = x_i- \bar{x}$$`
+* Von jedem Wert wird der Mittelwert abgezogen (Grand-Mean Zentrierung)
+
+Ergebnis: zentrierte Variable
+
+  * alle Werte, die genau dem Mittelwert entsprechen sind nun 0 (neuer Nullpunkt)
+  * Werte `\(&gt;\bar{x}\)` sind positiv
+  * Werte `\(&lt;\bar{x}\)` sind negativ
+
+`\(\rightarrow\)` Beispiel: `\(x_{izentriert} = 2\)` bedeutet 2 Einheiten mehr als der Durchschnitt
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+.pull-left[
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+Zentrierung des IQ Prädiktors:
+
+`$$IQ_izentriert = IQ_i- \bar{IQ}$$`
+
+* `\(\bar{IQ}=100\)` ist der neue Nullpunkt der Variable
+
+`\(\rightarrow\)` Die neue 0 ist als "durchschnittlich intelliergent" interpretierbar
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 13px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Therapieerfolg &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Erfahrung &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Konfrontativ &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Empathie &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; IQ &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; IQ_cent &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 89 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 88 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 25 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 36 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 69 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 77 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -23 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 90 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -10 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 77 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 39 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 87 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 41 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 25 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 46 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 114 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -5 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 71 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 109 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 50 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 92 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -8 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 75 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 44 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 96 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 51 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 39 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 87 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 66 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 93 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -7 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 73 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 25 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * IQ_cent, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * IQ_cent, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.096  -6.900  -1.909   6.275  20.129 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)            51.2252     2.0533  24.948 &lt; 0.0000000000000002 ***
+## Erfahrunghoch          23.6145     2.8651   8.242      0.0000000000951 ***
+## IQ_cent                -0.1288     0.1428  -0.903                0.371    
+## Erfahrunghoch:IQ_cent   0.1320     0.2125   0.621                0.537    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.894 on 48 degrees of freedom
+## Multiple R-squared:  0.5992,	Adjusted R-squared:  0.5742 
+## F-statistic: 23.92 on 3 and 48 DF,  p-value: 0.000000001298
+```
+]
+]
+
+.pull-right[
+Modell mit **zentiertem IQ** als Prädiktor:
+
+Interpretation der Koeffizienten:
+
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einem durchschnittlichen IQ (IQ=0) einen geschätzten Therapieerfolg von 51.23 Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben bei einem durchschnittlichen IQ (IQ=0) einen geschätzten Therapieerfolg von 23.61 Punkten mehr, als die Referenzgruppe `\(\rightarrow\)` Nun wieder signifikant `\((t_{48}=8.24, p&lt;.001)\)`
+
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+.pull-left[
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * IQ_cent, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * IQ_cent, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.096  -6.900  -1.909   6.275  20.129 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)            51.2252     2.0533  24.948 &lt; 0.0000000000000002 ***
+## Erfahrunghoch          23.6145     2.8651   8.242      0.0000000000951 ***
+## IQ_cent                -0.1288     0.1428  -0.903                0.371    
+## Erfahrunghoch:IQ_cent   0.1320     0.2125   0.621                0.537    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.894 on 48 degrees of freedom
+## Multiple R-squared:  0.5992,	Adjusted R-squared:  0.5742 
+## F-statistic: 23.92 on 3 and 48 DF,  p-value: 0.000000001298
+```
+]
+]
+
+.pull-right[
+&lt;small&gt;
+Für Visualisierung muss IQ diskret gemacht werden (z.B. unter Durchschnitt, Durchschnitt, über Durchschnitt):
+.right[
+&lt;img src="Statistik_II_7_WS24_files/figure-html/unnamed-chunk-39-1.png" height="380px" /&gt;
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (stetig x stetig) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+&lt;small&gt;
+
+1. Verändert sich der Therapieerfolg von konfrontativeren Therapeut:innen mit zunehmendem IQ?
+
+`\(\rightarrow\)` Diese  Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/Moderation.png" width="950px" /&gt;
+]
+
+* AV: Therapieerfolg
+* UV: IQ
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Intelligenz den Effekt der Konfrontationsfähigkeit auf den Therapieerfolg?* (Beispielserklärung: Intelligentere Therapeut:innen können besser konfrontieren.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (stetig x stetig) :**
+
+.pull-left[
+.code60[
+
+```r
+df$IQ_cent = round(df$IQ - mean(df$IQ))
+
+model = lm(Therapieerfolg ~ Konfrontativ * IQ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Konfrontativ * IQ, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -35.991 -11.893   2.257   9.898  29.475 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept)     111.630738  49.145301   2.271   0.0276 *
+## Konfrontativ     -1.407004   1.000679  -1.406   0.1662  
+## IQ               -0.495811   0.477318  -1.039   0.3041  
+## Konfrontativ:IQ   0.014410   0.009679   1.489   0.1431  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 15.03 on 48 degrees of freedom
+## Multiple R-squared:  0.07545,	Adjusted R-squared:  0.01766 
+## F-statistic: 1.306 on 3 and 48 DF,  p-value: 0.2834
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+&lt;small&gt;
+* Therapeut:innen mit niedriger Konfrontativität (Konfrontativ=0) haben bei einem IQ von 0 einen geschätzten Therapieerfolg von 111.63 Punkten
+
+* Therapeut:innen mit 1 Einheit zusätzlicher Konfrontativität haben  zusätzlichen Therapieerfolg von -1.41 Punkten, im Vergleich zur Referenzgruppe
+
+* Therapeut:innen mit 1 Einheit zusätzlichem IQ haben zusätzlichen Therapieerfolg von -0.5 Punkten, im Vergleich zur Referenzgruppe
+
+* Therapeut:innen mit 1 Einheit zusätzlichem IQ haben bei Zunahme um 1 Punkt Konfrontativität eine zusätzliche Steigung von 0.014 Punkten.
+
+]
+
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+
+
+.pull-left[
+
+**Diskrete Prädiktoren mit `\(&gt; 2\)` Stufen:**
+
+Nehmen wir einmal an, Erfahrung der Therapeut:innen würde 3-stufig definiert:
+
+ * niedrig = 0 (Referenz)
+ * mittel = 1
+ * hoch = 2
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style="font-size: 13px; font-family: Times New Roman; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Therapieerfolg &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Erfahrung &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Konfrontativ &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Empathie &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; IQ &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 52 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; mittel &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 84 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 50 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 94 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 86 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 33 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 69 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 139 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 50 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 126 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 51 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; mittel &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 39 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 100 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 89 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 118 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 62 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 96 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 78 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 100 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 95 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 46 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 94 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 73 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 44 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 135 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 61 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; niedrig &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 39 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 105 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 42 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; mittel &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; hoch &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 107 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit `\(&gt; 2\)` Stufen:**
+
+Dummy-Kodierung: Zerlegung der 3-stufigen in zwei 2-stufige Dummy Variablen:
+
+.pull-left[
+Dummy-Variable 1:
+* niedrig = 0 (Referenz)
+* mittel = 1
+]
+.pull-right[
+Dummy-Variable 2:
+* niedrig = 0 (Referenz)
+* hoch = 1
+]
+
+Modell mit Dummy-Kodierung:
+
+&lt;small&gt;
+
+`$$Erfolg = \beta_1 \cdot Erfahrung_{(mittel)} + \beta_2 \cdot Erfahrung_{(hoch)} + \beta_3 \cdot Konfrontationsb. ...$$`
+`$$...+  \beta_4 \cdot (Erfahrung_{(mittel)} \cdot Konfrontationsb.) +  \beta_5 \cdot (Erfahrung_{(hoch)} \cdot Konfrontationsb.) + \epsilon_i$$`
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit `\(&gt; 2\)` Stufen:**
+
+.pull-left[
+
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -18.7144  -5.1562  -0.1617   5.2746  19.2377 
+## 
+## Coefficients:
+##                              Estimate Std. Error t value          Pr(&gt;|t|)    
+## (Intercept)                   71.4295     7.1862   9.940 0.000000000000493 ***
+## Erfahrungmittel              -20.2295     8.5970  -2.353           0.02295 *  
+## Erfahrunghoch                -18.2173     9.7180  -1.875           0.06721 .  
+## Konfrontativ                  -0.4322     0.1511  -2.860           0.00635 ** 
+## Erfahrungmittel:Konfrontativ   0.4128     0.1791   2.305           0.02572 *  
+## Erfahrunghoch:Konfrontativ     0.8832     0.1962   4.503 0.000045661383946 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.376 on 46 degrees of freedom
+## Multiple R-squared:  0.7173,	Adjusted R-squared:  0.6866 
+## F-statistic: 23.34 on 5 and 46 DF,  p-value: 0.00000000001343
+```
+]
+]
+.pull-right[
+.right[
+&lt;img src="Statistik_II_7_WS24_files/figure-html/unnamed-chunk-45-1.png" height="420px" /&gt;
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit `\(&gt;2\)` Stufen:**
+
+.pull-left[
+.code60[
+
+```r
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+anova(model)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: Therapieerfolg
+##                        Df Sum Sq Mean Sq F value            Pr(&gt;F)    
+## Erfahrung               2 6698.9  3349.4  47.746 0.000000000005978 ***
+## Konfrontativ            1   19.8    19.8   0.282         0.5979430    
+## Erfahrung:Konfrontativ  2 1469.2   734.6  10.472         0.0001787 ***
+## Residuals              46 3227.0    70.2                              
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+]
+.pull-right[
+* Der Omnibustest funktioniert wie bei der ANOVA `\((\geq\)` 2 Stufen) 
+
+* Alle 3 Steigungen werden auf simultan auf Signifikanz getestet
+
+* So wird eine `\(\alpha-\)`Fehlerkumulierung verhindert
+
+* Welche Steigungen sich genau zwischen den Gruppen unterscheiden, lässt sich mit Post-Hoc Trend-Vergleichen prüfen (nächste Folie)
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit `\(&gt; 2\)` Stufen:**
+
+.pull-left[
+
+.code60[
+
+```r
+emtrends(model, pairwise ~ Erfahrung, var = "Konfrontativ")
+```
+
+```
+## $emtrends
+##  Erfahrung Konfrontativ.trend     SE df lower.CL upper.CL
+##  niedrig              -0.4322 0.1511 46   -0.736   -0.128
+##  mittel               -0.0194 0.0961 46   -0.213    0.174
+##  hoch                  0.4510 0.1251 46    0.199    0.703
+## 
+## Confidence level used: 0.95 
+## 
+## $contrasts
+##  contrast         estimate    SE df t.ratio p.value
+##  niedrig - mittel   -0.413 0.179 46  -2.305  0.0651
+##  niedrig - hoch     -0.883 0.196 46  -4.503  0.0001
+##  mittel - hoch      -0.470 0.158 46  -2.983  0.0124
+## 
+## P value adjustment: tukey method for comparing a family of 3 estimates
+```
+]
+]
+
+.pull-right[
+* Bei Therapeut:innen mit hoher Erfahrung steigt Therapieerfolg mit zunehmender Konfrontationsbereitschaft signifikant an.
+
+* Bei Therapeut:innen mit mittlerer Erfahrung nimmt Therapieerfolg mit zunehmender Konfrontationsbereitschaft nicht signifikant ab.
+
+* Bei Therapeut:innen mit niedriger Erfahrung nimmt Therapieerfolg mit zunehmender Konfrontationsbereitschaft signifikant ab.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit `\(&gt; 2\)` Stufen:**
+
+.pull-left[
+
+.code60[
+
+```r
+emtrends(model, pairwise ~ Erfahrung, var = "Konfrontativ")
+```
+
+```
+## $emtrends
+##  Erfahrung Konfrontativ.trend     SE df lower.CL upper.CL
+##  niedrig              -0.4322 0.1511 46   -0.736   -0.128
+##  mittel               -0.0194 0.0961 46   -0.213    0.174
+##  hoch                  0.4510 0.1251 46    0.199    0.703
+## 
+## Confidence level used: 0.95 
+## 
+## $contrasts
+##  contrast         estimate    SE df t.ratio p.value
+##  niedrig - mittel   -0.413 0.179 46  -2.305  0.0651
+##  niedrig - hoch     -0.883 0.196 46  -4.503  0.0001
+##  mittel - hoch      -0.470 0.158 46  -2.983  0.0124
+## 
+## P value adjustment: tukey method for comparing a family of 3 estimates
+```
+]
+]
+
+.pull-right[
+* `\(\beta_{Konfrontativ|Erfahrung=hoch}\)` unterscheidet sich signifikant von `\((\beta_{Konfrontativ|Erfahrung=niedrig}\)` `\((p&lt;.001)\)` und `\(\beta_{Konfrontativ|Erfahrung=mittel}\)` `\((p=.012)\)`
+
+* `\(\beta_{Konfrontativ|Erfahrung=neidrig}\)` und `\(\beta_{Konfrontativ|Erfahrung=mittel}\)` unterscheiden sich nicht signifikant `\((p=.065)\)`
+
+* P-Werte sind Tukey-korrigiert, um Typ-I Fehler zu kontrollieren
+]
+
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+* Die Regression erlaubt **alle Kombinationen** von [stetig x stetig], [diskret x diskret] und [stetig x diskret] Prädiktoren.
+
+* Testung des Interaktionseffekt entspricht Prüfung einer **Moderationshypothese**.
+
+* Diskrete Variablen müssen **dummy-codiert** werden. Zur Inspektion der Steigungen aller Stufen muss **Referenzkategorie** ggf. gewechselt werden.
+
+* Bei stetigen Prädiktoren ohne sinnhaften Nullpunkt sollte eine **Zentrierung** durchgeführt werden.
+
+* Bei `\(&gt;2\)`-stufigen diskreten Prädiktoren sollten **Omnibustests** verwendet werden, um Typ-I Fehler zu vermeiden.
+
+* Paarweise Vergleiche von Steigungen innerhalb der Stufen eines Faktors lassen sich mit **Post-Hoc Trend Vergleichen** rechnen.
+]
+]
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

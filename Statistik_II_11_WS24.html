@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Einheit 11</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Dr. Stephan Goerigk" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/hygge.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#EE0071"],"pen_size":4,"eraser_size":40,"palette":[]}) })</script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link href="libs/htmltools-fill/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/plotly-binding/plotly.js"></script>
+    <script src="libs/typedarray/typedarray.min.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <link href="libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+name: Title slide
+class: middle, left
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+# Statistik II
+***
+### Einheit 11: Verfahren für Nominaldaten (2)
+##### 15.01.2025 | Prof. Dr. Stephan Goerigk
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Kurzvorstellung:**
+
+* In allen bisher besprochenen Regressionsmodellen war die abhängige Variable (AV) eine stetige Variable.
+
+* Ziel: Regressionsmodelle mit diskreter AV
+
+* Vorteile gegenüber `\(\chi^2\)`-Tests 
+
+  * Vorhersage mittels Prädiktoren
+  
+  * Erweiterbarkeit auf **multiple logistische Regression**
+
+  * Testen von Interaktionen zwischen 2 Prädiktoren 
+
+* Logistische Regression bringt Logik und Vorteile anderer Regressionen mit sich
+  
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+
+
+.pull-left[
+#### Logistische Regression
+
+**Beispiel:**
+&lt;small&gt;
+
+* `\(AV:\)` Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * `\(Y_i\)` = 0 falls nein
+  
+  * `\(Y_i\)` = 1 falls ja
+
+* `\(UV_1:\)` (stetige) gemessene Empathie der Therapeut:in
+
+* `\(UV_2:\)` (diskreter) erhobener Bindungsstil der Patient:in
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+&lt;table class=" lightable-classic" style="font-size: 11px; font-family: Times New Roman; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Behandlungserfolg &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Empathie &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Bindungsstil &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+&lt;small&gt;
+
+Wir beginnen mit einem bivariaten Modell `\((AV\)` und `\(UV_1):\)`
+
+* `\(AV:\)` Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * `\(Y_i\)` = 0 falls nein
+  
+  * `\(Y_i\)` = 1 falls ja
+
+* `\(UV_1:\)` (stetige) gemessene Empathie der Therapeut:in
+
+***
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+
+**Lösungsvorschlag:** Einfaches lineares Regressionsmodell (bereits bekannt)
+
+`$$Y_i = a + \beta \cdot x_i + \varepsilon_i$$`
+
+**Problem:**
+
+* Die meisten der mit der Gerade vorhergesagten Werte können gar nicht tatsächlich beobachtet werden
+
+* Lediglich Werte 0 und 1 können für die dummy-codierte Variable auftreten
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+.pull-left[
+
+**Lösungsvorschlag:** Einfaches lineares Regressionsmodell
+
+<div class="plotly html-widget html-fill-item" id="htmlwidget-23445a382b4e9f6267c9" style="width:504px;height:380px;"></div>
+<script type="application/json" data-for="htmlwidget-23445a382b4e9f6267c9">{"x":{"data":[{"x":[3.4500000000000002,15.550000000000001],"y":[1,1],"text":"yintercept: 1","type":"scatter","mode":"lines","line":{"width":0.37795275590551186,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3.4500000000000002,15.550000000000001],"y":[0,0],"text":"yintercept: 0","type":"scatter","mode":"lines","line":{"width":0.37795275590551186,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[8,9,4,15,10,5,10,7,10,15,7,6,4,11,11,7,6],"y":[1,1,0,1,1,0,0,0,1,1,0,0,0,0,1,0,1],"text":["Empathie:  8<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  9<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  4<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 15<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  5<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie: 15<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  6<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  4<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 11<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 11<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  6<br />as.numeric(Behandlungserfolg) - 1: 1"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[4,4.1392405063291138,4.2784810126582276,4.4177215189873422,4.556962025316456,4.6962025316455698,4.8354430379746836,4.9746835443037973,5.1139240506329111,5.2531645569620249,5.3924050632911396,5.5316455696202533,5.6708860759493671,5.8101265822784809,5.9493670886075947,6.0886075949367093,6.2278481012658222,6.3670886075949369,6.5063291139240507,6.6455696202531644,6.7848101265822782,6.924050632911392,7.0632911392405067,7.2025316455696196,7.3417721518987342,7.481012658227848,7.6202531645569618,7.7594936708860756,7.8987341772151893,8.037974683544304,8.1772151898734187,8.3164556962025316,8.4556962025316444,8.5949367088607591,8.7341772151898738,8.8734177215189867,9.0126582278481013,9.151898734177216,9.2911392405063289,9.4303797468354418,9.5696202531645564,9.7088607594936711,9.848101265822784,9.9873417721518987,10.126582278481013,10.265822784810126,10.405063291139239,10.544303797468354,10.683544303797468,10.822784810126581,10.962025316455696,11.101265822784811,11.240506329113924,11.379746835443036,11.518987341772151,11.658227848101266,11.797468354430379,11.936708860759493,12.075949367088608,12.215189873417721,12.354430379746836,12.493670886075948,12.632911392405063,12.772151898734176,12.911392405063291,13.050632911392405,13.189873417721518,13.329113924050633,13.468354430379746,13.60759493670886,13.746835443037973,13.886075949367088,14.025316455696203,14.164556962025316,14.30379746835443,14.443037974683543,14.582278481012658,14.721518987341772,14.860759493670885,15],"y":[0.065420560747663947,0.077875986547464512,0.090331412347265064,0.10278683814706571,0.11524226394686626,0.12769768974666681,0.14015311554646739,0.15260854134626795,0.1650639671460685,0.17751939294586908,0.18997481874566971,0.20243024454547026,0.21488567034527081,0.22734109614507139,0.23979652194487194,0.25225194774467258,0.26470737354447305,0.27716279934427368,0.28961822514407426,0.30207365094387484,0.31452907674367536,0.32698450254347594,0.33943992834327658,0.35189535414307704,0.36435077994287768,0.37680620574267826,0.38926163154247884,0.40171705734227936,0.41417248314207994,0.42662790894188057,0.43908333474168121,0.45153876054148168,0.4639941863412822,0.47644961214108283,0.48890503794088347,0.50136046374068388,0.51381588954048463,0.52627131534028526,0.53872674114008567,0.5511821669398862,0.56363759273968683,0.57609301853948747,0.58854844433928788,0.60100387013908851,0.61345929593888926,0.62591472173868967,0.6383701475384902,0.65082557333829083,0.66328099913809146,0.67573642493789188,0.68819185073769251,0.70064727653749326,0.71310270233729367,0.72555812813709419,0.73801355393689483,0.75046897973669546,0.76292440553649588,0.77537983133629651,0.78783525713609726,0.80029068293589767,0.8127461087356983,0.82520153453549883,0.83765696033529946,0.85011238613509987,0.86256781193490051,0.87502323773470125,0.88747866353450167,0.8999340893343023,0.91238951513410282,0.92484494093390346,0.93730036673370387,0.94975579253350451,0.96221121833330525,0.97466664413310566,0.9871220699329063,0.99957749573270682,1.0120329215325075,1.0244883473323081,1.0369437731321085,1.0493991989319091],"text":["Empathie:  4.000000<br />as.numeric(Behandlungserfolg) - 1: 0.06542056","Empathie:  4.139241<br />as.numeric(Behandlungserfolg) - 1: 0.07787599","Empathie:  4.278481<br />as.numeric(Behandlungserfolg) - 1: 0.09033141","Empathie:  4.417722<br />as.numeric(Behandlungserfolg) - 1: 0.10278684","Empathie:  4.556962<br />as.numeric(Behandlungserfolg) - 1: 0.11524226","Empathie:  4.696203<br />as.numeric(Behandlungserfolg) - 1: 0.12769769","Empathie:  4.835443<br />as.numeric(Behandlungserfolg) - 1: 0.14015312","Empathie:  4.974684<br />as.numeric(Behandlungserfolg) - 1: 0.15260854","Empathie:  5.113924<br />as.numeric(Behandlungserfolg) - 1: 0.16506397","Empathie:  5.253165<br />as.numeric(Behandlungserfolg) - 1: 0.17751939","Empathie:  5.392405<br />as.numeric(Behandlungserfolg) - 1: 0.18997482","Empathie:  5.531646<br />as.numeric(Behandlungserfolg) - 1: 0.20243024","Empathie:  5.670886<br />as.numeric(Behandlungserfolg) - 1: 0.21488567","Empathie:  5.810127<br />as.numeric(Behandlungserfolg) - 1: 0.22734110","Empathie:  5.949367<br />as.numeric(Behandlungserfolg) - 1: 0.23979652","Empathie:  6.088608<br />as.numeric(Behandlungserfolg) - 1: 0.25225195","Empathie:  6.227848<br />as.numeric(Behandlungserfolg) - 1: 0.26470737","Empathie:  6.367089<br />as.numeric(Behandlungserfolg) - 1: 0.27716280","Empathie:  6.506329<br />as.numeric(Behandlungserfolg) - 1: 0.28961823","Empathie:  6.645570<br />as.numeric(Behandlungserfolg) - 1: 0.30207365","Empathie:  6.784810<br />as.numeric(Behandlungserfolg) - 1: 0.31452908","Empathie:  6.924051<br />as.numeric(Behandlungserfolg) - 1: 0.32698450","Empathie:  7.063291<br />as.numeric(Behandlungserfolg) - 1: 0.33943993","Empathie:  7.202532<br />as.numeric(Behandlungserfolg) - 1: 0.35189535","Empathie:  7.341772<br />as.numeric(Behandlungserfolg) - 1: 0.36435078","Empathie:  7.481013<br />as.numeric(Behandlungserfolg) - 1: 0.37680621","Empathie:  7.620253<br />as.numeric(Behandlungserfolg) - 1: 0.38926163","Empathie:  7.759494<br />as.numeric(Behandlungserfolg) - 1: 0.40171706","Empathie:  7.898734<br />as.numeric(Behandlungserfolg) - 1: 0.41417248","Empathie:  8.037975<br />as.numeric(Behandlungserfolg) - 1: 0.42662791","Empathie:  8.177215<br />as.numeric(Behandlungserfolg) - 1: 0.43908333","Empathie:  8.316456<br />as.numeric(Behandlungserfolg) - 1: 0.45153876","Empathie:  8.455696<br />as.numeric(Behandlungserfolg) - 1: 0.46399419","Empathie:  8.594937<br />as.numeric(Behandlungserfolg) - 1: 0.47644961","Empathie:  8.734177<br />as.numeric(Behandlungserfolg) - 1: 0.48890504","Empathie:  8.873418<br />as.numeric(Behandlungserfolg) - 1: 0.50136046","Empathie:  9.012658<br />as.numeric(Behandlungserfolg) - 1: 0.51381589","Empathie:  9.151899<br />as.numeric(Behandlungserfolg) - 1: 0.52627132","Empathie:  9.291139<br />as.numeric(Behandlungserfolg) - 1: 0.53872674","Empathie:  9.430380<br />as.numeric(Behandlungserfolg) - 1: 0.55118217","Empathie:  9.569620<br />as.numeric(Behandlungserfolg) - 1: 0.56363759","Empathie:  9.708861<br />as.numeric(Behandlungserfolg) - 1: 0.57609302","Empathie:  9.848101<br />as.numeric(Behandlungserfolg) - 1: 0.58854844","Empathie:  9.987342<br />as.numeric(Behandlungserfolg) - 1: 0.60100387","Empathie: 10.126582<br />as.numeric(Behandlungserfolg) - 1: 0.61345930","Empathie: 10.265823<br />as.numeric(Behandlungserfolg) - 1: 0.62591472","Empathie: 10.405063<br />as.numeric(Behandlungserfolg) - 1: 0.63837015","Empathie: 10.544304<br />as.numeric(Behandlungserfolg) - 1: 0.65082557","Empathie: 10.683544<br />as.numeric(Behandlungserfolg) - 1: 0.66328100","Empathie: 10.822785<br />as.numeric(Behandlungserfolg) - 1: 0.67573642","Empathie: 10.962025<br />as.numeric(Behandlungserfolg) - 1: 0.68819185","Empathie: 11.101266<br />as.numeric(Behandlungserfolg) - 1: 0.70064728","Empathie: 11.240506<br />as.numeric(Behandlungserfolg) - 1: 0.71310270","Empathie: 11.379747<br />as.numeric(Behandlungserfolg) - 1: 0.72555813","Empathie: 11.518987<br />as.numeric(Behandlungserfolg) - 1: 0.73801355","Empathie: 11.658228<br />as.numeric(Behandlungserfolg) - 1: 0.75046898","Empathie: 11.797468<br />as.numeric(Behandlungserfolg) - 1: 0.76292441","Empathie: 11.936709<br />as.numeric(Behandlungserfolg) - 1: 0.77537983","Empathie: 12.075949<br />as.numeric(Behandlungserfolg) - 1: 0.78783526","Empathie: 12.215190<br />as.numeric(Behandlungserfolg) - 1: 0.80029068","Empathie: 12.354430<br />as.numeric(Behandlungserfolg) - 1: 0.81274611","Empathie: 12.493671<br />as.numeric(Behandlungserfolg) - 1: 0.82520153","Empathie: 12.632911<br />as.numeric(Behandlungserfolg) - 1: 0.83765696","Empathie: 12.772152<br />as.numeric(Behandlungserfolg) - 1: 0.85011239","Empathie: 12.911392<br />as.numeric(Behandlungserfolg) - 1: 0.86256781","Empathie: 13.050633<br />as.numeric(Behandlungserfolg) - 1: 0.87502324","Empathie: 13.189873<br />as.numeric(Behandlungserfolg) - 1: 0.88747866","Empathie: 13.329114<br />as.numeric(Behandlungserfolg) - 1: 0.89993409","Empathie: 13.468354<br />as.numeric(Behandlungserfolg) - 1: 0.91238952","Empathie: 13.607595<br />as.numeric(Behandlungserfolg) - 1: 0.92484494","Empathie: 13.746835<br />as.numeric(Behandlungserfolg) - 1: 0.93730037","Empathie: 13.886076<br />as.numeric(Behandlungserfolg) - 1: 0.94975579","Empathie: 14.025316<br />as.numeric(Behandlungserfolg) - 1: 0.96221122","Empathie: 14.164557<br />as.numeric(Behandlungserfolg) - 1: 0.97466664","Empathie: 14.303797<br />as.numeric(Behandlungserfolg) - 1: 0.98712207","Empathie: 14.443038<br />as.numeric(Behandlungserfolg) - 1: 0.99957750","Empathie: 14.582278<br />as.numeric(Behandlungserfolg) - 1: 1.01203292","Empathie: 14.721519<br />as.numeric(Behandlungserfolg) - 1: 1.02448835","Empathie: 14.860759<br />as.numeric(Behandlungserfolg) - 1: 1.03694377","Empathie: 15.000000<br />as.numeric(Behandlungserfolg) - 1: 1.04939920"],"type":"scatter","mode":"lines","name":"fitted values","line":{"width":3.7795275590551185,"color":"rgba(238,0,113,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":37.260273972602747,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[3.4500000000000002,15.550000000000001],"tickmode":"array","ticktext":["6","9","12","15"],"tickvals":[6,9,12,15],"categoryorder":"array","categoryarray":["6","9","12","15"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Empathie","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.052469959946595458,1.1018691588785046],"tickmode":"array","ticktext":["0.0","0.2","0.4","0.6","0.8","1.0"],"tickvals":[0,0.20000000000000004,0.40000000000000002,0.59999999999999998,0.80000000000000004,1],"categoryorder":"array","categoryarray":["0.0","0.2","0.4","0.6","0.8","1.0"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Behandlungserfolg","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b3420660c7b":{"yintercept":{},"type":"scatter"},"9b34bbd6fdb":{"yintercept":{}},"9b3441fa98e2":{"x":{},"y":{}},"9b342b4b3f45":{"x":{},"y":{}}},"cur_data":"9b3420660c7b","visdat":{"9b3420660c7b":["function (y) ","x"],"9b34bbd6fdb":["function (y) ","x"],"9b3441fa98e2":["function (y) ","x"],"9b342b4b3f45":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+
+]
+
+.pull-right[
+
+`$$Y_i = a + \beta \cdot x_i + \varepsilon_i$$`
+* Modellierung mittels Y-Achsenabschnitt `\((a)\)` und Steigung `\((\beta)\)`
+
+* Gerade zeigt positiven Zusammenhang zwischen Empathie und Therapieerfolg
+
+  * je mehr Empathie desto besser die Therapie
+  
+  * Dies erscheint zunächst plausibel
+
+* ABER: Modell ignoriert Begrenzung des numerischen Bereichs der `\(AV\)` auf Werte 0 und 1 (Misserfolg vs. Erfolg)
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Modell für bedingte Wahrscheinlichkeiten:**
+
+* In statistischen Modellen für binäre AVs wird i.d.R. die (bedingte) **Wahrscheinlichkeit** `\((P)\)` modelliert, dass `\(Y_i\)` die Werte 0 bzw. 1 annimmt.
+
+  * Wahrscheinlichkeit `\((P)\)` anstelle der Werte von Variable `\(Y_i\)` selbst 
+  
+  * Wahrscheinlichkeit ist "bedingt" bei gegebenen Werten von Prädiktoren `\(x_{i1},...x_{ik}\)`
+
+* Wenn 0 und 1 komplementäre Ereignisse sind, reicht es aus nur `\(P(Y_i = 1|x_{i1},...x_{ik})\)` zu modellieren, denn
+
+`$$P(Y_i = 1|x_{i1},...x_{ik}) = 1-P(Y_i = 0|x_{i1},...x_{ik})$$`
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+.pull-left[
+#### Logistische Regression
+
+**Lineares Wahrscheinlichkeitsmodell**
+&lt;small&gt;
+
+In unserem Beispiel:
+
+* `\(AV:\)` Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * `\(Y_i\)` = 0 falls nein
+  
+  * `\(Y_i\)` = 1 falls ja
+
+* `\(UV_1:\)` (stetige) gemessene Empathie der Therapeut:in
+]
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-0d1d5b39c56b75937aba" style="width:300px;height:300px;"></div>
+<script type="application/json" data-for="htmlwidget-0d1d5b39c56b75937aba">{"x":{"data":[{"x":[3.4500000000000002,15.550000000000001],"y":[1,1],"text":"yintercept: 1","type":"scatter","mode":"lines","line":{"width":0.37795275590551186,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3.4500000000000002,15.550000000000001],"y":[0,0],"text":"yintercept: 0","type":"scatter","mode":"lines","line":{"width":0.37795275590551186,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[8,9,4,15,10,5,10,7,10,15,7,6,4,11,11,7,6],"y":[1,1,0,1,1,0,0,0,1,1,0,0,0,0,1,0,1],"text":["Empathie:  8<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  9<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  4<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 15<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  5<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie: 15<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  6<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  4<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 11<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 11<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  6<br />as.numeric(Behandlungserfolg) - 1: 1"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[4,4.1392405063291138,4.2784810126582276,4.4177215189873422,4.556962025316456,4.6962025316455698,4.8354430379746836,4.9746835443037973,5.1139240506329111,5.2531645569620249,5.3924050632911396,5.5316455696202533,5.6708860759493671,5.8101265822784809,5.9493670886075947,6.0886075949367093,6.2278481012658222,6.3670886075949369,6.5063291139240507,6.6455696202531644,6.7848101265822782,6.924050632911392,7.0632911392405067,7.2025316455696196,7.3417721518987342,7.481012658227848,7.6202531645569618,7.7594936708860756,7.8987341772151893,8.037974683544304,8.1772151898734187,8.3164556962025316,8.4556962025316444,8.5949367088607591,8.7341772151898738,8.8734177215189867,9.0126582278481013,9.151898734177216,9.2911392405063289,9.4303797468354418,9.5696202531645564,9.7088607594936711,9.848101265822784,9.9873417721518987,10.126582278481013,10.265822784810126,10.405063291139239,10.544303797468354,10.683544303797468,10.822784810126581,10.962025316455696,11.101265822784811,11.240506329113924,11.379746835443036,11.518987341772151,11.658227848101266,11.797468354430379,11.936708860759493,12.075949367088608,12.215189873417721,12.354430379746836,12.493670886075948,12.632911392405063,12.772151898734176,12.911392405063291,13.050632911392405,13.189873417721518,13.329113924050633,13.468354430379746,13.60759493670886,13.746835443037973,13.886075949367088,14.025316455696203,14.164556962025316,14.30379746835443,14.443037974683543,14.582278481012658,14.721518987341772,14.860759493670885,15],"y":[0.065420560747663947,0.077875986547464512,0.090331412347265064,0.10278683814706571,0.11524226394686626,0.12769768974666681,0.14015311554646739,0.15260854134626795,0.1650639671460685,0.17751939294586908,0.18997481874566971,0.20243024454547026,0.21488567034527081,0.22734109614507139,0.23979652194487194,0.25225194774467258,0.26470737354447305,0.27716279934427368,0.28961822514407426,0.30207365094387484,0.31452907674367536,0.32698450254347594,0.33943992834327658,0.35189535414307704,0.36435077994287768,0.37680620574267826,0.38926163154247884,0.40171705734227936,0.41417248314207994,0.42662790894188057,0.43908333474168121,0.45153876054148168,0.4639941863412822,0.47644961214108283,0.48890503794088347,0.50136046374068388,0.51381588954048463,0.52627131534028526,0.53872674114008567,0.5511821669398862,0.56363759273968683,0.57609301853948747,0.58854844433928788,0.60100387013908851,0.61345929593888926,0.62591472173868967,0.6383701475384902,0.65082557333829083,0.66328099913809146,0.67573642493789188,0.68819185073769251,0.70064727653749326,0.71310270233729367,0.72555812813709419,0.73801355393689483,0.75046897973669546,0.76292440553649588,0.77537983133629651,0.78783525713609726,0.80029068293589767,0.8127461087356983,0.82520153453549883,0.83765696033529946,0.85011238613509987,0.86256781193490051,0.87502323773470125,0.88747866353450167,0.8999340893343023,0.91238951513410282,0.92484494093390346,0.93730036673370387,0.94975579253350451,0.96221121833330525,0.97466664413310566,0.9871220699329063,0.99957749573270682,1.0120329215325075,1.0244883473323081,1.0369437731321085,1.0493991989319091],"text":["Empathie:  4.000000<br />as.numeric(Behandlungserfolg) - 1: 0.06542056","Empathie:  4.139241<br />as.numeric(Behandlungserfolg) - 1: 0.07787599","Empathie:  4.278481<br />as.numeric(Behandlungserfolg) - 1: 0.09033141","Empathie:  4.417722<br />as.numeric(Behandlungserfolg) - 1: 0.10278684","Empathie:  4.556962<br />as.numeric(Behandlungserfolg) - 1: 0.11524226","Empathie:  4.696203<br />as.numeric(Behandlungserfolg) - 1: 0.12769769","Empathie:  4.835443<br />as.numeric(Behandlungserfolg) - 1: 0.14015312","Empathie:  4.974684<br />as.numeric(Behandlungserfolg) - 1: 0.15260854","Empathie:  5.113924<br />as.numeric(Behandlungserfolg) - 1: 0.16506397","Empathie:  5.253165<br />as.numeric(Behandlungserfolg) - 1: 0.17751939","Empathie:  5.392405<br />as.numeric(Behandlungserfolg) - 1: 0.18997482","Empathie:  5.531646<br />as.numeric(Behandlungserfolg) - 1: 0.20243024","Empathie:  5.670886<br />as.numeric(Behandlungserfolg) - 1: 0.21488567","Empathie:  5.810127<br />as.numeric(Behandlungserfolg) - 1: 0.22734110","Empathie:  5.949367<br />as.numeric(Behandlungserfolg) - 1: 0.23979652","Empathie:  6.088608<br />as.numeric(Behandlungserfolg) - 1: 0.25225195","Empathie:  6.227848<br />as.numeric(Behandlungserfolg) - 1: 0.26470737","Empathie:  6.367089<br />as.numeric(Behandlungserfolg) - 1: 0.27716280","Empathie:  6.506329<br />as.numeric(Behandlungserfolg) - 1: 0.28961823","Empathie:  6.645570<br />as.numeric(Behandlungserfolg) - 1: 0.30207365","Empathie:  6.784810<br />as.numeric(Behandlungserfolg) - 1: 0.31452908","Empathie:  6.924051<br />as.numeric(Behandlungserfolg) - 1: 0.32698450","Empathie:  7.063291<br />as.numeric(Behandlungserfolg) - 1: 0.33943993","Empathie:  7.202532<br />as.numeric(Behandlungserfolg) - 1: 0.35189535","Empathie:  7.341772<br />as.numeric(Behandlungserfolg) - 1: 0.36435078","Empathie:  7.481013<br />as.numeric(Behandlungserfolg) - 1: 0.37680621","Empathie:  7.620253<br />as.numeric(Behandlungserfolg) - 1: 0.38926163","Empathie:  7.759494<br />as.numeric(Behandlungserfolg) - 1: 0.40171706","Empathie:  7.898734<br />as.numeric(Behandlungserfolg) - 1: 0.41417248","Empathie:  8.037975<br />as.numeric(Behandlungserfolg) - 1: 0.42662791","Empathie:  8.177215<br />as.numeric(Behandlungserfolg) - 1: 0.43908333","Empathie:  8.316456<br />as.numeric(Behandlungserfolg) - 1: 0.45153876","Empathie:  8.455696<br />as.numeric(Behandlungserfolg) - 1: 0.46399419","Empathie:  8.594937<br />as.numeric(Behandlungserfolg) - 1: 0.47644961","Empathie:  8.734177<br />as.numeric(Behandlungserfolg) - 1: 0.48890504","Empathie:  8.873418<br />as.numeric(Behandlungserfolg) - 1: 0.50136046","Empathie:  9.012658<br />as.numeric(Behandlungserfolg) - 1: 0.51381589","Empathie:  9.151899<br />as.numeric(Behandlungserfolg) - 1: 0.52627132","Empathie:  9.291139<br />as.numeric(Behandlungserfolg) - 1: 0.53872674","Empathie:  9.430380<br />as.numeric(Behandlungserfolg) - 1: 0.55118217","Empathie:  9.569620<br />as.numeric(Behandlungserfolg) - 1: 0.56363759","Empathie:  9.708861<br />as.numeric(Behandlungserfolg) - 1: 0.57609302","Empathie:  9.848101<br />as.numeric(Behandlungserfolg) - 1: 0.58854844","Empathie:  9.987342<br />as.numeric(Behandlungserfolg) - 1: 0.60100387","Empathie: 10.126582<br />as.numeric(Behandlungserfolg) - 1: 0.61345930","Empathie: 10.265823<br />as.numeric(Behandlungserfolg) - 1: 0.62591472","Empathie: 10.405063<br />as.numeric(Behandlungserfolg) - 1: 0.63837015","Empathie: 10.544304<br />as.numeric(Behandlungserfolg) - 1: 0.65082557","Empathie: 10.683544<br />as.numeric(Behandlungserfolg) - 1: 0.66328100","Empathie: 10.822785<br />as.numeric(Behandlungserfolg) - 1: 0.67573642","Empathie: 10.962025<br />as.numeric(Behandlungserfolg) - 1: 0.68819185","Empathie: 11.101266<br />as.numeric(Behandlungserfolg) - 1: 0.70064728","Empathie: 11.240506<br />as.numeric(Behandlungserfolg) - 1: 0.71310270","Empathie: 11.379747<br />as.numeric(Behandlungserfolg) - 1: 0.72555813","Empathie: 11.518987<br />as.numeric(Behandlungserfolg) - 1: 0.73801355","Empathie: 11.658228<br />as.numeric(Behandlungserfolg) - 1: 0.75046898","Empathie: 11.797468<br />as.numeric(Behandlungserfolg) - 1: 0.76292441","Empathie: 11.936709<br />as.numeric(Behandlungserfolg) - 1: 0.77537983","Empathie: 12.075949<br />as.numeric(Behandlungserfolg) - 1: 0.78783526","Empathie: 12.215190<br />as.numeric(Behandlungserfolg) - 1: 0.80029068","Empathie: 12.354430<br />as.numeric(Behandlungserfolg) - 1: 0.81274611","Empathie: 12.493671<br />as.numeric(Behandlungserfolg) - 1: 0.82520153","Empathie: 12.632911<br />as.numeric(Behandlungserfolg) - 1: 0.83765696","Empathie: 12.772152<br />as.numeric(Behandlungserfolg) - 1: 0.85011239","Empathie: 12.911392<br />as.numeric(Behandlungserfolg) - 1: 0.86256781","Empathie: 13.050633<br />as.numeric(Behandlungserfolg) - 1: 0.87502324","Empathie: 13.189873<br />as.numeric(Behandlungserfolg) - 1: 0.88747866","Empathie: 13.329114<br />as.numeric(Behandlungserfolg) - 1: 0.89993409","Empathie: 13.468354<br />as.numeric(Behandlungserfolg) - 1: 0.91238952","Empathie: 13.607595<br />as.numeric(Behandlungserfolg) - 1: 0.92484494","Empathie: 13.746835<br />as.numeric(Behandlungserfolg) - 1: 0.93730037","Empathie: 13.886076<br />as.numeric(Behandlungserfolg) - 1: 0.94975579","Empathie: 14.025316<br />as.numeric(Behandlungserfolg) - 1: 0.96221122","Empathie: 14.164557<br />as.numeric(Behandlungserfolg) - 1: 0.97466664","Empathie: 14.303797<br />as.numeric(Behandlungserfolg) - 1: 0.98712207","Empathie: 14.443038<br />as.numeric(Behandlungserfolg) - 1: 0.99957750","Empathie: 14.582278<br />as.numeric(Behandlungserfolg) - 1: 1.01203292","Empathie: 14.721519<br />as.numeric(Behandlungserfolg) - 1: 1.02448835","Empathie: 14.860759<br />as.numeric(Behandlungserfolg) - 1: 1.03694377","Empathie: 15.000000<br />as.numeric(Behandlungserfolg) - 1: 1.04939920"],"type":"scatter","mode":"lines","name":"fitted values","line":{"width":3.7795275590551185,"color":"rgba(238,0,113,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":37.260273972602747,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[3.4500000000000002,15.550000000000001],"tickmode":"array","ticktext":["6","9","12","15"],"tickvals":[6,9,12,15],"categoryorder":"array","categoryarray":["6","9","12","15"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Empathie","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.052469959946595458,1.1018691588785046],"tickmode":"array","ticktext":["0.0","0.2","0.4","0.6","0.8","1.0"],"tickvals":[0,0.20000000000000004,0.40000000000000002,0.59999999999999998,0.80000000000000004,1],"categoryorder":"array","categoryarray":["0.0","0.2","0.4","0.6","0.8","1.0"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"P(Yi = 1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b3420f81070":{"yintercept":{},"type":"scatter"},"9b347dff39f8":{"yintercept":{}},"9b347f370967":{"x":{},"y":{}},"9b34764a8a70":{"x":{},"y":{}}},"cur_data":"9b3420f81070","visdat":{"9b3420f81070":["function (y) ","x"],"9b347dff39f8":["function (y) ","x"],"9b347f370967":["function (y) ","x"],"9b34764a8a70":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+
+Wahrscheinlichkeit für Behandlungserfolg `\(P(Y_i = 1|x_i)\)` wird mit Geradengleichung vorhergesagt:
+
+`$$P(Y_i = 1|x_i) = a + \beta \cdot x_i + \varepsilon$$`
+
+ABER: Das Problem bleibt bestehen
+  * Wahrscheinlichkeit liegt zwischen 0 und 1
+  * Wertebereich von `\(a + \beta \cdot x_i + \varepsilon\)` liegt zwischen `\(−∞\)` und `\(+∞\)`
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Die logistische Funktion**
+
+Ziel: Transformation des Wertebereichs `\(−∞\)` bis `\(+∞\)` in Werte zwischen 0 und 1 (Wertebereich von Wahrscheinlichkeiten)
+
+Modellgleichung der einfachen logistischen Regression:
+
+`$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$`
+
+* Da wir nicht `\(Y_i\)` selbst, sondern die bedingte Wahrscheinlichkeit für `\(Y_i = 1\)` modellieren,
+benötigen wir keinen Fehlerterm
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+.pull-left[
+**Die logistische Funktion**
+
+`$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$`
+
+* Mit Anwendung der logistischen Funktion auf die lineare Regression lässt sich die Gerade "biegen"
+
+* Sie ist nun auf den Wertebereiche zwischen 0 und 1 begrenzt
+
+* Am Wendepunkt der Kurve ist `\(P(Y_i = 1|x_i) = 0.5\)`
+
+* Beide Optionen (Erfolg vs. Misserfolg) sind hier gleich wahrscheinlich
+]
+
+.pull-right[
+.center[
+<div class="plotly html-widget html-fill-item" id="htmlwidget-9f68f6e90beed05e755b" style="width:504px;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-9f68f6e90beed05e755b">{"x":{"data":[{"x":[3.4500000000000002,15.550000000000001],"y":[1,1],"text":"yintercept: 1","type":"scatter","mode":"lines","line":{"width":0.37795275590551186,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3.4500000000000002,15.550000000000001],"y":[0,0],"text":"yintercept: 0","type":"scatter","mode":"lines","line":{"width":0.37795275590551186,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[8,9,4,15,10,5,10,7,10,15,7,6,4,11,11,7,6],"y":[1,1,0,1,1,0,0,0,1,1,0,0,0,0,1,0,1],"text":["Empathie:  8<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  9<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  4<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 15<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  5<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 10<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie: 15<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  6<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  4<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 11<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie: 11<br />as.numeric(Behandlungserfolg) - 1: 1","Empathie:  7<br />as.numeric(Behandlungserfolg) - 1: 0","Empathie:  6<br />as.numeric(Behandlungserfolg) - 1: 1"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[4,4.1392405063291138,4.2784810126582276,4.4177215189873422,4.556962025316456,4.6962025316455698,4.8354430379746836,4.9746835443037973,5.1139240506329111,5.2531645569620249,5.3924050632911396,5.5316455696202533,5.6708860759493671,5.8101265822784809,5.9493670886075947,6.0886075949367093,6.2278481012658222,6.3670886075949369,6.5063291139240507,6.6455696202531644,6.7848101265822782,6.924050632911392,7.0632911392405067,7.2025316455696196,7.3417721518987342,7.481012658227848,7.6202531645569618,7.7594936708860756,7.8987341772151893,8.037974683544304,8.1772151898734187,8.3164556962025316,8.4556962025316444,8.5949367088607591,8.7341772151898738,8.8734177215189867,9.0126582278481013,9.151898734177216,9.2911392405063289,9.4303797468354418,9.5696202531645564,9.7088607594936711,9.848101265822784,9.9873417721518987,10.126582278481013,10.265822784810126,10.405063291139239,10.544303797468354,10.683544303797468,10.822784810126581,10.962025316455696,11.101265822784811,11.240506329113924,11.379746835443036,11.518987341772151,11.658227848101266,11.797468354430379,11.936708860759493,12.075949367088608,12.215189873417721,12.354430379746836,12.493670886075948,12.632911392405063,12.772151898734176,12.911392405063291,13.050632911392405,13.189873417721518,13.329113924050633,13.468354430379746,13.60759493670886,13.746835443037973,13.886075949367088,14.025316455696203,14.164556962025316,14.30379746835443,14.443037974683543,14.582278481012658,14.721518987341772,14.860759493670885,15],"y":[0.079642297156765393,0.085158704817434289,0.091019418002087904,0.097240599737717842,0.10383842428553317,0.11082895608020704,0.11822801277403912,0.12605101202016328,0.13431280192395176,0.14302747545169231,0.15220816951237276,0.16186684992131445,0.17201408400944804,0.18265880325121286,0.19380805893472861,0.20546677457225671,0.21763749942388477,0.23032016815437384,0.24351187222890852,0.25720664914097929,0.27139529591532219,0.28606521350107833,0.30120028862773113,0.31678081940691871,0.33278349040338068,0.34918140205624792,0.3659441582102721,0.38303801413464217,0.40042608580167449,0.41806861942327833,0.43592331836982451,0.45394572270655936,0.47208963476751026,0.49030758253851647,0.50855131122780683,0.52677229234173029,0.54492223891523273,0.56295361531015597,0.58082013020323631,0.59847720202757437,0.61588238716915622,0.63299576259455359,0.64978025622077873,0.66620192014573276,0.6822301437452275,0.69783780551938701,0.71300136435400585,0.7277008924801518,0.74192005381248993,0.75564603248545548,0.7688694172661803,0.78158404810035798,0.79378683135303618,0.80547753036349112,0.8166585377735035,0.82733463574858845,0.8375127497317133,0.84720170078824719,0.85641196095669858,0.86515541534573548,0.87344513404284363,0.88129515624725274,0.88872028842755657,0.89573591774573103,0.90235784149230791,0.90860211284650771,0.91448490291107187,0.92002237867253844,0.92523059630004856,0.93012540901430096,0.93472238862700163,0.93903675976372902,0.94308334573307717,0.94687652498605168,0.95043019711609322,0.9537577573764997,0.95687207873364311,0.95978550052710221,0.9625098228681398,0.96505630597287961],"text":["Empathie:  4.000000<br />as.numeric(Behandlungserfolg) - 1: 0.07964230","Empathie:  4.139241<br />as.numeric(Behandlungserfolg) - 1: 0.08515870","Empathie:  4.278481<br />as.numeric(Behandlungserfolg) - 1: 0.09101942","Empathie:  4.417722<br />as.numeric(Behandlungserfolg) - 1: 0.09724060","Empathie:  4.556962<br />as.numeric(Behandlungserfolg) - 1: 0.10383842","Empathie:  4.696203<br />as.numeric(Behandlungserfolg) - 1: 0.11082896","Empathie:  4.835443<br />as.numeric(Behandlungserfolg) - 1: 0.11822801","Empathie:  4.974684<br />as.numeric(Behandlungserfolg) - 1: 0.12605101","Empathie:  5.113924<br />as.numeric(Behandlungserfolg) - 1: 0.13431280","Empathie:  5.253165<br />as.numeric(Behandlungserfolg) - 1: 0.14302748","Empathie:  5.392405<br />as.numeric(Behandlungserfolg) - 1: 0.15220817","Empathie:  5.531646<br />as.numeric(Behandlungserfolg) - 1: 0.16186685","Empathie:  5.670886<br />as.numeric(Behandlungserfolg) - 1: 0.17201408","Empathie:  5.810127<br />as.numeric(Behandlungserfolg) - 1: 0.18265880","Empathie:  5.949367<br />as.numeric(Behandlungserfolg) - 1: 0.19380806","Empathie:  6.088608<br />as.numeric(Behandlungserfolg) - 1: 0.20546677","Empathie:  6.227848<br />as.numeric(Behandlungserfolg) - 1: 0.21763750","Empathie:  6.367089<br />as.numeric(Behandlungserfolg) - 1: 0.23032017","Empathie:  6.506329<br />as.numeric(Behandlungserfolg) - 1: 0.24351187","Empathie:  6.645570<br />as.numeric(Behandlungserfolg) - 1: 0.25720665","Empathie:  6.784810<br />as.numeric(Behandlungserfolg) - 1: 0.27139530","Empathie:  6.924051<br />as.numeric(Behandlungserfolg) - 1: 0.28606521","Empathie:  7.063291<br />as.numeric(Behandlungserfolg) - 1: 0.30120029","Empathie:  7.202532<br />as.numeric(Behandlungserfolg) - 1: 0.31678082","Empathie:  7.341772<br />as.numeric(Behandlungserfolg) - 1: 0.33278349","Empathie:  7.481013<br />as.numeric(Behandlungserfolg) - 1: 0.34918140","Empathie:  7.620253<br />as.numeric(Behandlungserfolg) - 1: 0.36594416","Empathie:  7.759494<br />as.numeric(Behandlungserfolg) - 1: 0.38303801","Empathie:  7.898734<br />as.numeric(Behandlungserfolg) - 1: 0.40042609","Empathie:  8.037975<br />as.numeric(Behandlungserfolg) - 1: 0.41806862","Empathie:  8.177215<br />as.numeric(Behandlungserfolg) - 1: 0.43592332","Empathie:  8.316456<br />as.numeric(Behandlungserfolg) - 1: 0.45394572","Empathie:  8.455696<br />as.numeric(Behandlungserfolg) - 1: 0.47208963","Empathie:  8.594937<br />as.numeric(Behandlungserfolg) - 1: 0.49030758","Empathie:  8.734177<br />as.numeric(Behandlungserfolg) - 1: 0.50855131","Empathie:  8.873418<br />as.numeric(Behandlungserfolg) - 1: 0.52677229","Empathie:  9.012658<br />as.numeric(Behandlungserfolg) - 1: 0.54492224","Empathie:  9.151899<br />as.numeric(Behandlungserfolg) - 1: 0.56295362","Empathie:  9.291139<br />as.numeric(Behandlungserfolg) - 1: 0.58082013","Empathie:  9.430380<br />as.numeric(Behandlungserfolg) - 1: 0.59847720","Empathie:  9.569620<br />as.numeric(Behandlungserfolg) - 1: 0.61588239","Empathie:  9.708861<br />as.numeric(Behandlungserfolg) - 1: 0.63299576","Empathie:  9.848101<br />as.numeric(Behandlungserfolg) - 1: 0.64978026","Empathie:  9.987342<br />as.numeric(Behandlungserfolg) - 1: 0.66620192","Empathie: 10.126582<br />as.numeric(Behandlungserfolg) - 1: 0.68223014","Empathie: 10.265823<br />as.numeric(Behandlungserfolg) - 1: 0.69783781","Empathie: 10.405063<br />as.numeric(Behandlungserfolg) - 1: 0.71300136","Empathie: 10.544304<br />as.numeric(Behandlungserfolg) - 1: 0.72770089","Empathie: 10.683544<br />as.numeric(Behandlungserfolg) - 1: 0.74192005","Empathie: 10.822785<br />as.numeric(Behandlungserfolg) - 1: 0.75564603","Empathie: 10.962025<br />as.numeric(Behandlungserfolg) - 1: 0.76886942","Empathie: 11.101266<br />as.numeric(Behandlungserfolg) - 1: 0.78158405","Empathie: 11.240506<br />as.numeric(Behandlungserfolg) - 1: 0.79378683","Empathie: 11.379747<br />as.numeric(Behandlungserfolg) - 1: 0.80547753","Empathie: 11.518987<br />as.numeric(Behandlungserfolg) - 1: 0.81665854","Empathie: 11.658228<br />as.numeric(Behandlungserfolg) - 1: 0.82733464","Empathie: 11.797468<br />as.numeric(Behandlungserfolg) - 1: 0.83751275","Empathie: 11.936709<br />as.numeric(Behandlungserfolg) - 1: 0.84720170","Empathie: 12.075949<br />as.numeric(Behandlungserfolg) - 1: 0.85641196","Empathie: 12.215190<br />as.numeric(Behandlungserfolg) - 1: 0.86515542","Empathie: 12.354430<br />as.numeric(Behandlungserfolg) - 1: 0.87344513","Empathie: 12.493671<br />as.numeric(Behandlungserfolg) - 1: 0.88129516","Empathie: 12.632911<br />as.numeric(Behandlungserfolg) - 1: 0.88872029","Empathie: 12.772152<br />as.numeric(Behandlungserfolg) - 1: 0.89573592","Empathie: 12.911392<br />as.numeric(Behandlungserfolg) - 1: 0.90235784","Empathie: 13.050633<br />as.numeric(Behandlungserfolg) - 1: 0.90860211","Empathie: 13.189873<br />as.numeric(Behandlungserfolg) - 1: 0.91448490","Empathie: 13.329114<br />as.numeric(Behandlungserfolg) - 1: 0.92002238","Empathie: 13.468354<br />as.numeric(Behandlungserfolg) - 1: 0.92523060","Empathie: 13.607595<br />as.numeric(Behandlungserfolg) - 1: 0.93012541","Empathie: 13.746835<br />as.numeric(Behandlungserfolg) - 1: 0.93472239","Empathie: 13.886076<br />as.numeric(Behandlungserfolg) - 1: 0.93903676","Empathie: 14.025316<br />as.numeric(Behandlungserfolg) - 1: 0.94308335","Empathie: 14.164557<br />as.numeric(Behandlungserfolg) - 1: 0.94687652","Empathie: 14.303797<br />as.numeric(Behandlungserfolg) - 1: 0.95043020","Empathie: 14.443038<br />as.numeric(Behandlungserfolg) - 1: 0.95375776","Empathie: 14.582278<br />as.numeric(Behandlungserfolg) - 1: 0.95687208","Empathie: 14.721519<br />as.numeric(Behandlungserfolg) - 1: 0.95978550","Empathie: 14.860759<br />as.numeric(Behandlungserfolg) - 1: 0.96250982","Empathie: 15.000000<br />as.numeric(Behandlungserfolg) - 1: 0.96505631"],"type":"scatter","mode":"lines","name":"fitted values","line":{"width":3.7795275590551185,"color":"rgba(238,0,113,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":37.260273972602747,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[3.4500000000000002,15.550000000000001],"tickmode":"array","ticktext":["6","9","12","15"],"tickvals":[6,9,12,15],"categoryorder":"array","categoryarray":["6","9","12","15"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Empathie","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.050000000000000003,1.05],"tickmode":"array","ticktext":["0.0","0.2","0.4","0.6","0.8","1.0"],"tickvals":[0,0.20000000000000001,0.40000000000000002,0.59999999999999987,0.80000000000000004,1],"categoryorder":"array","categoryarray":["0.0","0.2","0.4","0.6","0.8","1.0"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"P(Yi = 1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"9b3416f8fe9":{"yintercept":{},"type":"scatter"},"9b3443510abb":{"yintercept":{}},"9b347d979d83":{"x":{},"y":{}},"9b346ce643df":{"x":{},"y":{}}},"cur_data":"9b3416f8fe9","visdat":{"9b3416f8fe9":["function (y) ","x"],"9b3443510abb":["function (y) ","x"],"9b347d979d83":["function (y) ","x"],"9b346ce643df":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Modellparameter**
+
+`$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$`
+
+
+* Parameter `\(\beta\)` (entspricht dem Steigungsparameter):
+
+&gt;* `\(𝛽 = 0:\)` Wahrscheinlichkeit für `\(Y_i = 1\)` ist unabhängig von der UV (kein Zusammenhang).
+
+&gt;* `\(𝛽 &gt; 0:\)` Je höher der Wert auf der UV, desto höher die Wahrscheinlichkeit für `\(Y_i = 1\)`.
+
+&gt;* `\(𝛽 &lt; 0:\)` Je höher der Wert auf der UV, desto niedriger die Wahrscheinlichkeit für `\(Y_i = 1\)`.
+
+* Parameter `\(a\)` (entspricht dem Y-Achsenabschnitt)
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Interpretation der Modellparameter - Odds**
+
+* Der Bruch aus der Wahrscheinlichkeit für ein  Ereignis geteilt durch dessen Gegenwahrscheinlichkeit, wird als **Odds** bezeichnet
+
+* In der logistischen Regression relevante Odds:
+
+`$$\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)}$$`
+
+&gt;* Falls das Ereignis `\(Y_i = 1\)` wahrscheinlicher ist als das Ereignis `\(Y_i= 0\)`  `\(\rightarrow\)` Odds &gt; 1
+
+&gt;* Falls das Ereignis `\(Y_i = 1\)` wahrscheinlicher ist als das Ereignis `\(Y_i= 0\)`  `\(\rightarrow\)` Odds &lt; 1
+
+&gt;* Sind beide Ereignisse gleich wahrscheinlich `\(\rightarrow\)` Odds = 1
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Ermittlung der Odds für Steigung `\((\beta)\)`**
+
+Odds lassen sich durch Einsetzen der Modellparameter `\((a, \beta)\)` in die Odds Formel ermitteln:
+
+`$$\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)} = \frac{P(Y_i = 1|x_i)}{1- P(Y_i = 1|x_i)}=e^a \cdot e^{\beta \cdot x_i}$$`
+Das heißt: Erhöht sich die UV um eine Einheit, erhöhen sich die Odds um den Faktor `\(e^{\beta}\)`
+
+&gt;* `\(e^{\beta}=1:\)` kein Einfluss der UV auf die Odds
+
+&gt;* `\(e^{\beta}&gt;1:\)` wenn Wert der UV höher wird, werden auch Odds höher
+
+&gt;* `\(e^{\beta}&lt;1:\)` wenn Wert der UV höher wird, werden  Odds niedriger
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Ermittlung der Odds für Y-Achsenabschnitt `\((\beta)\)`**
+
+Wenn `\(x_i=0\)` gilt für die Odds
+
+$$\frac{P(Y_i = 1|x_i=0)}{P(Y_i = 0|x_i=0)} = e^a \cdot e^{\beta \cdot 0} = e^a \cdot e^0 = e^a $$
+
+* Für Personen mit einem Wert von 0 auf der UV, sind die Odds gleich `\(e^a\)`
+
+* Kennen wir bereits von linearer Regression: Y-Achsenabschnitt ist Wert, wenn `\(x_i = 0\)` (UV = 0)
+
+* Auch hier hängt Sinnhaftigkeit der Interpretation des Werts davon ab, ob ein UV-Wert von 0 sinnvoll interpretierbar ist (s.h. z.B. IQ)
+
+* Falls UV-Wert von 0 nicht sinnvoll interpretierbar `\(\rightarrow\)` **Zentrierung der UV** (s.h. lineare Regression)
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Einheit von a und `\(\beta\)` (Log-Odds)**
+
+* Mittels der Odds haben wir also eine inhaltliche Interpretation der Modellparameter
+
+* Wie gesehen, müssen diese dafür jeweils zunächst mittels Euler'scher Zahl `\(e\)`  exponiert werden `\((e^a\)` bzw. `\(e^{\beta})\)`
+
+ABER: In welcher Einheit werden a und `\(\beta\)` selbst dann gemessen und warum ist das Exponieren notwendig?
+
+* Nimmt man von den Odds den natürlichen Logarithmus, so erhält man die **„Log–Odds“** bzw. **„Logits“**:
+
+`$$ln(\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)})$$`
+
+&gt;* Wenn `\(P(Y_i = 1|x_i) = 0.5\)` `\(\rightarrow\)` Log-Odds `\(= 0\)`
+
+&gt;* Wenn `\(P(Y_i = 1|x_i) &lt; P(Y_i = 0|x_i)\)` `\(\rightarrow\)` Log-Odds `\(&lt; 0\)`
+
+&gt;* Wenn `\(P(Y_i = 1|x_i) &gt; P(Y_i = 0|x_i)\)` `\(\rightarrow\)` Log-Odds `\(&gt; 0\)`
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression
+
+**Einheit von a und `\(\beta\)` (Log-Odds)**
+
+&lt;small&gt;
+
+* Einsetzen der Modellgleichung für die Odds in die Definition der Log-Odds ergibt:
+
+`$$ln(\frac{P(Y_i = 1|x_i)}{P(Y_i = 0|x_i)}) = ln(e^{a+ \beta \cdot x_i}) = a+ \beta \cdot x_i$$`
+
+`\(\rightarrow\)` Logistische Regression ist eine **lineare Regression der Log-Odds**
+
+***
+
+Die Parameter `\(a\)` und `\(\beta\)` können damit wie folgt interpretiert werden:
+
+* `\(a\)` entspricht den Log-Odds für Personen mit einem UV-Wert von 0 
+
+  * (wie Y-Achsenabschnitt linearer Regression).
+
+* Wenn sich die UV um eine Einheit erhöht, erhöhen sich die Log-Odds um `\(\beta\)` 
+
+  * (wie Steigung linearer Regression).
+
+* Da die Log-Odds weniger intuitiv als die Odds sind, werden jedoch **meist `\(e^a\)` und `\(e^{\beta}\)` (Odds) statt `\(a\)` und `\(\beta\)` (Log-Odds) interpretiert**.
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+.pull-left[
+#### Logistische Regression
+
+**Zurück zum Beispiel:**
+&lt;small&gt;
+
+* `\(AV:\)` Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * `\(Y_i\)` = 0 falls nein
+  
+  * `\(Y_i\)` = 1 falls ja
+
+* `\(UV_1:\)` (stetige) gemessene Empathie der Therapeut:in
+
+* `\(UV_2:\)` (diskreter) erhobener Bindungsstil der Patient:in
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+&lt;table class=" lightable-classic" style="font-size: 11px; font-family: Times New Roman; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Behandlungserfolg &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Empathie &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Bindungsstil &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+.pull-left[
+#### Logistische Regression
+
+**Zurück zum Beispiel:**
+&lt;small&gt;
+
+`$$P(Y_i = 1|x_i) = \frac{e^{a + \beta \cdot x_i}}{1+e^{a + \beta \cdot x_i}}$$`
+**Gedacht in Odds:**
+
+* Die Odds für einen Behandlungserfolg bei einer Therapeut:in mit Empathie von 0 sind `\(e^a\)`
+
+* Falls sich die Empathie um 1 Einheit erhöht, erhöhen sich die Odds für den Behandlungserfolg um den Faktor `\(e^{\beta}\)`
+
+**Gedacht in Log-Odds:**
+
+* Die Log-Odds für einen Behandlungserfolg bei einer Therapeut:in mit Empathie von 0 sind `\(a\)`
+
+* Falls sich die Empathie um 1 Einheit erhöht, erhöhen sich die Log-Odds für den Behandlungserfolg (linear) um `\(\beta\)`
+
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+&lt;table class=" lightable-classic" style="font-size: 11px; font-family: Times New Roman; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Behandlungserfolg &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Empathie &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Bindungsstil &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+&lt;small&gt;
+
+* In R benutzen wir statt `lm` nun `glm` (generalized linear model)
+
+.pull-left[
+.code60[
+
+```r
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+summary(model)
+```
+
+```
+## 
+## Call:
+## glm(formula = Behandlungserfolg ~ Empathie, family = "binomial", 
+##     data = data)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)  -4.5438     2.2836  -1.990   0.0466 *
+## Empathie      0.5242     0.2644   1.983   0.0474 *
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 23.508  on 16  degrees of freedom
+## Residual deviance: 16.802  on 15  degrees of freedom
+## AIC: 20.802
+## 
+## Number of Fisher Scoring iterations: 5
+```
+]
+]
+
+.pull-right[
+* Output zeigt unter `Estimate` immer `\(a\)` und `\(\beta\)` (Log-Odds)
+
+* Diese folgen der Logik des linearen Modells
+
+**Umwandlung Log-Odds in Odds mittels Exponierung (z.B. `\(e^\beta\)`):**
+
+.code60[
+
+```r
+exp(-4.5438)
+```
+
+```
+## [1] 0.01063292
+```
+
+```r
+exp(0.5242)
+```
+
+```
+## [1] 1.689107
+```
+]
+
+* 0.01 = Odds für Behandlungserfolg, wenn Empathie = 0 
+
+* Zunahme der Odds um Faktor 1.69, wenn Empathie um 1 Einheit zunimmt
+
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+
+&lt;small&gt;
+
+* In R benutzen wir statt `lm` nun `glm` (generalized linear model)
+
+.pull-left[
+.code60[
+
+```r
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+summary(model)
+```
+
+```
+## 
+## Call:
+## glm(formula = Behandlungserfolg ~ Empathie, family = "binomial", 
+##     data = data)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)  -4.5438     2.2836  -1.990   0.0466 *
+## Empathie      0.5242     0.2644   1.983   0.0474 *
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 23.508  on 16  degrees of freedom
+## Residual deviance: 16.802  on 15  degrees of freedom
+## AIC: 20.802
+## 
+## Number of Fisher Scoring iterations: 5
+```
+]
+]
+
+.pull-right[
+**Hypothesentests:**
+
+* `Pr(&gt;|z|)` zeigt an, das ein Hypothesentest gerechnet wurde
+
+Dieser prüft folgende Hypothesenpaare:
+
+* Für `\(a\)`
+  * `\(H_0:\)` `\(a = 0\)`
+  * `\(H_1:\)` `\(a \neq 0\)`
+* Für `\(\beta\)`
+  * `\(H_0:\)` `\(\beta = 0\)`
+  * `\(H_1:\)` `\(\beta \neq 0\)`
+
+* `\(p_{\beta} = 0.0474 &lt;.05\)`
+
+`\(\rightarrow\)` Wir gehen davon aus, dass es einen signifikanten Zusammenhang zwischen Empathie und Therapieerfolg gibt.
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+
+&lt;small&gt;
+
+* In R benutzen wir statt `lm` nun `glm` (generalized linear model)
+
+.pull-left[
+.code60[
+
+```r
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+car::Anova(model)
+```
+
+```
+## Analysis of Deviance Table (Type II tests)
+## 
+## Response: Behandlungserfolg
+##          LR Chisq Df Pr(&gt;Chisq)   
+## Empathie    6.706  1   0.009609 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+]
+
+.pull-right[
+**Hypothesentests (Omnibustest):**
+
+* Auch für Log-Regression lässt sich ein Omnibustest rechnen
+
+* Dieser prüft, ob Hinzunahme des Prädiktors Modellpassung signifikant verbessert (Modell mit Prädiktor mehr Varianz erklärt)
+
+* Prüft *nicht* einzelne Steigungsparameter
+
+* Die Teststatistik ist `\(\chi^2\)`-verteilt
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+**Berechnung der Konfidenzintervalle für Log-Odds und Odds:**
+
+.code80[
+
+```r
+model = glm(Behandlungserfolg ~ Empathie, data = data, family = "binomial")
+
+# Für Log-Odds
+confint(model)
+```
+
+```
+##                   2.5 %     97.5 %
+## (Intercept) -10.2498495 -0.8737261
+## Empathie      0.1066026  1.1812475
+```
+
+```r
+# Für Odds
+exp(confint(model))
+```
+
+```
+##                     2.5 %    97.5 %
+## (Intercept) 0.00003536282 0.4173934
+## Empathie    1.11249211601 3.2584367
+```
+]
+
+&lt;small&gt;
+
+* Wir gehen davon aus, dass Odds für einen Behandlungserfolg um Faktor 1.11 bis 3.26 steigen, wenn Empathie um 1 Einheit zunimmt
+
+* Gängige Notation (engl.): `\(OR = 1.69, CI_{95\%}=1.11 \text{ to } 3.26\)` 
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression mit zentrierter UV
+
+&lt;small&gt;
+
+.pull-left[
+.code60[
+
+```r
+model = glm(Behandlungserfolg ~ center(Empathie), data = data, family = "binomial")
+summary(model)
+```
+
+```
+## 
+## Call:
+## glm(formula = Behandlungserfolg ~ center(Empathie), family = "binomial", 
+##     data = data)
+## 
+## Coefficients:
+##                  Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)      -0.07312    0.60264  -0.121   0.9034  
+## center(Empathie)  0.52415    0.26435   1.983   0.0474 *
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 23.508  on 16  degrees of freedom
+## Residual deviance: 16.802  on 15  degrees of freedom
+## AIC: 20.802
+## 
+## Number of Fisher Scoring iterations: 5
+```
+]
+]
+
+.pull-right[
+* Zentrierung (grand mean): Von jedem Wert der UV wird der Durchschnitt der UV abgezogen
+
+* Empathie (zentriert) = 0 ist nun der Durschnittswert der Stichprobe (nur `\(a\)` ändert sich, `\(\beta\)` bleibt unverändert)
+
+**Umwandlung Log-Odds in Odds mittels Exponierung (z.B. `\(e^\beta\)`):**
+
+.code60[
+
+```r
+exp(-0.07)
+```
+
+```
+## [1] 0.9323938
+```
+
+```r
+exp(0.5242)
+```
+
+```
+## [1] 1.689107
+```
+]
+
+* 0.93 = Odds für Behandlungserfolg **bei durschnittlicher Empathie**
+
+* Zunahme der Odds um Faktor 1.69, wenn Empathie um 1 Einheit zunimmt
+
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Multiple logistische Regression
+
+* Wie bei der linearen Regression lässt sich auch die einfache logistische Regression zur multiplen logistischen Regression erweitern:
+
+`$$P(Y_i = 1|x_{i1},...x_{ik}) = \frac{e^{a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k}}{1+e^{a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k}}$$`
+
+Gedacht in Odds:
+
+`$$\frac{P(Y_i = 1|x_{i1},...x_{ik})}{P(Y_i = 0|x_{i1},...x_{ik})} = e^{a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k}$$`
+
+Gedacht in Log-Odds:
+
+`$$ln(\frac{P(Y_i = 1|x_{i1},...x_{ik})}{P(Y_i = 0|x_{i1},...x_{ik})}) = a + \beta_1 \cdot x_i+...+\beta_k \cdot x_k$$`
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Multiple logistische Regression
+
+**Interpretation der Modellparameter:**
+
+Gedacht in Odds:
+
+* `\(e^a\)` entspricht den Odds von Personen (z.B. für Behandlungserfolg), die auf allen UVs den Wert 0 haben.
+
+* `\(e^{\beta_j}\)` entspricht dem Faktor, um den sich die Odds erhöhen, falls sich die UV `\(j\)` um eine Einheit erhöht (alle anderen UVs  bleiben konstant).
+
+Gedacht in Log-Odds:
+
+* `\(a\)` entspricht den Log-Odds von Personen (z.B. für Behandlungserfolg), die auf allen UVs den Wert 0 haben.
+
+* `\(\beta_j\)` entspricht Zunahme der Log-Odds, falls sich die UV `\(j\)` um eine Einheit erhöht (alle anderen UVs bleiben konstant).
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+.pull-left[
+#### Multiple logistische Regression
+
+**Zurück zum Beispiel Beispiel:**
+&lt;small&gt;
+
+* `\(AV:\)` Erfolg einer Gesprächstherapie (dummy-codiert)
+
+  * `\(Y_i\)` = 0 falls nein
+  
+  * `\(Y_i\)` = 1 falls ja
+
+* `\(UV_1:\)` (stetige) gemessene Empathie der Therapeut:in
+
+* `\(UV_2:\)` (diskreter) erhobener Bindungsstil der Patient:in
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+**Frage:** Wie lässt sich der Zusammenhang zwischen den Variablen beschreiben?
+]
+.pull-right[
+**Beispiel - nominalskalierte (diskrete) AV:**
+
+&lt;table class=" lightable-classic" style="font-size: 11px; font-family: Times New Roman; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Behandlungserfolg &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Empathie &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Bindungsstil &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; nein &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; unsicher &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sicher &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Multiple logistische Regression mit zentrierter UV
+
+
+
+&lt;small&gt;
+
+.pull-left[
+.code60[
+
+```r
+model = glm(Behandlungserfolg ~ center(Empathie) * Bindungsstil, data = data, family = "binomial")
+car::Anova(model)
+```
+
+```
+## Analysis of Deviance Table (Type II tests)
+## 
+## Response: Behandlungserfolg
+##                               LR Chisq Df  Pr(&gt;Chisq)    
+## center(Empathie)               20.9213  1 0.000004786 ***
+## Bindungsstil                    5.0032  1      0.0253 *  
+## center(Empathie):Bindungsstil   1.6786  1      0.1951    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+]
+
+.pull-right[
+**Omnibustest**
+
+* Haupteffekt Empathie ist signifikant `\((\chi^2_1=20.92, p&lt;.001)\)`
+
+* Haupteffekt Bindungsstil ist signifikant `\((\chi^2_1=5.00, p=.025)\)`
+
+* Keine signifikante Interaktion `\((\chi^2_1=1.68, p=.195)\)`
+
+`\(\rightarrow\)` Empathie und Bindungsstil können Behandlungserfolg beide signifikant vorhersagen (Haupteffekte).
+
+`\(\rightarrow\)` Empathie scheint bei sicher und unsicher gebundenen Personen gleich wichtig für Behandlungserfolg zu sein (Interaktion).
+]
+
+---
+class: top, left
+### Verfahren für Nominaldaten
+
+#### Logistische Regression 
+
+**Effektstärken, Stichprobenplanung und Regressionsdiagnostik (s.h. Bühner et al. 2023)**
+
+* Auch für die logistische Regression spielen in der Praxis Effektstärken, Stichprobenplanung und Regressionsdiagnostik eine wichtige Rolle. Bei allen drei Themen existiert aber häufig keine eindeutig beste Variante, weshalb wir hier auf eine Beschreibung der Methoden verzichten.
+
+* Bemerkung 1: In der logistischen Regression gibt es mehrere Möglichkeiten, eine globale Effektstärke in Anlehnung an `\(R^2\)` in der linearen Regression zu definieren.
+
+* Bemerkung 2: Für die Stichprobenplanung in der logistischen Regression müssen meist individuell Daten simuliert werden. 
+
+* Bemerkung 3: Für die Regressionsdiagnostik in der logistischen Regression gibt es mehrere Möglichkeiten, Residuen mit sinnvollen Eigenschaften zu definieren.
+
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+* Die **logistische Regression** ist ein statistisches Modell zur Vorhersage von binären oder kategorialen Ergebnissen (z.B. Ja/Nein, Erfolg/Misserfolg oder Krank/gesund).
+
+* Mithilfe der **logsitischen Funktion** (aka. sigmoide Funktion) wird Wertebereich zwischen 0 und 1 begrenzt (Wahrscheinlichkeiten).
+
+* Modellparameter werden in **Log-Odds** angegeben (linear skaliert). Diese können durch Exponierung in besser interpretierbare **Odds** umgewandelt werden.
+
+* **Statistische Inferenz** (Hypothesentesten) funktioniert entweder über Prüfung einzelner Modellparameter vs. 0 oder mittels Omnibustest `\((\chi^2\)`-verteilt `\()\)`.
+
+* Einfache logistische Regression kann zur **multiplen logistischen Regression** erweitert werden.
+
+* **Powerberechnung** kann kompliziert sein und Simulation erfordern, **Effektstärken** werden uneinheitlich angegeben.
+
+]
+]
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

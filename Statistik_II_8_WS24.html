@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Einheit 8</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Dr. Stephan Goerigk" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/hygge.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#EE0071"],"pen_size":4,"eraser_size":40,"palette":[]}) })</script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+name: Title slide
+class: middle, left
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+# Statistik II
+***
+### Einheit 8: ANOVA mit Messwiederholung
+##### 11.12.2024 | Prof. Dr. Stephan Goerigk
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+.pull-left[
+#### Kurzvorstellung
+&lt;small&gt;
+* Viele wiss. Untersuchungen verwenden Messwiederholungen
+
+* Gründe:
+  * Untersuchung zeitlicher Veränderung eines Merkmals (z.B. Lernen, Gesundung)
+  * Statistische Vorteile beim Studiendesign (z.B. mehr Teststärke)
+
+* Wichtig: **Dieselben** Personen werden **mehrfach** erfasst
+
+* Daten sind **abhängig** voneinander (Verletzung Unabhängigkeitsvoraussetzung bei ANOVA)
+
+* Graphische Darstellung i.d.R. mittels Line-Graph 
+  * Punkte = Mittelwert zu Zeitpunkt `\(t_i\)` (wie Balkendiagramm)
+  * Linie symbolisiert Messwiederholungen
+]
+.pull-right[
+&lt;img src="Statistik_II_8_WS24_files/figure-html/unnamed-chunk-1-1.png" width="430px" /&gt;
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Logik ANOVA mit Messwiederholung
+
+* Prüft, ob sich die Ausprägung eines Merkmals zu `\(\geq\)` 2 Messzeitpunkten unterscheidet
+
+* Erweiterung des abhängigen t-Tests
+
+* Simultaner Vergleich beliebig vieler Zeitpunkte mittels Omnibustest
+
+  * Vermeidung von `\(\alpha\)`-Fehlerkumulierung
+  * Vermeidung von verringerter Teststärke
+
+* Prinzip wie bei einfaktorieller ANOVA ohne Messwiederholung, jedoch mit leicht abgewandelten Formeln, um Abhängigkeit der Messungen zu entsprechen
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Hypothesen bei Messwiederholungsdesigns
+
+**Vorteil der ANOVA mit Messwiederholung:**
+
+* Logik des **Omnibustests** bei messwiederholten Daten
+
+* Es werden die Mittelwerte aller Zeitpunkte auf einmal miteinander verglichen.
+
+* `\(H_0\)` abh. t-Tests:
+  * `\(\mu_{t1} = \mu_{t2}\)`
+  * `\(\mu_{t1} = \mu_{t3}\)`
+  * `\(\mu_{t2} = \mu_{t3}\)`
+
+* `\(H_0\)` ANOVA mit Messwiederholung:
+  * `\(\mu_{t1} = \mu_{t2} = \mu_{t3}\)`
+  
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Zerlegung der Gesamtvarianz:**
+
+Wir müssen uns wiederum fragen, weshalb Messungen unterschiedlich (mit Varianz) ausfallen
+
+Nach wie vor gibt es 2 denkbare Ursachen für die Gesamtvarianz:
+1. systematische Einflüsse (experimentelle Manipulation)
+2. unsystematische Einflüsse (nicht erklärbare Restvarianz aka. Residualvarianz)
+
+Spezialfall Messwiederholung:
+
+* Aufgrund der wiederholten Messungen beziehen sich beide Varianzquellen auf Unterschiede **innerhalb der Personen**
+* Zusätzliche Varianzquelle: Unterschiede **zwischen den Personen** (Personenvarianz `\(\sigma^2_{Vpn}\)` - z.B. Persönlichkeit, Motivation)
+
+`$$\sigma_{gesamt}^2= \sigma_{Vpn}^2 + \sigma_{Zeit}^2 +  \sigma_{Res}^2$$`  
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Zerlegung der Gesamtvarianz:**
+
+.center[
+&lt;img src="bilder/anova_rm.png" width="550px" /&gt;
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Bestandteile der Residualvarianz:**
+
+* Residualvarianz besteht im Falle von Messwiederholungen aus 2 Komponenten:
+
+  * Wechselwirkung aus Personenfaktor und den Stufen des Messwiederholungsfaktors (Zeit)
+  * restliche unsystematische Einflüsse
+
+* Beide Komponenten auf Stichprobenebene nicht voneinander abgrenzbar
+
+`\(\rightarrow\)` Personenfaktor kann nicht systematisch von Forscher:innen variiert werden (hätten dann wieder Zwischengruppendesign statt reine Messwiederholung)
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Anwendungsbespiel händisch (kleiner Datensatz)
+
+.pull-left[
+* Datensatz für `\(N=5\)` Patient:innen nach Schlaganfall
+
+* **Forschungsfrage:** Kann kognitives Training Merkfähigkeit verbessern?
+
+* Es wurden folgende Variablen gemessen:
+  
+  * Gedächtnisleistung (AV; 0-50 Punkte) 
+  `\(\rightarrow\)` nach jeder Trainingseinheit gemessen
+
+* "Indirekte" Variable im Datensatz
+
+  * Zeitpunkt (UV, 3 Messungen)
+  
+`\(\rightarrow\)` Numerische Frage: Anstieg mit zunehmenden Trainingseinheiten?
+]
+
+
+.pull-right[
+&lt;table class=" lightable-classic" style='font-size: 15px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; '&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; id &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; t0 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; t1 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; t2 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; P(m) &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 22 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 16.67 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 15.67 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 21 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 14.67 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A(i) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 10.4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 16.6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19.8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 15.6 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+* `\(A_{i}\)` Mittelwert pro Zeitpunkt
+* `\(P_{m}\)` Mittelwert der Person über Zeitpunkte hinweg
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Varianzschätzungen:**
+
+* Die Varianzschätzungen der ANOVA mit Messwiederholung gehen von einer Interaktion der Messwiederholung mit unspezifischen Personencharakteristika aus
+
+* Die Formeln ähneln daher eher denen der mehrfaktoriellen ANOVA mit Interaktionseffekt
+
+* Auch hier wird von "erwarteten Werten" ausgegangen
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Schätzung der Residualvarianz:**
+
+* Erfolgt über die Abweichung der gemessenen Werte von den, allein auf Grund von
+  1. den Mittelwerten zu jedem Zeitpunkt
+  2. den aufgrund der Personenmittelwerte zu **erwartenden** Werten `\((x_{im(erwartet)})\)`
+
+* Entspricht Vorgehen für Varianz der Interaktion zwischen 2 Faktoren
+
+* Erwartete Werte setzen sich zusammen aus: 
+
+  * Gesamtmittelwert `\((\bar{G})\)`
+  * Einfluss des Messwiederholungsfaktors `\((\bar{A_i})\)`
+  * Einfluss des Personenfaktors `\((\bar{P_m})\)`
+
+`$$x_{im(erwartet)} = \bar{G} + (\bar{A_i} - \bar{G}) + (\bar{P_m} - \bar{G})= \bar{A_i} + \bar{P_m} - \bar{G}$$`
+
+`\(x_{im(erwartet)}=\)` Erwarteter Wert der Person `\(m\)` in der Messwiedeholung `\(i\)` des Messwiederholungsfaktors `\(A\)`.
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Schätzung der Residualvarianz:**
+
+* Die geschätzte Residualvarianz `\((\hat{\sigma}^2_{Res})\)` berechnet sich aus den quadrierten Abweichungen `\((QS_{A\text{ x }Vpn})\)` der beobachteten von den erwarteten Messwerten 
+
+* Sie wird somit aus der Varianz der Wechselwirkung zwischen Messwiederholungsfaktor und Personenfaktor geschätzt
+
+`$$\hat{\sigma}^2_{A\text{ x }Vpn} = \frac{QS_{A\text{ x }Vpn}}{df_{A\text{ x }Vpn}} = \frac{\sum\limits _{i=1}^{p}\sum\limits _{m=1}^{N} [x_{im} - (\bar{A_{i}} + \bar{P_{m}}- \bar{G})]^2}{(p-1) \cdot (n-1)}$$`
+mit:
+
+* `\(p\)` = Gesamtzahl der Stufen des Messwiederholungsfaktors (Laufindex `\(i\)`)
+* `\(n\)` = Gesamtzahl der Personen (Laufindex `\(m\)`)
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Schätzung der Residualvarianz:**
+
+Berechnung der Residualvarianz im Beispiel:
+
+
+
+`$$\hat{\sigma}^2_{A\text{ x }Vpn}  = \frac{[9 - (10.4 + 16.67 - 15.6)]^2 + ..[19 - (19.8 + 14.67 - 15.6)]^2}{(3-1) \cdot (5-1)} = \frac{23.6}{8}=2.95$$`
+
+mit
+* `\(df_{A\text{ x }Vpn}=(3-1) \cdot (5-1)=8\)`
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Schätzung der Personenvarianz:**
+
+* Erfolgt über die sogenannte Varianz zwischen Versuchspersonen
+
+* Besteht aus den Unterschieden zwischen den über alle Zeitpunkte gemittelten Werten `\(P_m\)`
+
+* Exakter Wert für Berechnung der Varianzanalyse mit Messwiederholung irrelevant 
+
+`\(\rightarrow\)` Wir verzichten an dieser Stelle auf die Formel
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Systematische Varianz:**
+
+* Setzt sich aus den Unterschieden zwischen Mittelwerten der Messzeitpunkten zusammen (Zeiteffekt)
+
+* Lässt sich nicht isoliert, sondern nur in Kombination mit Residualvarianz schätzen (wie bei ANOVA ohne Messwiederholung)
+
+Geschätzt wird die Varianz des Haupteffekts `\(A:\)`
+
+`$$\hat{\sigma}^2_{A} = \frac{QS_{A}}{df_{A}} = \frac{n \cdot \sum\limits _{i=1}^{p}(\bar{A}_i - \bar{G})^2}{p-1}$$`
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Systematische Varianz:**
+
+Berechnung der systematischen Varianz im Beispiel:
+
+`$$\hat{\sigma}^2_{A} = \frac{5 \cdot [(10.4 - 15.6)^2 + (16.6 - 15.6)^2 + (19.8 - 15.6)^2]}{3-1} = \frac{228.4}{2}= 114.2$$`
+mit
+* `\(df_A=3-1=2\)`
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Signifikanzprüfung:**
+
+* Püfung, ob sich die Messzeitpunkte signifikant unterscheiden
+
+* F-Bruch (emp. F-Wert) wird gebildet aus geschätzter systematischer Varianz für Messwiederholungsfaktor (A) und der geschätzten Residualvarianz 
+
+`$$F_{A(df_{A}, df_{Res})}=\frac{\hat{\sigma}^2_{A}}{\hat{\sigma}^2_{Res}} = \frac{\hat{\sigma}^2_{A}}{\hat{\sigma}^2_{A\text{ x }Vpn}}$$`
+
+mit
+* `\(df_A=p-1\)`
+* `\(df_{A\text{ x }Vpn}=(p-1) \cdot (n-1)\)`
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+.pull-left[
+#### Prinzip der Varianzanalyse mit Messwiederholung
+
+**Signifikanzprüfung:**
+
+Berechnung des F-Bruchs im Beispiel:
+
+`$$F_{A(2,8)} = \frac{114.2}{2.95}=38.71$$`
+
+`\(F_{krit(2,8)}=4.46\)` (F-Tabelle)
+
+`\(F_{A(2,8)} &gt; F_{krit(2,8)}\)` `\(\rightarrow\)` Der Test ist signifikant.
+
+`\(\rightarrow\)` Es besteht ein signifikanter Unterschied zwischen den Mittelwerten der wiederholten Messungen.
+
+`\(\rightarrow\)` Anders gesagt: Es erfolgt eine signifikante Veränderung über die Zeit.
+
+]
+.pull-right[
+.center[
+&lt;img src="bilder/ftab_rm1.png" width="230px" /&gt;
+]
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+.pull-left[
+#### Anwendungsbespiel R (größerer Datensatz)
+
+* Datensatz für `\(N=15\)` Patient:innen nach Schlaganfall
+
+* **Forschungsfrage:** Kann kognitives Training Merkfähigkeit verbessern?
+
+* Es wurden folgende Variablen gemessen:
+  
+  * Gedächtnisleistung (AV; 0-50 Punkte) 
+  `\(\rightarrow\)` nach jeder Trainingseinheit gemessen
+
+* "Indirekte" Variable im Datensatz
+
+  * Zeitpunkt (UV, 3 Messungen)
+  
+`\(\rightarrow\)` Numerische Frage: Anstieg mit zunehmenden Trainingseinheiten?
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style='font-size: 15px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; '&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; id &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; t0 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; t1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; t2 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+.pull-left[
+#### Anwendungsbespiel R (größerer Datensatz)
+
+**Wide vs. Long-Format:**
+
+&lt;small&gt;
+* Datensätze können entweder im Wide- oder Long-Format vorliegen, wobei jede Formatierung ihre eigenen Vor- und Nachteile aufweist.
+
+Wide-Format:
+
+* Daten in einer breiten Tabelle dargestellt
+* Jede Variable hat eine eigene Spalte 
+* Übersichtliche Sicht auf die Daten, insbesondere wenn es viele Variablen gibt
+
+Wichtig: Jede Person hat eine Zeile. Gibt es Messwiederholungen (hier t1, t2 und t3 der Gedächtnisleistung), erhält jede Messung seine eigene Spalte.
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style='font-size: 15px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; '&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; id &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; t0 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; t1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; t2 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+.pull-left[
+#### Anwendungsbespiel R (größerer Datensatz)
+
+**Wide vs. Long-Format:**
+
+&lt;small&gt;
+
+Long-Format (aus Platzgründen nur für Personen 1-5 dargestellt):
+
+* Daten sind in einer schmaleren Tabelle darzustellen, in der mehrere Variablen in einer Spalte zusammengefasst werden
+* Jede Beobachtung erstreckt sich über mehrere Zeilen, wodurch eine längere Tabelle entsteht
+* Long-Format eignet sich besonders für Messwiederholungen
+
+Wichtig:
+
+* Jede Zeile muss mittels einer ID Variable eindeutig den Personen zugeordnet werden
+* Eine weitere Variable (bei Messwiederholungen z.B. Zeit) muss angegeben werden, weshalb es mehrere Werte pro Fall gibt
+]
+
+.pull-right[
+&lt;table class=" lightable-classic" style='font-size: 15px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; '&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; id &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Time &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Score &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; t2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Anwendungsbespiel R (größerer Datensatz)
+
+Wide und  Long-Format lassen sich automatisch ineinander überführen:
+
+.code60[
+
+
+.pull-left[
+
+```r
+df_wide
+```
+
+```
+##    id t0 t1 t2
+## 1   1  9 19 22
+## 2   2 10 17 18
+## 3   3 13 15 19
+## 4   4 10 17 21
+## 5   5 10 15 19
+## 6   6 13 17 20
+## 7   7 11 17 20
+## 8   8  7 11 13
+## 9   9  9 14 15
+## 10 10  9 14 15
+## 11 11 12 15 16
+## 12 12 11 19 21
+## 13 13 11 17 16
+## 14 14 10 14 20
+## 15 15  9 18 22
+```
+]
+
+.pull-right[
+
+```r
+df_wide_to_long = as.data.frame(pivot_longer(data = df_wide, 
+                               cols = c("t0", "t1", "t2"), 
+                               names_to = "Time", 
+                               values_to = "Score"))
+
+head(df_wide_to_long, 15)
+```
+
+```
+##    id Time Score
+## 1   1   t0     9
+## 2   1   t1    19
+## 3   1   t2    22
+## 4   2   t0    10
+## 5   2   t1    17
+## 6   2   t2    18
+## 7   3   t0    13
+## 8   3   t1    15
+## 9   3   t2    19
+## 10  4   t0    10
+## 11  4   t1    17
+## 12  4   t2    21
+## 13  5   t0    10
+## 14  5   t1    15
+## 15  5   t2    19
+```
+]
+]
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Anwendungsbespiel R (größerer Datensatz)
+
+.code60[
+
+```r
+library(afex)
+model = aov_ez(dv = "Score", within = c("Time"), id = "id", data = df_long)
+summary(model)
+```
+
+```
+## 
+## Univariate Type III Repeated-Measures ANOVA Assuming Sphericity
+## 
+##             Sum Sq num Df Error SS den Df F value              Pr(&gt;F)    
+## (Intercept) 9975.6      1  141.111     14 989.701 0.00000000000002165 ***
+## Time         528.8      2   74.489     28  99.395 0.00000000000019120 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## 
+## Mauchly Tests for Sphericity
+## 
+##      Test statistic p-value
+## Time        0.72821 0.12725
+## 
+## 
+## Greenhouse-Geisser and Huynh-Feldt Corrections
+##  for Departure from Sphericity
+## 
+##       GG eps       Pr(&gt;F[GG])    
+## Time 0.78629 0.00000000005163 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+##         HF eps           Pr(&gt;F[HF])
+## Time 0.8685946 0.000000000005964162
+```
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Anwendungsbespiel R (größerer Datensatz)
+
+
+```r
+library(emmeans)
+
+model = aov_ez(dv = "Score", within = c("Time"), id = "id", data = df_long)
+emmeans(model, pairwise ~ Time)
+```
+
+```
+## $emmeans
+##  Time emmean    SE df lower.CL upper.CL
+##  t0     10.3 0.419 14     9.37     11.2
+##  t1     15.9 0.565 14    14.72     17.1
+##  t2     18.5 0.729 14    16.90     20.0
+## 
+## Confidence level used: 0.95 
+## 
+## $contrasts
+##  contrast estimate    SE df t.ratio p.value
+##  t0 - t1     -5.67 0.575 14  -9.862  &lt;.0001
+##  t0 - t2     -8.20 0.725 14 -11.309  &lt;.0001
+##  t1 - t2     -2.53 0.456 14  -5.551  0.0002
+## 
+## P value adjustment: tukey method for comparing a family of 3 estimates
+```
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Voraussetzungen der ANOVA mit Messwiederholung
+
+**Es gelten folgende Voraussetzungen:**
+
+1. Die abhängige Variable ist intervallskaliert
+  * messtheoretisch abgesichert (muss man wissen)
+
+2. Das untersuchte Merkmal ist in der Population normalverteilt
+
+3. Varianzhomogenität (Varianzen sind innerhalb der verglichenen Gruppen ungefähr gleich)
+
+4. NEU: Annahme homogener Korrelationen, bzw. Zirkularität (aka Sphärizität)
+
+**Folgende Voraussetzung gilt nicht:**
+
+(4.) Messwerte in allen Bedingungen sind unabhängig voneinander
+  
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Voraussetzungen der ANOVA mit Messwiederholung
+
+.pull-left[
+
+**Annahme homogener Korrelationen:**
+
+* Zur Erinnerung: Daten sind explizit nicht unabhängig
+
+* Voraussetzung über die Art der Abhängigkeit der Daten
+
+* Alle Korrelationen zwischen den Stufen des Messwiederholungsfaktors `\((A)\)` müssen homogen sein 
+
+ACHTUNG: Muss erst ab &gt;2 Messzeitpunkten getestet werden! (nur 1 Korrelation)
+]
+
+.pull-right[
+
+```r
+cor(df[, c("t0", "t1", "t2")])
+```
+
+```
+##           t0        t1        t2
+## t0 1.0000000 0.3472786 0.2978448
+## t1 0.3472786 1.0000000 0.7801474
+## t2 0.2978448 0.7801474 1.0000000
+```
+
+* Korrelationen können mittels Korrelationsmatrix abgelesen werden
+
+* Auf den ersten Blick scheint es Unterschiede zu geben... `\((r=0.29\)` vs. `\(r=0.78)\)`
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Voraussetzungen der ANOVA mit Messwiederholung
+
+**Annahme homogener Korrelationen:**
+
+Verletzung der Annahme:
+
+* Bei Verletzung, kann der Zeiteffekt überschätzt werden
+
+* Es würden ggf. signifikante Ergebnisse gefunden, wo kein Effekt existiert
+
+ABER:
+
+* Annahme homogener Korrelationen sehr strenge Voraussetzung
+
+* Studien zeigen, dass auch etwas liberalere Annahme ausreicht: Homogenität der Varianzen zwischen den Faktorstufen **(Sphärizität)**
+
+* Sphärizität wird stattdessen geprüft
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Voraussetzungen der ANOVA mit Messwiederholung
+
+**Überprüfung der Sphärizität - Mauchly-Test:**
+
+* Annahme: Homogenität der Varianzen zwischen den Faktorstufen
+
+* Signifikanter Mauchly-Test `\(\rightarrow\)` Varianzen inhomogen `\(\rightarrow\)` keine Sphärizität
+
+**Durchführung des Mauchly-Tests in R:**
+
+
+```r
+library(performance)
+
+check_sphericity(model)
+```
+
+```
+## OK: Data seems to be spherical (p &gt; 0.127).
+```
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Voraussetzungen der ANOVA mit Messwiederholung
+
+**Verletzung der Sphärizität - Korrekturverfahren**
+
+* Es gibt Korrekturverfahren, die den F-Test für die Sphärizitätsverletzung korrigieren
+
+  * Greenhouse-Geisser Korrektur
+  * Huynh-Feldt Korrektur
+
+* Die Auswahl des Korrekturverfahrens richtet sich nach dem Wert `\(\varepsilon\)` (Epsilon)
+
+* Untergrenze für  Epsilon ist `\(\varepsilon=\frac{1}{p-1}\)`
+
+* Kleineres Epsilon `\(\rightarrow\)` stärkere Verletzung der Sphärizitätsannahme
+
+Entscheidungsregel nach Box:
+
+* `\(\varepsilon&lt;0.75\)` `\(\rightarrow\)` Greenhouse-Geisser Korrektur (strenger)
+
+* `\(\varepsilon\geq0.75\)` `\(\rightarrow\)` Huynh-Feldt Korrektur (liberaler)
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+**Verletzung der Sphärizität - Korrekturverfahren**
+
+.pull-left[
+
+.code60[
+
+```r
+model = aov_ez(dv = "Score", within = c("Time"), id = "id", data = df_long)
+summary(model)
+```
+
+```
+## 
+## Univariate Type III Repeated-Measures ANOVA Assuming Sphericity
+## 
+##             Sum Sq num Df Error SS den Df F value              Pr(&gt;F)    
+## (Intercept) 9975.6      1  141.111     14 989.701 0.00000000000002165 ***
+## Time         528.8      2   74.489     28  99.395 0.00000000000019120 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## 
+## Mauchly Tests for Sphericity
+## 
+##      Test statistic p-value
+## Time        0.72821 0.12725
+## 
+## 
+## Greenhouse-Geisser and Huynh-Feldt Corrections
+##  for Departure from Sphericity
+## 
+##       GG eps       Pr(&gt;F[GG])    
+## Time 0.78629 0.00000000005163 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+##         HF eps           Pr(&gt;F[HF])
+## Time 0.8685946 0.000000000005964162
+```
+]
+]
+
+.pull-right[
+* Beide Korrekturen können aus Output abgelesen werden
+
+* Entscheidend für Auswahl des Korrekturverfahrens ist das GG `\(\varepsilon\)`
+]
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Effektstärke
+
+`$$f^2_{s(abhängig)}=\frac{F\cdot df_{A}}{df_{A\text{ x }Vpn}}$$`
+
+`$$f^2_{s(abhängig)}=\frac{F\cdot df_{A}}{df_{A\text{ x }Vpn}}$$`
+
+`$$\eta^2_p=\frac{QS_{A}}{QS_{A} + QS_{A\text{ x }Vpn}}=\frac{f^2_{s}}{1+ f^2_{s}}$$`
+* `\(\eta^2_p\)` gibt Anteil der Varianz an, der durch Messwiederholung auf Stichprobenebene aufgeklärt wird
+
+* Der Vergleich von Effektstärke über Studien hinweg kann problematisch sein, wenn Korrelationen zwischen Messungen variieren.
+
+---
+class: top, left
+### ANOVA mit Messwiederholung
+
+#### Stichprobenumfangsplanung
+
+.center[
+&lt;img src="bilder/gpower_rm.png" width="470px" /&gt;
+]
+
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+* ANOVA mit Messwiederholung erlaubt Vergleich **abhängiger Daten** mit `\(\geq2\)` Messungen.
+
+* Es wird geprüft, ob eine **Veränderung über die Zeit** (Zeiteffekt) vorliegt.
+
+* Wird ebenfalls über Varianzzerlegung und Prüfung mittels **F-Test** durchgeführt.
+
+* ANOVA mit Messwiederholung kann zusätzlich zur **Effektvarianz** auch **Personenvarianz** aufklären (höhere Teststärke).
+
+* Als zusätzliche Voraussetzung wird die **Spärizität** geprüft.
+
+* Bei Verletzungen der Spärizitätsannahme können **Korrekturverfahren** angewendet werden, die Überschätzung des Effekts verhindern.
+
+* Wenn Spärizität erfüllt ist, können Post-Hoc Vergleiche mittels **Tukey-Test** geprüft werden.
+]
+]
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
