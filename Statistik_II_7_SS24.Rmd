@@ -1,0 +1,1332 @@
+---
+title: "Einheit 7"
+subtitle: "⚔<br/>with xaringan"
+author: "Prof. Dr. Stephan Goerigk"
+institute: "RStudio, PBC"
+date: "2016/12/12 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, "hygge", style.css]
+    lib_dir: libs
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+    seal: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+library(plotly)
+library(htmlwidgets)
+library(plotly)
+library(MASS)
+library(ggpubr)
+library(xaringanthemer)
+library(xaringanExtra)
+library(sjPlot)
+library(sjmisc)
+options(scipen = 999)
+
+style_duo_accent(
+  primary_color = "#621C37",
+  secondary_color = "#EE0071",
+  background_image = "blank.png"
+)
+
+xaringanExtra::use_xaringan_extra(c("tile_view"))
+
+use_scribble(
+  pen_color = "#EE0071",
+  pen_size = 4
+  )
+
+knitr::opts_chunk$set(
+  fig.retina = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+
+Xname = ""
+Yname = ""
+nudgnumber = 3
+my_green = "#EE0071"
+```
+
+name: Title slide
+class: middle, left
+<br><br><br><br><br><br><br>
+# Statistik II
+***
+### Einheit 7: Regressionsmodelle mit Interaktionen
+##### `r format(as.Date(data.frame(readxl::read_excel("Modul Quantitative Methoden II_Termine.xlsx"))$Datum), "%d.%m.%Y")[7]` | Prof. Dr. Stephan Goerigk
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Wiederholung:
+
+**Effektarten:**
+
+1. Haupteffekt 
+
+  * Haupteffekte beschreiben den Einfluss einer UV auf die AV unabhängig von anderen UVs (Konstanthaltung)
+
+2. Interaktionseffekt
+
+  * Wechselwirkung zwei UVs/Pädiktoen (Interaktion) auf die AV
+
+**Abgrenzung zur mehrfaktoriellen ANOVA:**
+
+* Bei der ANOVA sind UVs immer kategorial (Mittelwertesvergleiche zw. Gruppen/Kategorien)
+
+* Im Regressionsmodell können kategoriale und stetige UVs verwendet und auch kombiniert werden
+
+$\rightarrow$ Im multiplen Regressionsmodell sind weitere Arten von Interaktionen möglich
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Mögliche Interaktionen von 2 Prädiktoren im multiplen Regressionsmodell
+
+Die Regression erlaubt alle Kombinationen von Prädiktorentypen (Erweiterung des multiplen Regressionsmodells):
+
+1. stetig x stetig
+
+2. stetig x diskret
+
+3. diskret x diskret
+
+$\rightarrow$ Dabei dürfen die diskreten Prädiktoren 2 oder $\geq$ 2 Stufen haben.
+
+<br><br>
+Zum Vergleich - ANOVA erlaubt lediglich die Prüfung einer Art von Interaktion:
+
+1. diskret x diskret
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+```{r echo = F}
+set.seed(123)
+df = data.frame(Therapieerfolg = NA,
+                Erfahrung = sample(1:2, 52, replace=TRUE, prob=c(.5, .5)),
+                Konfrontativ = round(rnorm(52, 45, 19)))
+df$Erfahrung = factor(df$Erfahrung, levels = 1:2, labels = c("niedrig", "hoch"))
+#df$Therapieerfolg[df$Erfahrung == "niedrig"] = round(df$Konfrontativ[df$Erfahrung == "niedrig"] * 0.12 + 51  + rnorm(length(df$Konfrontativ[df$Erfahrung == "niedrig"]),0,10))
+
+df$Therapieerfolg[df$Erfahrung == "niedrig"] = round(faux::rnorm_pre(df$Konfrontativ[df$Erfahrung == "niedrig"], mu = 52, sd = 10, r = -0.61))
+df$Therapieerfolg[df$Erfahrung == "hoch"] = round(faux::rnorm_pre(df$Konfrontativ[df$Erfahrung == "hoch"], mu = 78, sd = 10, r = 0.85))
+
+df$Empathie = faux::rnorm_pre(df$Therapieerfolg, mu = 0, sd = 1, r = 0.7)
+df$Empathie[df$Empathie >= 0] = 2
+df$Empathie[df$Empathie < 0] = 1
+df$Empathie = factor(df$Empathie, levels = 1:2, labels = c("niedrig", "hoch"))
+
+df$IQ = round(faux::rnorm_pre(df$Therapieerfolg, mu = 100, sd = 15, r = 0.2))
+```
+
+.pull-left[
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+<small>
+
+* Datensatz für $N=52$ Therapeut:innen
+
+* **Forschungsfrage:** Was kann als Prädiktor für Therapieerfolg gelten? Gibt es Interaktionen?
+
+* Es wurden folgende Variablen gemessen:
+  
+  * Therapieerfolg (AV; 0-100 Punkte) 
+  
+  * Therapieerfahrung der Therapeut:in (UV; niedrig, hoch)
+  
+  * Bereitschaft Patient:in zu konfrontieren (UV 0-100 Punkte) 
+  
+  * Empathiefähigkeit der Therapeut:in (UV; niedrig, hoch)
+  
+  * IQ der Therapeut:in (UV; $\mu=100,\sigma=15$)
+
+  
+* Die ersten 15 Fälle sind in der Tabelle rechts dargestellt.
+
+</small>
+]
+
+.pull-right[
+```{r echo = F}
+knitr::kable(df[1:15,],
+             booktabs = T,
+             longtable = F) %>%
+  kable_classic(full_width = F,
+                  font_size = 13,
+                  html_font = "Times New Roman")
+```
+]
+
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+.pull-left[
+
+**Kodierung der diskreten Variablen:**
+
+Erinnerung - Diskrete Variablen werden im Regressionsmodell dummy-kodiert:
+
+* Therapieerfahrung (rechts dargestellt)
+
+  * niedrig = 0 (Referenz)
+  * hoch = 1
+  
+* Empathiefähigkeit
+
+  * niedrig = 0 (Referenz)
+  * hoch = 1
+]
+.pull-right[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung, data = df)
+summary(model)
+```
+]
+]
+
+$\rightarrow$ Im Modell berechnete Steigung $(\beta)$ repräsentiert durchschnittlichen Unterschied in AV, wenn Person nicht zu Referenzkategoie gehört
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+.pull-left[
+
+**Kodierung der diskreten Variablen:**
+
+Interpretation der Koeffizienten:
+
+* Theapeut:innen mit niedriger Erfahrung (Erfahrung = 0) haben Thearapieefolg von `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` Punkten.
+
+* Theapeut:innen mit hoher Erfahrung (Erfahrung = 1) haben `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkte Thearapieefolg mehr.
+
+* Theapeut:innen mit hoher Erfahrung (Erfahrung = 1) haben Thearapieefolg von `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` + `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` = `r round(as.data.frame(summary(model)$coefficients)[1,1], 2) + round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkte
+
+]
+.pull-right[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung, data = df)
+summary(model)
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+Modell mit 2 Prädiktoren: Erfahrung und Konfrontationsbereitschaft:
+
+<small>
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} + \epsilon_i$$
+
+$$Erfolg = \beta_1 \cdot Erfahrung_{(hoch)} + \beta_2 \cdot Konfrontationsb. + \epsilon_i$$
+
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+$$Y_i=a + \beta_1 \cdot X_{i1} + \beta_2 \cdot X_{i2} +  \beta_3 \cdot (X_{i1} \cdot X_{i2}) + \epsilon_i$$
+
+$$Erfolg = \beta_1 \cdot Erfahrung_{(hoch)} + \beta_2 \cdot Konfrontationsb. +  \beta_3 \cdot (Erfahrung_{(hoch)} \cdot Konfrontationsb.)+ \epsilon_i$$
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+Mögliche Forschungsfragen im Modell:
+
+1. Besteht ein Unterschied zwischen unerfahrenen und erfahrenen Therapeut:innen hinsichtlich des Therapieerfolgs? $\rightarrow$ Steigung Erfahrung
+
+2. Verändert sich der Therapieerfolg mit zunehmender Konfrontationsbereitschaft? $\rightarrow$ Steigung Konfrontationsbereitschaft
+
+3. Wie viel Varianz der AV (Therapieerfolg) kann das Gesamtmodell mit beiden Prädiktoren erklären $\rightarrow$ Bestimmtheitsmaß $R^2$
+
+$\rightarrow$ Für Fragen 1 und 2 wird der jeweils andere Prädiktor konstant gehalten.
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+<small>
+* Y-Achsenabschnitt (aka. Intercept, $a$): Therapeut:innen mit Erfahrung = 0 (niedrig) und Konfrontationsbereitschaft = 0 haben `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` Punkte Therapieerfolg.
+
+* Mit 1 Einheit mehr Erfahrung (1 = hoch) haben Therapeut:innen `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkte zusätzlichen Therapieerfolg (bei Konstanthaltung von Konfrontationsbereitschaft).
+
+* Mit 1 Einheit mehr Konfrontationsbereitschaft haben Therapeut:innen `r round(as.data.frame(summary(model)$coefficients)[3,1], 2)` Punkte zusätzlichen Therapieerfolg (bei Konstanthaltung von Erfahrung).
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+<small>
+
+* Bei Konstanthaltung von Konfrontationsbereitschaft ist Erfahrung signifikant mit Therapieerfolg assoziiert $(t_{(49)}=8.89, p<.001)$.
+
+* Bei Konstanthaltung von Erfahrung ist Konfrontationsbereitschaft nicht signifikant mit Therapieerfolg assoziiert $(t_{(49)}=1.89, p=.066)$.
+
+* Das Gesamtmodell kann 62% der Varianz des Therapieerfolgs erklären $(R^2=0.62)$.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Berechnung der Konfidenzintervalle: 
+.code60[
+```{r}
+confint(model)
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**1. Multiples Regressionsmodell ohne Interaktion (diskret + stetig):**
+
+.pull-left[
+```{r echo = F, out.height="420px"}
+ggplotly(ggplot(df, aes(x = Erfahrung, y = Therapieerfolg)) +
+  geom_point() +
+stat_summary(geom = "bar", fun = "mean", fill = "transparent", colour = "black") +
+  coord_cartesian(ylim = c(0,100)) +
+  theme_classic() +
+    theme(text = element_text(size = 20)))
+```
+]
+
+.pull-right[
+```{r echo = F, out.height="420px"}
+ggplotly(ggplot(df, aes(x = Konfrontativ, y = Therapieerfolg)) +
+   geom_point() +
+    geom_smooth(method = "lm") +
+    coord_cartesian(ylim = c(0,100)) +
+  theme_classic() +
+    theme(text = element_text(size = 20)))
+```
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Achtung: Unterschiedliche Steigungsparameter für selben Pädiktor (Erfahrung) nach Hinzunahme weiterer Prädiktoren**
+
+.pull-left[
+.code60[
+```{r}
+model1 = lm(Therapieerfolg ~ Erfahrung, data = df)
+summary(model1)
+```
+]
+]
+
+.pull-right[
+.code60[
+```{r}
+model2 = lm(Therapieerfolg ~ Erfahrung + Konfrontativ, data = df)
+summary(model2)
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Achtung: Unterschiedliche Steigungsparameter für selben Pädiktor (Erfahrung) nach Hinzunahme weiterer Prädiktoren**
+
+* Steigungsparameter unterscheiden sich marginal:
+
+  * Modell ohne Konfrontationsbereitschaft: $\beta_{Erfahrung=hoch}=$ `r round(as.data.frame(summary(model1)$coefficients)[2,1], 2)`
+
+  * Modell mit Konfrontationsbereitschaft $\beta_{Erfahrung=hoch}=$ `r round(as.data.frame(summary(model2)$coefficients)[2,1], 2)`
+
+**Begründung:**
+
+* Im zweiten Modell ist der Steigungsparameter von Erfahrung für den Einfluss von Konfrontationsbereitschaft **kontrolliert** (Einfluss wurde herausgerechnet)
+
+* Man spricht dann bei der Konfrontationsbereitschaft von einer **Kovariaten** (Kontrollvariable)
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+<small>
+
+1. Verändert sich der Therapieerfolg von unerfahrenen Therapeut:innen mit zunehmender Konfrontationsbereitschaft?
+
+2. Verändert sich der Therapieerfolg von erfahrenen Therapeut:innen mit zunehmender Konfrontationsbereitschaft?
+
+3. Ist der Effekt der Konfrontationsbereitschaft auf den Therapieerfolg in den Gruppen signifikant unterschiedlich?
+
+$\rightarrow$ Die dritte Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+```{r eval = TRUE, echo = F, out.width = "950px"}
+knitr::include_graphics("bilder/Moderation.png")
+```
+]
+
+* AV: Therapieerfolg
+* UV: Konfrontationsbereitschaft
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Erfahrung den Effekt der Konfrontationsbereitschaft auf den Therapieerfolg?* (Beispielserklärung: Erfahrenere Therapeut:innen können besser konfrontieren.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einer Konfrontationsbereitschaft = 0 einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben bei einer Konfrontationsbereitschaft = 0 einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkten weniger, als die Referenzgruppe
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+<small>
+* Mit 1 Einheit zusätzlicher Konfrontationsbereitschaft nimmt der Therapieerfolg von Therapeut:innen mit niedriger Erfahrung um `r round(as.data.frame(summary(model)$coefficients)[3,1], 2)` Punkte ab $(t_{48}=-4.14, p<.001)$.
+
+* Mit 1 Einheit zusätzlicher Konfrontationsbereitschaft nimmt der Therapieerfolg von Therapeut:innen mit hoher Erfahrung um `r round(as.data.frame(summary(model)$coefficients)[4,1], 2)` Punkte mehr zu, als bei der Referenzgruppe $(t_{48}=6.51, p<.001)$.
+
+* Insgesamt nimmt der Therapieerfolg bei von Therapeut:innen mit hoher Erfahrung mit 1 Einheit zusätzlicher Konfrontationsbereitschaft also um `r round(as.data.frame(summary(model)$coefficients)[3,1], 2)` + `r round(as.data.frame(summary(model)$coefficients)[4,1], 2)` = `r round(as.data.frame(summary(model)$coefficients)[3,1], 2) +  round(as.data.frame(summary(model)$coefficients)[4,1], 2)` Punkte zu
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Berechnung der Konfidenzintervalle:
+.code60[
+```{r}
+confint(model)
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+Moderationseffekt:
+
+* Der Unterschied zwischen den Steigungen der Gruppen mit niedriger und hoher Erfahrung ist signifikant $(\beta = 0.82, t_{(48)}=6.51, p<.001)$
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+.right[
+```{r echo = F, out.height="420px"}
+ggplot(df, aes(x = Konfrontativ, y = Therapieerfolg, colour = Erfahrung)) +
+  geom_point(size = 4) +
+    geom_smooth(method = "lm") +
+  coord_cartesian(ylim = c(0,100)) +
+  theme_classic() +
+    theme(legend.position = "bottom", text = element_text(size = 20))
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+**Anmerkung:**
+<small>
+* Output des Regressionsmodells enthält lediglich einen Signifikanztest für die Steigung der Referenzkategorie $(\beta_{Konfrontativ|Erfahrung=0}=-0.44, t_{48}=-4.14, p<.001)$
+
+* Steigung der anderen Gruppe lässt sich "per Hand" ausrechnen $(\beta_{Konfrontativ|Erfahrung=1} =$ `r round(as.data.frame(summary(model)$coefficients)[3,1], 2)` + `r round(as.data.frame(summary(model)$coefficients)[4,1], 2)` = `r round(as.data.frame(summary(model)$coefficients)[3,1], 2) +  round(as.data.frame(summary(model)$coefficients)[4,1], 2)`
+
+* Signifikanztest prüft jedoch nur, ob $\beta_{Konfrontativ|Erfahrung=0} \neq \beta_{Konfrontativ|Erfahrung=1}$ $(t_{48}=6.51, p<.001)$, nicht ob $(\beta_{Erfahrung=1} \neq 0$
+
+$\rightarrow$ Dafür müsste die Referenzkategorie getauscht werden, sodass hohe Erfahrung = 0 und niedrige Erfahrung = 1.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ relevel(Erfahrung, "hoch") * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+**Anmerkung:**
+<small>
+* Nun ist "hohe Erfahrung" die Referenzkategorie
+* Y-Achsenabschnitt (Intercept) und Steigungen beziehen sich jetzt auf "hohe Erfahrung" = 0
+* Signifikanztest für die Steigung der Referenzkategorie (hohe Erfahrung = 0) nun möglich $(\beta_{Konfrontativ|Erfahrung=0}=0.38, t_{48}=5.63, p<.001)$
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+Die einzelnen Steigungen un deren KIs lassen sich jedoch auch automatisch anzeigen:
+
+```{r echo=FALSE}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+```
+
+```{r}
+library(emmeans)
+emtrends(model, pairwise ~ Erfahrung, var = "Konfrontativ")
+```
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+Signifikanz kann auch mittels Omnibustest ermittelt werden:
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+anova(model)
+```
+]
+]
+
+.pull-right[
+<small>
+
+Für jeden Modellfaktor stellt sich die Frage: "*Erklärt das Modell mit diesem Faktor signifikant mehr Varinaz als ohne den Faktor?*"
+
+* Alle 3 Effekte (2 Haupeffekt + 1 Interaktion signifikant)
+
+* Vorsicht: Bei signifikanter Interaktion muss bei Interpretation der Haupteffekte aufgepasst werden!
+
+$\rightarrow$ Haupteffekt Konfrontationsbereitschaft deutlich größerer p-Wert, da Effekt in beiden Gruppen gegenläufig (disordinale Interaktion)
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+<small>
+
+1. Verändert sich der Therapieerfolg von unerfahrenen Therapeut:innen mit zunehmender Empathiefähigkeit?
+
+2. Verändert sich der Therapieerfolg von erfahrenen Therapeut:innen mit zunehmender Empathiefähigkeit?
+
+3. Ist der Effekt der Empathiefähigkeit auf den Therapieerfolg in den Gruppen signifikant unterschiedlich?
+
+$\rightarrow$ Die dritte Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+```{r eval = TRUE, echo = F, out.width = "950px"}
+knitr::include_graphics("bilder/Moderation.png")
+```
+]
+
+* AV: Therapieerfolg
+* UV: Empathiefähigkeit
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Erfahrung den Effekt der Empathiefähigkeit auf den Therapieerfolg?* (Beispielserklärung: Erfahrenere Therapeut:innen können Empathie besser ausdrücken.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einer niedrigen Empathie (Empathie = 0) einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben bei einer niedrigen Empathie (Empathie = 0) einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkten mehr, als die Referenzgruppe
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+
+<small>
+* Mit 1 Einheit zusätzlicher Empathiefähigkeit (Empathie=hoch) nimmt der Therapieerfolg von Therapeut:innen mit niedriger Erfahrung um `r round(as.data.frame(summary(model)$coefficients)[3,1], 2)` Punkte zu $(t_{48}=2.06, p=.045)$.
+
+* Mit 1 Einheit zusätzlicher Empathiefähigkeit (Empathie=hoch)  nimmt der Therapieerfolg von Therapeut:innen mit hoher Erfahrung um `r round(as.data.frame(summary(model)$coefficients)[4,1], 2)` Punkte weniger zu, als bei der Referenzgruppe $(t_{48}=-0.09, p=.927)$.
+
+* Insgesamt nimmt der Therapieerfolg bei von Therapeut:innen mit hoher Erfahrung mit 1 Einheit zusätzlicher Empathiefähigkeit also um `r round(as.data.frame(summary(model)$coefficients)[3,1], 2)` + (`r round(as.data.frame(summary(model)$coefficients)[4,1], 2)`) = `r round(as.data.frame(summary(model)$coefficients)[3,1], 2) +  round(as.data.frame(summary(model)$coefficients)[4,1], 2)` Punkte zu.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Berechnung der Konfidenzintervalle:
+
+.code60[
+```{r}
+confint(model)
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x diskret) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Empathie, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+.right[
+```{r echo = F, out.height="420px"}
+ggplot(df, aes(x = Empathie, y = Therapieerfolg, colour = Erfahrung)) +
+  geom_point(size = 4, position = position_dodge(.95)) +
+    stat_summary(geom = "bar", fill = "transparent", position = position_dodge2(.95)) +
+  coord_cartesian(ylim = c(0,100)) +
+  theme_classic() +
+    theme(legend.position = "bottom", text = element_text(size = 20))
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+<small>
+
+1. Verändert sich der Therapieerfolg von unerfahrenen Therapeut:innen mit zunehmendem IQ?
+
+2. Verändert sich der Therapieerfolg von erfahrenen Therapeut:innen mit zunehmendem IQ?
+
+3. Ist der Effekt des IQ auf den Therapieerfolg in den Gruppen signifikant unterschiedlich?
+
+$\rightarrow$ Die dritte Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+```{r eval = TRUE, echo = F, out.width = "950px"}
+knitr::include_graphics("bilder/Moderation.png")
+```
+]
+
+* AV: Therapieerfolg
+* UV: IQ
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Erfahrung den Effekt der Empathiefähigkeit auf den Therapieerfolg?* (Beispielserklärung: Erfahrenere Therapeut:innen können Intelligenz besser einsetzen / geringe Intelligenz kompensieren.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+df$IQ_cent = round(df$IQ - mean(df$IQ))
+
+model = lm(Therapieerfolg ~ Erfahrung * IQ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+<small>
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einem IQ von 0 einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben  bei einem IQ von 0 einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkten mehr, als die Referenzgruppe
+
+**VORSICHT:** Effekt von Erfahrung in diesem Modell nicht mehr signifikant $(t_{48}=0.48, p=.631)$ - Wie kann dies sein?
+
+$\rightarrow$ IQ = 0 ist kein sinnvoller Wert! $\rightarrow$ Lösung: **Zentrierung** (folgt gleich)
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * IQ, data = df)
+anova(model)
+```
+]
+]
+
+.pull-right[
+* Im Omnibustest ist der Haupteffekt von Erfahrung signifikant $(F_{1,48}=70.96, p<.001)$ 
+
+* Der Faktor Erfahrung scheint also ein signifikantes Maß an Varianz zu erklären.
+
+* Dennoch ist die Steigung nicht signifikant... 
+
+$\rightarrow$ IQ = 0 ist kein sinnvoller Wert! $\rightarrow$ Lösung: **Zentrierung** (nächste Folie)
+]
+
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Zentrierung - Prädiktoren ohne sinnhaften 0-Punkt:**
+
+* Einige Koeffizienten im Regressionsmodell gehen von Prädiktor = 0 aus
+
+* Wenn 0 des Prädiktors kein sinnvoller Wert ist, wendet man eine Zentrierung an:
+
+$$x_{izentriert} = x_i- \bar{x}$$
+* Von jedem Wert wird der Mittelwert abgezogen (Grand-Mean Zentrierung)
+
+Ergebnis: zentrierte Variable
+
+  * alle Werte, die genau dem Mittelwert entsprechen sind nun 0 (neuer Nullpunkt)
+  * Werte $>\bar{x}$ sind positiv
+  * Werte $<\bar{x}$ sind negativ
+
+$\rightarrow$ Beispiel: $x_{izentriert} = 2$ bedeutet 2 Einheiten mehr als der Durchschnitt
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+.pull-left[
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+Zentrierung des IQ Prädiktors:
+
+$$IQ_izentriert = IQ_i- \bar{IQ}$$
+
+* $\bar{IQ}=100$ ist der neue Nullpunkt der Variable
+
+$\rightarrow$ Die neue 0 ist als "durchschnittlich intelliergent" interpretierbar
+]
+
+.pull-right[
+```{r echo = F}
+knitr::kable(df[1:15,],
+             booktabs = T,
+             longtable = F) %>%
+  kable_classic(full_width = F,
+                  font_size = 13,
+                  html_font = "Times New Roman")
+```
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * IQ_cent, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Modell mit **zentiertem IQ** als Prädiktor:
+
+Interpretation der Koeffizienten:
+
+* Therapeut:innen mit niedriger Erfahrung (Erfahrung=0) haben bei einem durchschnittlichen IQ (IQ=0) einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` Punkten
+
+* Therapeut:innen mit hoher Erfahrung (Erfahrung=1) haben bei einem durchschnittlichen IQ (IQ=0) einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkten mehr, als die Referenzgruppe $\rightarrow$ Nun wieder signifikant $(t_{48}=8.24, p<.001)$
+
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+.pull-left[
+
+**2. Multiples Regressionsmodell mit Interaktion (diskret x stetig) :**
+
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * IQ_cent, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+<small>
+Für Visualisierung muss IQ diskret gemacht werden (z.B. unter Durchschnitt, Durchschnitt, über Durchschnitt):
+.right[
+```{r echo = F, out.height="380px"}
+plot_model(model, type = "pred", terms = c("Erfahrung", "IQ_cent [-15, 0, 15]")) +
+  geom_line(position = position_dodge(.1)) +
+  coord_cartesian(ylim = c(0,100)) +
+  ggtitle("") +
+  theme_classic() +
+    theme(legend.position = "bottom", text = element_text(size = 20))
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (stetig x stetig) :**
+
+.pull-left[
+Mögliche Forschungsfragen im Modell:
+
+<small>
+
+1. Verändert sich der Therapieerfolg von konfrontativeren Therapeut:innen mit zunehmendem IQ?
+
+$\rightarrow$ Diese  Frage stellt eine sog. Moderationshypothese dar (rechts dargestellt)
+]
+
+.pull-right[
+.center[
+```{r eval = TRUE, echo = F, out.width = "950px"}
+knitr::include_graphics("bilder/Moderation.png")
+```
+]
+
+* AV: Therapieerfolg
+* UV: IQ
+* Moderator: Erfahrung
+
+**Moderation:** *Beeinflusst die Intelligenz den Effekt der Konfrontationsfähigkeit auf den Therapieerfolg?* (Beispielserklärung: Intelligentere Therapeut:innen können besser konfrontieren.) 
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**2. Multiples Regressionsmodell mit Interaktion (stetig x stetig) :**
+
+.pull-left[
+.code60[
+```{r}
+df$IQ_cent = round(df$IQ - mean(df$IQ))
+
+model = lm(Therapieerfolg ~ Konfrontativ * IQ, data = df)
+summary(model)
+```
+]
+]
+
+.pull-right[
+Interpretation der Koeffizienten:
+<small>
+* Therapeut:innen mit niedriger Konfrontativität (Konfrontativ=0) haben bei einem IQ von 0 einen geschätzten Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[1,1], 2)` Punkten
+
+* Therapeut:innen mit 1 Einheit zusätzlicher Konfrontativität haben  zusätzlichen Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[2,1], 2)` Punkten, im Vergleich zur Referenzgruppe
+
+* Therapeut:innen mit 1 Einheit zusätzlichem IQ haben zusätzlichen Therapieerfolg von `r round(as.data.frame(summary(model)$coefficients)[3,1], 2)` Punkten, im Vergleich zur Referenzgruppe
+
+* Therapeut:innen mit 1 Einheit zusätzlichem IQ haben bei Zunahme um 1 Punkt Konfrontativität eine zusätzliche Steigung von `r round(as.data.frame(summary(model)$coefficients)[4,1], 3)` Punkten.
+
+]
+
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+```{r echo = F}
+set.seed(123)
+df = data.frame(Therapieerfolg = NA,
+                Erfahrung = sample(1:3, 52, replace=TRUE, prob=c(.333, .333, .333)),
+                Konfrontativ = round(rnorm(52, 45, 19)))
+df$Erfahrung = factor(df$Erfahrung, levels = 1:3, labels = c("niedrig", "mittel", "hoch"))
+#df$Therapieerfolg[df$Erfahrung == "niedrig"] = round(df$Konfrontativ[df$Erfahrung == "niedrig"] * 0.12 + 51  + rnorm(length(df$Konfrontativ[df$Erfahrung == "niedrig"]),0,10))
+
+df$Therapieerfolg[df$Erfahrung == "niedrig"] = round(faux::rnorm_pre(df$Konfrontativ[df$Erfahrung == "niedrig"], mu = 52, sd = 10, r = -0.61))
+df$Therapieerfolg[df$Erfahrung == "mittel"] = round(faux::rnorm_pre(df$Konfrontativ[df$Erfahrung == "mittel"], mu = 52, sd = 10, r = 0.2))
+df$Therapieerfolg[df$Erfahrung == "hoch"] = round(faux::rnorm_pre(df$Konfrontativ[df$Erfahrung == "hoch"], mu = 78, sd = 10, r = 0.85))
+
+df$Empathie = faux::rnorm_pre(df$Therapieerfolg, mu = 0, sd = 1, r = 0.7)
+df$Empathie[df$Empathie >= 0] = 2
+df$Empathie[df$Empathie < 0] = 1
+df$Empathie = factor(df$Empathie, levels = 1:2, labels = c("niedrig", "hoch"))
+
+df$IQ = round(faux::rnorm_pre(df$Therapieerfolg, mu = 100, sd = 15, r = 0.2))
+```
+
+.pull-left[
+
+**Diskrete Prädiktoren mit $> 2$ Stufen:**
+
+Nehmen wir einmal an, Erfahrung der Therapeut:innen würde 3-stufig definiert:
+
+ * niedrig = 0 (Referenz)
+ * mittel = 1
+ * hoch = 2
+]
+
+.pull-right[
+```{r echo = F}
+knitr::kable(df[1:15,],
+             booktabs = T,
+             longtable = F) %>%
+  kable_classic(full_width = F,
+                  font_size = 13,
+                  html_font = "Times New Roman")
+```
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit $> 2$ Stufen:**
+
+Dummy-Kodierung: Zerlegung der 3-stufigen in zwei 2-stufige Dummy Variablen:
+
+.pull-left[
+Dummy-Variable 1:
+* niedrig = 0 (Referenz)
+* mittel = 1
+]
+.pull-right[
+Dummy-Variable 2:
+* niedrig = 0 (Referenz)
+* hoch = 1
+]
+
+Modell mit Dummy-Kodierung:
+
+<small>
+
+$$Erfolg = \beta_1 \cdot Erfahrung_{(mittel)} + \beta_2 \cdot Erfahrung_{(hoch)} + \beta_3 \cdot Konfrontationsb. ...$$
+$$...+  \beta_4 \cdot (Erfahrung_{(mittel)} \cdot Konfrontationsb.) +  \beta_5 \cdot (Erfahrung_{(hoch)} \cdot Konfrontationsb.) + \epsilon_i$$
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit $> 2$ Stufen:**
+
+.pull-left[
+
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+summary(model)
+```
+]
+]
+.pull-right[
+.right[
+```{r echo = F, out.height="420px"}
+ggplot(df, aes(x = Konfrontativ, y = Therapieerfolg, colour = Erfahrung)) +
+  geom_point(size = 4) +
+    geom_smooth(method = "lm") +
+  coord_cartesian(ylim = c(0,100)) +
+  theme_classic() +
+    theme(legend.position = "bottom", text = element_text(size = 20))
+```
+]
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit $>2$ Stufen:**
+
+.pull-left[
+.code60[
+```{r}
+model = lm(Therapieerfolg ~ Erfahrung * Konfrontativ, data = df)
+anova(model)
+```
+]
+]
+.pull-right[
+* Der Omnibustest funktioniert wie bei der ANOVA $(\geq$ 2 Stufen) 
+
+* Alle 3 Steigungen werden auf simultan auf Signifikanz getestet
+
+* So wird eine $\alpha-$Fehlerkumulierung verhindert
+
+* Welche Steigungen sich genau zwischen den Gruppen unterscheiden, lässt sich mit Post-Hoc Trend-Vergleichen prüfen (nächste Folie)
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit $> 2$ Stufen:**
+
+.pull-left[
+
+.code60[
+```{r}
+emtrends(model, pairwise ~ Erfahrung, var = "Konfrontativ")
+```
+]
+]
+
+.pull-right[
+* Bei Therapeut:innen mit hoher Erfahrung steigt Therapieerfolg mit zunehmender Konfrontationsbereitschaft signifikant an.
+
+* Bei Therapeut:innen mit mittlerer Erfahrung nimmt Therapieerfolg mit zunehmender Konfrontationsbereitschaft nicht signifikant ab.
+
+* Bei Therapeut:innen mit niedriger Erfahrung nimmt Therapieerfolg mit zunehmender Konfrontationsbereitschaft signifikant ab.
+]
+
+---
+class: top, left
+### Regressionsmodelle mit Interaktionen
+
+#### Beispiel: Faktoren für Erfolg einer Therapie
+
+**Diskrete Prädiktoren mit $> 2$ Stufen:**
+
+.pull-left[
+
+.code60[
+```{r}
+emtrends(model, pairwise ~ Erfahrung, var = "Konfrontativ")
+```
+]
+]
+
+.pull-right[
+* $\beta_{Konfrontativ|Erfahrung=hoch}$ unterscheidet sich signifikant von $(\beta_{Konfrontativ|Erfahrung=niedrig}$ $(p<.001)$ und $\beta_{Konfrontativ|Erfahrung=mittel}$ $(p=.012)$
+
+* $\beta_{Konfrontativ|Erfahrung=neidrig}$ und $\beta_{Konfrontativ|Erfahrung=mittel}$ unterscheiden sich nicht signifikant $(p=.065)$
+
+* P-Werte sind Tukey-korrigiert, um Typ-I Fehler zu kontrollieren
+]
+
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+* Die Regression erlaubt **alle Kombinationen** von [stetig x stetig], [diskret x diskret] und [stetig x diskret] Prädiktoren.
+
+* Testung des Interaktionseffekt entspricht Prüfung einer **Moderationshypothese**.
+
+* Diskrete Variablen müssen **dummy-codiert** werden. Zur Inspektion der Steigungen aller Stufen muss **Referenzkategorie** ggf. gewechselt werden.
+
+* Bei stetigen Prädiktoren ohne sinnhaften Nullpunkt sollte eine **Zentrierung** durchgeführt werden.
+
+* Bei $>2$-stufigen diskreten Prädiktoren sollten **Omnibustests** verwendet werden, um Typ-I Fehler zu vermeiden.
+
+* Paarweise Vergleiche von Steigungen innerhalb der Stufen eines Faktors lassen sich mit **Post-Hoc Trend Vergleichen** rechnen.
+]
+]
+
+
+
+

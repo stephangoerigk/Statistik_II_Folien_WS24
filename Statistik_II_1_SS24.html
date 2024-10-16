@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Einheit 1</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dr. Stephan Goerigk" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/hygge.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#EE0071"],"pen_size":4,"eraser_size":40,"palette":[]}) })</script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+name: Title slide
+class: middle, left
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+# Statistik II
+***
+### Einheit 1: Einfaktorielle Varianzanalyse (1)
+##### 16.10.2024 | Prof. Dr. Stephan Goerigk
+
+---
+class: top, left
+name: Contact Slide
+
+### Kontakt
+
+.pull-left[
+Prof. Dr. phil. Stephan Goerigk 
+
+Psychologische Methodenlehre
+
+Infanteriestraße 11a · 80797 München · 
+
+[stephan.goerigk@charlotte-fresenius-uni.de](mailto:stephan.goerigk@charlotte-fresenius-uni.de)
+
+Zoom Sprechstunde (bitte per Email anmelden): 
+
+Meeting-ID: 284 567 8838
+
+Kenncode: 807174
+
+[Publikationen](https://scholar.google.at/citations?user=nlvO-e4AAAAJ&amp;hl=de)
+
+[Commitment to Research Transparency](http://www.researchtransparency.org)
+]
+
+.pull-right[
+.center[
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+.bottom[![](rtransperency.png)]
+]
+]
+
+---
+class: top, left
+### Übersicht Lehrveranstaltung 
+
+Termine:
+* 13 Termine
+* Mittwoch 13:05 - 14:35 (Audimax)
+
+Begleitendes Seminar:
+* Dozentin: Sara Vragolic ([sara.vragolic@charlotte-fresenius-uni.de](mailto:sara.vragolic@charlotte-fresenius-uni.de))
+
+Materialien:
+* werden auf [Studynet](https://studynet.hs-fresenius.de/ilias.php?baseClass=ilrepositorygui&amp;cmdNode=zx:oz&amp;cmdClass=ilobjfoldergui&amp;ref_id=26259) bereitgestellt
+
+Prüfungsleistung:
+* Klausur 90 min
+* 1/3 geschlossene Fragen (z.B. MC) &amp; 2/3 offene Fragen und Rechnungen
+
+---
+class: top, left
+### Termine
+
+&lt;table class=" lightable-classic" style='font-size: 15px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; '&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Einheit &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Datum &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Thema &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 16.10.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Einfaktorielle ANOVA (1) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 23.10.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Einfaktorielle ANOVA (2) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 06.11.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Einfache lineare Regression (1) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 13.11.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Einfache lineare Regression (2) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 20.11.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mehrfaktorielle ANOVA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 27.11.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Multiple Regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 04.12.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Regressionsmodelle mit Interaktionen &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 11.12.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ANOVA mit Messwiederholung &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 18.12.2024 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mixed Designs &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 08.01.2025 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verfahren für Nominaldaten (1) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 29.01.2025 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Verfahren für Nominaldaten (2) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 05.02.2025 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Klausurvorbereitung &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+class: top, left
+### Material (bitte mitbringen)
+
+Es werden händische Berechnungen durchgeführt.
+
+* Taschenrechner
+
+* Lineal
+
+* Bleistift
+
+* kariertes Papier
+
+* Folien ersetzen nicht den Vorlesungsbesuch
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+.pull-left[
+
+#### Kurzvorstellung
+
+* In der psychologischen Forschung weit verbreiteter und beliebter inferenzstatistischer Test
+
+* ANOVA: engl. *Analysis of Variance*
+
+* Anwendung: Vergleich nicht nur zweier (t-Test), sondern mehrerer Mittelwerte (Gruppen/Zeitpunkte)
+
+* Verallgemeinerung des t-Tests, da vergleichbare Argumentationsweise
+
+`\(\rightarrow\)` Wir testen gegen die Nullhypothese `\((H_0)\)` und verwerfen diese bei einem signifikanten Ergebnis
+]
+.pull-right[
+![](Statistik_II_1_SS24_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+.pull-left[
+
+#### Kurzvorstellung
+
+##### Klinisches Beispiel
+
+* Klassisches Design: Behandlung (z.B. Medikament 1) vs. Placebo
+
+* ANOVA: Erweiterung durch eine weitere Behandlungsoption (z.B. Medikament 2)
+
+***
+
+* Klärbare Forschungsfragen: 
+
+  * Unterscheiden sich die 3 Mittelwerte voneinander?
+  
+  * Welche Gruppe ist welcher Gruppe überlegen (hat den höheren/niedrigeren Mittelwert)?
+
+]
+.pull-right[
+![](Statistik_II_1_SS24_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Warum brauchen wir die ANOVA?
+
+
+
+* Wir kennen bereits den t-Test:
+
+  * t-Test kann Mittelwerte von 2 Gruppen vergleichen
+  
+  * t-Wert prüft, wie wahrscheinlich eine Mittelwertsdifferenz unter Annahme der `\(H_0\)` ist 
+
+***
+
+**Intuitive Überlegung:**
+
+* Können wir mit dem t-Test auch mehr als 2 Mittelwerte vergleichen?
+
+* Wie sähe dies bei unserem Beispiel aus?
+  * t-Test (1): Placebo vs. Medikament 1
+  * t-Test (2): Placebo vs. Medikament 2
+  * t-Test (3): Medikament 1 vs. Medikament 2
+
+`\(\rightarrow\)` Zwar mit steigender Anzahl an Vergleichen immer aufwendiger, aber man könnte bekanntes Verfahren beibehalten!
+
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Warum brauchen wir die ANOVA?
+
+* Wir kennen bereits den t-Test
+
+  * kann Mittelwerte von 2 Gruppen vergleichen
+  * t-Wert prüft, wie wahrscheinlich eine Mittelwertsdifferenz unter Annahme der `\(H_0\)` ist 
+
+.pull-left[
+**FRAGE:**
+
+* Können wir mit dem t-Test auch mehr als 2 Mittelwerte vergleichen?
+* Wie sähe dies bei unserem Beispiel aus:
+  * t-Test (1): Placebo vs. Medikament 1
+  * t-Test (2): Placebo vs. Medikament 2
+  * t-Test (3): Medikament 1 vs. Medikament 2
+
+`\(\rightarrow\)` Ist zwar mit steigender Anzahl an Vergleichen immer aufwendiger, aber man könnte beim bekannten Verfahren bleiben!
+]
+.pull-right[
+**Es ergeben sich jedoch 2 Probleme:**
+
+1. `\(\alpha\)`-Fehlerkumulierung
+2. Verringerung der Teststärke
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Warum brauchen wir die ANOVA?
+
+** `\(\alpha\)`-Fehlerkumulierung**
+
+* Tritt auf, wenn zur Prüfung einer Hypothese mehrere Tests an denselben Daten gerechnet werden
+
+GRUND:
+
+* Jeder Test testet gegen das a priori festgelegte Niveau (z.B. `\(\alpha=.05\)`)
+
+* Zur Erinnerung: `\(\alpha\)`-Fehler = Wahrscheinlichkeit für einen Fehler 1. Art `\((H_0\)` fälschlicherweise verwerfen)
+
+* Beim Rechnen mehrerer Tests kumuliert sich der `\(\alpha\)`-Fehler (kumulieren = anhäufen)
+
+* Folge: Das Gesamt `\(\alpha-\)`Niveau entspricht nicht mehr dem der Einzeltests:
+
+`$$\alpha_{gesamt}=1-(1-\alpha_{Test})^m$$` 
+
+* Beispiel 3 Gruppen: `\(\alpha_{gesamt}=1-(1-0.05)^3=0.14\)`
+
+`\(\rightarrow\)` Fehler 1. Art nicht mehr zu 5% sondern zu 14% wahrscheinlich!
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Warum brauchen wir die ANOVA?
+
+**Vorteil der ANOVA:**
+
+* Die ANOVA ist ein sogenannter **Omnibustest**.
+
+* D.h. es werden alle Mittelwerte auf einmal miteinander verglichen.
+
+Veranschaulichung:
+
+* `\(H_0:\)` t-Test (x3)
+  * `\(\mu_1 = \mu_2\)`
+  * `\(\mu_1 = \mu_3\)`
+  * `\(\mu_2 = \mu_3\)`
+
+* `\(H_0:\)` ANOVA
+  * `\(\mu_1 = \mu_2 = \mu_3\)`
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Warum brauchen wir die ANOVA?
+
+** `\(\alpha\)`-Fehlerkumulierung**
+
+* Die `\(\alpha\)`-Fehlerkumulierung tritt nur dann auf, wenn mehrere Tests für eine Hypothese an denselben Daten durchgeführt werden
+
+* Würden für jeden Einzelvergleich neue Stichproben gezogen, wären mehrere Tests zulässig
+
+VORSICHT: 
+
+* `\(\alpha\)`-Fehlerkumulierung gilt grundsätzlich für alle Arten statistischer Tests!
+
+  * Gilt auch für ANOVAs: mehrere ANOVAs am selben Datensatz durchgeführt führen auch zu `\(\alpha\)`-Fehlerkumulierung
+  
+* Bei dem **einmaligen** Vergleich mehrerer Mittelwerte befreit uns die ANOVA aber von diesem Problem
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Warum brauchen wir die ANOVA?
+
+**Verringerung der Teststärke `\((\lambda)\)`**
+
+* Beim Rechnnen mehrerer t-Tests `\(\rightarrow\)` es gehen immer nur Teile der Gesamtstichprobe in die Analyse ein
+
+* z.B. 3 Tests: Jeder Test mit `\(\frac{2}{3}\)` der Gesamtstichprobe (bei gleich großen Gruppen)
+
+* Test, der alle Gruppen gleichzeitig vergleicht, hat eine höhere Teststärke:
+
+$$\lambda=\phi^2 \cdot N = \frac{\Omega^2}{1-\Omega^2}\cdot N $$
+`\(\rightarrow\)` Unter Zugrundelegung des gleichen Populationseffekts `\((\Omega^2)\)` ist die Teststärke `\((\lambda)\)` direkt von Stichprobengröße `\((N)\)` abhängig.
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Name der Varianzanalyse:**
+
+* Simultanvergleich der Mittelwerte wird über Betrachtung von Varianzen (systematische und unsystematische) erreicht
+  
+* Aus dem Vergleich dieser Varianzen wird die Entscheidungsregel abgeleitet
+
+***
+
+**Historisch:**
+
+* Geht zurück auf Sir Ronald Fisher
+
+* ANOVA = Vergleich systematischer Einflüsse (systematische Varianz) und unsystematischer Einflüsse (Residualvarianz)
+
+* Quotient der beiden Varianzen ergibt den F-Wert (Teststatistik der ANOVA - ähnlich t-Wert)
+
+* Daher wird ANOVA auch "F-Test" genannt
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+Beispiel: Vergleich der 3 Behandlungsgruppen - Werte entsprechen Verbesserung nach Behandlung
+
+.pull-left[
+
+| Placebo| Medikament.1| Medikament.2|
+|-------:|------------:|------------:|
+|       6|           10|           11|
+|       7|           11|           12|
+|       7|           11|           12|
+|       8|           12|           13|
+]
+
+.pull-right[
+Verbesserung scheint sich (rein numerisch) zwischen Gruppen zu unterscheiden:
+
+* `\(\bar{x}_{Placebo}=7\)`
+* `\(\bar{x}_{Med1}=11\)`
+* `\(\bar{x}_{Med2}=12\)`
+
+]
+
+&lt;br&gt;
+Größe der Unterschiede zwischen den gemessenen Werten = Varianz `\((\hat{\sigma}_x^2):\)`
+
+`$$\hat{\sigma}_x^2=\frac{\sum\limits _{i=1}^{n}(x_{i}-\bar{x})^2}{n-1}$$`
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+&lt;small&gt;
+
+**Varianz:**
+
+`$$\hat{\sigma}_x^2=\frac{\sum\limits _{i=1}^{n}(x_{i}-\bar{x})^2}{n-1}$$`
+
+* Zur allgemeineren Verwendung der Formel ändern wir die Schreibweise etwas:
+
+  * QS = Quadratsumme
+  * df = Freiheitsgerade der Verteilung
+
+`$$QS_x=\sum\limits _{i=1}^{n}(x_{i}-\bar{x})^2$$`
+`$$df_x=n-1$$`
+
+Allgemeine Schreibweise:
+
+`$$\hat{\sigma}_x^2=\frac{QS_x}{df_x}$$`
+&lt;/small&gt;
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Die Gesamtvarianz:**
+
+* Variation aller Messwerte, **ohne Unterteilung in Versuchsbedingungen** (Gruppen)
+
+* Gibt an, wie stark sich Personen, ungeachtet ihrer Gruppenzugehörigkeit, voneinander unterscheiden
+
+Berechnung: 
+
+* Jeden Wert in Varianzformel vom Gesamtmittelwert `\((\bar{G})\)` abziehen
+
+* Gesamtmittelwert `\((\bar{G})\)`: Mittelwert aller Messwerte der gesamten Stichprobe
+
+`$$\hat{\sigma}_{gesamt}^2=\frac{QS_{gesamt}}{df_{gesamt}}=\frac{\sum\limits _{i=1}^{p}\sum\limits _{m=1}^{n}(x_{mi}-\bar{G})^2}{N-1}$$`
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+.pull-left[
+
+&lt;small&gt;
+**Die Gesamtvarianz:**
+
+
+
+| Placebo| Medikament.1| Medikament.2|
+|-------:|------------:|------------:|
+|       6|           10|           11|
+|       7|           11|           12|
+|       7|           11|           12|
+|       8|           12|           13|
+]
+
+.pull-right[
+
+.center[
+&lt;img src="bilder/groups.png" width="350px" /&gt;
+]
+]
+
+`$$\bar{G}=\frac{\sum\limits _{i=1}^{p}\sum\limits _{m=1}^{n}x_{mi}}{N}=\frac{\sum\limits _{i=1}^{3}\sum\limits _{m=1}^{4}x_{mi}}{12}= \frac{6+7+7+8+...+13}{12}=10$$`
+`$$\hat{\sigma}_{gesamt}^2=\frac{QS_{gesamt}}{df_{gesamt}}=\frac{(6-10)^2+(7-10)^2+...+(13-10)^2}{12-1}=5.63$$`
+
+&lt;/small&gt;
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Zerlegung der Gesamtvarianz:**
+
+Zentrale, die Gesamtvarianz betreffende, Fragen:
+
+* Warum variieren die gemessenen Werte der Personen?
+
+* Warum verbessern sich einige Patienten stärker als andere?
+
+Bei der ANOVA gibt es 2 Ursachen für die Gesamtvarianz:
+
+1. systematische Einflüsse
+
+2. unsystematische Einflüsse
+
+`$$\hat{\sigma}_{gesamt}^2=\hat{\sigma}_{sys}^2 + \hat{\sigma}_{Res}^2$$`
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Zerlegung der Gesamtvarianz:**
+
+.pull-left[
+**Systematische Einflüsse:**
+
+* gehen auf in Studie verwendete Manipulation zurück
+
+* z.B. Vorher klar zugeteilte Verabreichung eines Medikaments
+
+* Können auch natürliche Gruppenzugehörigkeiten sein (z.B. Geschlecht, Diagnose, etc.)
+
+* gemessen als **systematische Varianz/Effektvarianz**
+]
+
+.pull-right[
+**Unsystematische Einflüsse:**
+* Wirken auf die Meswerte, sind aber nicht von Studie intendiert
+
+* Unterschiede zwischen Personen, unabhängig von Manipulation
+
+* können zeitlich stabil oder instabil sein (z.B. Motivation, Tagesstimmung, Persönlichkeit, Messfehler...)
+
+* gemessen als **Residualvarianz**
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Schätzung der Residualvarianz:**
+
+* Residualvarianz wird durch die durchschnittliche Varianz innerhalb jeder Bedingung geschätzt
+
+* aka. Varianz der Messwerte innerhalb der Einzelgruppen
+
+* Man spricht daher auch von der **Varianzschätzung innerhalb**
+
+* Unterschiede **zwischen den Gruppen** spielen für diese Berechnung keine Rolle
+
+`$$\hat{\sigma}_i^2=\frac{\sum\limits _{m=1}^{n}(x_{mi}-\bar{A})^2}{n-1}$$`
+`\(\rightarrow\)` Quadrierte Abweichung jedes Messwerts `\((x_{mi})\)` von seinem jeweiligen Gruppenmittelwert `\((\bar{A})\)`
+
+&lt;small&gt;
+Good-to-know: "Varianz innerhalb" bezieht sich streng genommen auf die Varianzen innerhalb jeder einzelnen Gruppe. Der Begriff wird jedoch auch synonym für die Residualvarianz, also die über alle Gruppen hinweg gemittelte Varianz innerhalb verwendet
+&lt;/small&gt;
+
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Schätzung der Residualvarianz:**
+
+* Unter idealen Bedingungen sollten Varianzen innerhalb aller Gruppen gleich sein (Varianzhomogenität)
+
+* Dies ist allerdings auf Stichprobenebene (kleinere Gruppe als Gesamtpopulation) selten der Fall
+
+Idee, um ungleiche Varianzen zu berücksichtigen: 
+
+* Die Berechnung der **durchschnittlichen Varianz innerhalb** erfolgt durch die Addition der Varianzen innerhalb der einzelnen Gruppen 
+
+* Diese Summe wird geteilt durch die Anzahl der Gruppen `\((p)\)`
+
+`$$\hat{\sigma}_{Res}^2=\hat{\sigma}_{innerhalb}^2 = \frac{\sum\limits _{i=1}^{p}\hat{\sigma}_{i}^2}{p}=\frac{\hat{\sigma}_{1}^2 + \hat{\sigma}_{2}^2+ ...+\hat{\sigma}_{p}^2}{p}$$`
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Schätzung der Residualvarianz:**
+
+Unter der Annahme gleich großer Gruppen, lässt sich die Formel auch wie folgt darstellen:
+
+`$$\hat{\sigma}_{Res}^2=\hat{\sigma}_{innerhalb}^2 = \frac{\sum\limits _{i=1}^{p}\hat{\sigma}_{i}^2}{p}=\frac{\sum\limits _{i=1}^{p}\sum\limits _{m=1}^{n}(x_{mi}-\bar{A}_i)^2}{p \cdot (n-1)}$$`
+mit `\(p\)` = Anzahl der verglichenen Gruppen.
+
+Diese Darstellung ermöglicht die separate Betrachtung von Quadratsummen und Freiheitsgraden (Schreibweise von oben):
+
+`$$\hat{\sigma}_{innerhalb}^2= \frac{QS_{innerhalb}}{df_{innerhalb}}$$`
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+&lt;small&gt;
+**Schätzung der Residualvarianz:**
+
+Beispiel: Residualvarianz errechnet sich aus:
+
+`$$\hat{\sigma}_{innerhalb}^2= \frac{\hat{\sigma}_{Placebo}^2 + \hat{\sigma}_{Med1}^2 + \hat{\sigma}_{Med2}^2}{3}$$`
+Berechnung Varianz innerhalb Gruppe Placebo:
+
+`$$\hat{\sigma}_{Placebo}^2=\frac{\sum\limits _{m=1}^{n}(x_{mi}-\bar{A})^2}{n-1}=\frac{(6-7)^2 + (7-7)^2 + (7-7)^2+(8-7)^2}{4-1}=0.67$$`
+Für die anderen beiden Gruppen ergibt sich (kann nachgerechnet werden):
+
+`$$\hat{\sigma}_{Med1}^2 = \hat{\sigma}_{Med2}^2=0.67;df_{innerhalb}=p \cdot (n-1)$$`
+`$$\hat{\sigma}_{innerhalb}^2= \frac{0.67 + 0.67 + 0.67}{3}=0.67$$`
+&lt;/small&gt;
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Schätzung der Residualvarianz:**
+
+* Bei der Berechnung der Residualvarianz spielen Unterschiede zwischen den Gruppenmittelwerten (durchschnittliche Symptomverbesserung der Gruppen) keine Rolle
+
+Grund: 
+
+* Jeder Messwert wird mit dem eigenen Gruppenmittelwert verglichen
+
+* Die Gruppen werden unabhängig betrachtet und der Durschnitt aus ihren Varianzen gebildet 
+
+* Denn: Varianz innerhalb soll nur unsystematische Einflüsse erfassen
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+&lt;small&gt;
+**Schätzung der systematischen Varianz:**
+
+* beschreibt Unterschiede, die durch die UV verursacht worden sind
+
+* Schätzung mittels Stichprobenmittelwerten (Stichprobenmittelwerte = erwartungstreue Schätzer der Populationsmittelwerte)
+
+**Kontext der Varianzanalyse (Varianz zwischen): **
+
+* Experimenteller Einfluss auf die Gesamtvarianz wird über die Unterschiede der Gruppenmittelwerte geschätzt
+
+* Unterschiede zwischen Gruppenmittelwerten = **Varianz zwischen**
+
+* **Varianz zwischen** = Quadrierte Abweichung der Gruppenmittelwerte vom Gesamtmittelwert
+
+**ACHTUNG: **
+
+* Varianz zwischen schätzt nicht nur systematische, sondern auch Residualvarianz
+* Gruppenmittelwerte sind selber nur geschätzte Werte (mit unsystematischen Einflüssen behaftet) 
+* Schätzgüte des Mittelwerts = Standardfehler
+
+&lt;/small&gt;
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Schätzung der systematischen Varianz:**
+
+* Einsetzen der Gruppenmittelwerte `\((\bar{A}_{i})\)` und des Gesamtmittelwerts `\((\bar{G})\)` in die Varianzformel
+
+* Freiheitsgrade ergeben sich aus der Anzahl der Gruppen
+
+* Der Zähler muss mit der Anzahl der Versuchspersonen (n) in einer Gruppe multipliziert werden, um Genauigkeit der Mittelwerte als Populationsschätzer zu berücksichtigen
+
+`$$\hat{\sigma}_{zwischen}^2=\frac{QS_{zwischen}}{df_{zwischen}}= \frac{n \cdot \sum\limits _{i=1}^{p}(\bar{A}_i-\bar{G})^2}{p-1}$$`
+Wenn kein Effekt der UV vorliegt...
+* Ist die Effektvarianz = 0 (kein Unterschied zwischen Mittelwerten)
+* Schätzt die Zwischenvarianz lediglich Residualvarianz
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Schätzung der systematischen Varianz:**
+
+Beispiel:
+
+`$$\hat{\sigma}_{zwischen}^2= \frac{n \cdot \sum\limits _{i=1}^{p}(\bar{A}_i-\bar{G})^2}{p-1}= \frac{4 \cdot [(7-10)^2 + (11-10)^2 + (12-10)^2]}{3-1}=\frac{56}{2}=28$$`
+
+* Die **Varianz zwischen** den Gruppen `\((\hat{\sigma}_{zwischen}^2=28)\)` ist deutlich größer als die zuvor berechnete Residualvarianz `\((\hat{\sigma}_{innerhalb}^2=0.67)\)`.
+
+* Frage (s.h. Hypothese): Ist dieser Unterschied statistisch signifikant?
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Signifikanztestung der ANOVA - Der F-Quotient:**
+
+* Verhältnis der **Varianz zwischen** und der **Varianz innerhalb**
+
+* Beide schätzen auf unterschiedlichem Weg die gleiche Residualvarianz
+
+* Aber: In der **Varianz zwischen** ist zusätzlich die gesuchte **Effektvarianz enthalten**
+
+* In der **Varianz innerhalb** ist lediglich die Residualvarianz enthalten
+
+`$$F_{(df_{Zähler}; df_{Nenner})}=\frac{\hat{\sigma}_{zwischen}^2}{\hat{\sigma}_{innerhalb}^2}$$`
+`$$df_{Zähler}=df_{zwischen}=p-1$$`
+`$$df_{Nenner}=df_{innerhalb}=p \cdot (n-1)$$`
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Signifikanztestung der ANOVA - Der F-Quotient:**
+
+* F-Wert ist die Teststatistik der ANOVA (wie t-Wert beim t-Test)
+
+Mögliche Werte und deren Interpretation:
+
+* `\(F=1\)`
+
+  * Der F-Wert ist gleich 1 wenn die systematische Varianz gleich 0 ist.
+  * Es wird lediglich die Residualvarianz durch sich selbst geteilt
+  * Grupppenmittelwerte unterscheiden sich höchstens durch unsystematische Einflüsse
+
+* `\(F&gt;1\)`
+  * Es gibt einen systematischen Einfluss
+  * Gruppenmittelwerte unterscheiden sich nicht nur durch unsystematische, sondern auch wesentlich durch systematische Einflüsse
+  
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+.pull-left[
+**Signifikanztestung der ANOVA - Der F-Quotient:**
+
+* Annahme der `\(H_0\)` erlaubt Konstruktion der F-Verteilung (Verteilung aller F-Werte die unter dieser Annahme auftreten können)
+
+* Unter der `\(H_0\)` hat die F-Verteilung einen Mittelwert von 1 (F=1)
+
+* Bei Gleichheit der Populationsmittelwerte besteht **Varianz zwischen** nur aus Residualvarianz und nimmt gleichen Wert wie **Varianz innerhalb** an
+  
+* Negative Werte sind nicht möglich, da Varianzen durch Quadrierung immer positiv sind
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/fdist.png" width="450px" /&gt;
+]
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+.pull-left[
+**Entscheidungsregel beim F-Test:**
+
+* Unter der `\(H_0\)` ist ein F-Wert von 1 oder nahe 1 zu erwarten
+
+* Wahrscheinlichkeit für einen F-Wert (in Abhängigkeit von Gruppenzahl und Stichprobengröße) kann in der F-Tabelle abgelesen werden
+
+* Logik: Vergleich empirischer F-Wert `\((F_{emp})\)` mit kritischem F-Wert `\((F_{krit})\)` unter Annahme des Signifikanzniveaus `\((\alpha=.05)\)`
+
+Wenn `\(F_{emp} &gt; F_{krit}\)` `\(\rightarrow\)` ist die ANOVA signifikant.
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/fdist_sig.png" width="450px" /&gt;
+]
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+.pull-left[
+**Signifikanztestung der ANOVA - Der F-Quotient:**
+
+Logik der F-Verteilung (analog zum t-Test):
+* Aus 3 Populationen werden jeweils `\(n\)` Personen gezogen
+
+* Aus Messwerten werden Inner- und Zwischenvarianz sowie der F-Quotient berechnet
+
+* Vorgang wird (idealerweise unendlich oft) wiederholt
+
+* Resultierende F-Werte ergeben beim Eintragen in das Koordinatensystem die F-Verteilung
+]
+
+.pull-right[
+.center[
+&lt;img src="bilder/fdist.png" width="450px" /&gt;
+]
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+.pull-left[
+#### Prinzip der Varianzanalyse
+
+**Entscheidungsregel beim F-Test:**
+
+* Bestimmung des kritischen F-Werts (bei `\(\alpha=.05\)` und `\(p = 3\)` und `\(n = 4\)`):
+
+* Auswählen von Zähler und Nennerfreiheitsgraden
+
+* Fläche `\(= 1-\alpha\)`
+
+* `\(F_{krit}=4.26\)`
+
+]
+.pull-right[
+.center[
+&lt;img src="bilder/ftab.png" width="650px" /&gt;
+]
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Prinzip der Varianzanalyse
+
+**Alternativhypothese der ANOVA - Was bedeutet ein signifikanter Test?**
+
+* Zwischenvarianz größer als Varianz innerhalb (Manipulation verursacht signifikanten Teil der Gesamtvarianz)
+
+* Mit anderen Worten: Es besteht ein signifikanter (systematischer) Unterschied zwischen den Gruppen
+
+* ACHTUNG: Nur statistische Signifikanz `\(\rightarrow\)` für Relevanz auf inhaltlicher/klinischer Ebene müssen Effektstärken berücksichtigt werden
+
+**VORSICHT:**
+
+* Eine signifikante ANOVA bedeutet lediglich, dass sich **mindestens ein Gruppenmittelwert** signifikant von den anderen unterscheidet 
+
+* Zwischen welchen Gruppen der Unterschied besteht, lässt sich noch nicht sehen
+
+`\(\rightarrow\)` Alternativhypothese der ANOVA ist **immer ungerichtet**
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Einfaktorielle ANOVA - Rechenbeispiel in R
+
+Unsere Stichprobe ist, für ein realisteres Szenario mit mehr Teststärke, auf insgesamt `\(N=150\)` `\((n=50\)` pro Gruppe) erweitert worden:
+
+
+
+
+```r
+head(df, 10) # erste 10 Zeilen anzeigen
+```
+
+```
+##          Gruppe  Symptome ID
+## 1       Placebo  4.758097  1
+## 2  Medikament.1 12.013274  2
+## 3  Medikament.2  9.158374  3
+## 4       Placebo  6.079290  4
+## 5  Medikament.1 10.885813  5
+## 6  Medikament.2 13.027535  6
+## 7       Placebo 13.234833  7
+## 8  Medikament.1 10.828518  8
+## 9  Medikament.2 11.013232  9
+## 10      Placebo  7.282034 10
+```
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+#### Einfaktorielle ANOVA - Rechenbeispiel in R
+
+Anzeigen der Deskriptivstatistiken pro Gruppe:
+
+.code60[
+
+
+```r
+psych::describeBy(x = df[,c("Symptome", "Gruppe")], group = df$Gruppe)
+```
+
+```
+## 
+##  Descriptive statistics by group 
+## group: Medikament.1
+##          vars  n  mean   sd median trimmed  mad  min   max range  skew
+## Symptome    1 50 11.59 3.62  11.61   11.58 3.01 1.76 19.75 17.99 -0.04
+## Gruppe      2 50  1.00 0.00   1.00    1.00 0.00 1.00  1.00  0.00   NaN
+##          kurtosis   se
+## Symptome     0.05 0.51
+## Gruppe        NaN 0.00
+## --------------------------------------------------------- 
+## group: Medikament.2
+##          vars  n  mean   sd median trimmed  mad  min  max range skew
+## Symptome    1 50 10.98 3.96  10.78   10.74 3.82 3.79 20.4 16.61 0.41
+## Gruppe      2 50  2.00 0.00   2.00    2.00 0.00 2.00  2.0  0.00  NaN
+##          kurtosis   se
+## Symptome    -0.38 0.56
+## Gruppe        NaN 0.00
+## --------------------------------------------------------- 
+## group: Placebo
+##          vars  n mean  sd median trimmed  mad   min   max range skew
+## Symptome    1 50 7.14 3.7   6.71    7.06 3.67 -0.87 15.68 16.54 0.16
+## Gruppe      2 50 3.00 0.0   3.00    3.00 0.00  3.00  3.00  0.00  NaN
+##          kurtosis   se
+## Symptome    -0.52 0.52
+## Gruppe        NaN 0.00
+```
+
+]
+
+---
+class: top, left
+### Einfaktorielle Varianzanalyse (ANOVA)
+
+
+&lt;small&gt;
+
+.pull-left[
+#### Einfaktorielle ANOVA - Rechenbeispiel in R
+
+Berechnen der ANOVA:
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+```r
+anova(lm(Symptome ~ Gruppe, data = df))
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: Symptome
+##            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Gruppe      2  582.4 291.201  20.558 1.341e-08 ***
+## Residuals 147 2082.2  14.165                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+
+.pull-right[
+* `\(QS_{total}=QS_{zwischen} +QS_{innerhalb}=582.4+2082.2=2664.6\)`
+
+* `\(df_{zwischen}=p-1=2\)`
+
+* `\(df_{innerhalb}=p \cdot (n-1) = 3 \cdot (50-1)=147\)`
+
+* `\(\hat{\sigma}_{zwischen}^2=\frac{QS_{zwischen}}{df_{zwischen}}=\frac{582.4}{2}=291.2\)`
+
+* `\(\hat{\sigma}_{innerhalb}^2=\frac{QS_{innerhalb}}{df_{innerhalb}}=\frac{2082.2}{147}=14.17\)`
+
+* `\(F_{(2,147)}=\frac{291.20}{14.17}=20.56\)`
+]
+
+&lt;/small&gt;
+---
+class: top, left
+### Take-aways
+
+.full-width[.content-box-gray[
+
+* **ANOVA** = Verfahren für Hypothesen mit einer intervallskalierten AV und einer mehr als 2-stufigen UV
+
+* ANOVA vergleicht im Vergleich zum t-Test auch **mehr als 2 Gruppen** miteinander.
+
+* Durch **simultanen Mittelwertsvergleich** (Omnibustest) werden `\(\alpha\)` -Fehler-Kumulierung und Reduktion der Teststärke vermieden.
+
+* Prinzip basiert auf der Unterscheidung zwischen **systematischer Varianz** und **unsystematischer Varianz**.
+
+* Signifikanztestung über **F-Test**, der systematische und unsystematische Varianz ins Verhältnis zueinander setzt (F-Quotient).
+
+* **Signifikante ANOVA** zeigt einen Unterschied zwischen Mittwelwerten an, jedoch nicht, zwischen welchen Gruppen dieser genau besteht.
+
+* ANOVA alleine kann **keine gerichteten Hypothesen** prüfen.
+]
+
+]
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
